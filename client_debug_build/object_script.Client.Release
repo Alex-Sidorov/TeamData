@@ -1,0 +1,15 @@
+release/main.o
+release/mainwindow.o
+release/abstracttask.o
+release/proxyactiveobject.o
+release/scheduler.o
+release/base_client.o
+release/filesystem_informer.o
+release/tasksendmsg.o
+release/taskrecvmsg.o
+release/workermetadata.o
+release/moc_mainwindow.o
+release/moc_base_client.o
+release/moc_tasksendmsg.o
+release/moc_taskrecvmsg.o
+release/moc_workermetadata.o
