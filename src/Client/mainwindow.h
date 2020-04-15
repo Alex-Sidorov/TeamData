@@ -34,6 +34,9 @@ private slots:
     void on_scan_dir_button_clicked();
     void slot_exec_file(const QModelIndex &index);
 
+    void slot_removed_dirs(QStringList dirs);
+    void slot_load_tree(WorkerMetaData::MetaDataDir data);
+
 private:
     Ui::MainWindow *ui;
 
@@ -41,13 +44,10 @@ private:
     ActiveObject::ProxyActiveObject _proxy;
     TaskRecvMsg::WorkInfo info_recv_data;
     WorkerMetaData worker_meta_data;
-
-    void load_tree(WorkerMetaData::MetaDataDir data);
     void remove_items_tree(WorkerMetaData::MetaDataDir data);
 
     void add_dirs(QStringList &dirs);
     void add_files(WorkerMetaData::FileMetaData &files);
-
 };
 
 #endif // MAINWINDOW_H

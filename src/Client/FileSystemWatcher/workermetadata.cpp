@@ -1,5 +1,7 @@
 #include "workermetadata.h"
 #include "filesystem_informer.h"
+#include "taskfilechanged.h"
+#include "taskdirchanged.h"
 
 #include <QDebug>
 #include <QDataStream>
@@ -22,7 +24,8 @@ void WorkerMetaData::scan_dir()
 
         //init_dir_tree(files,present_dirs);
 
-        _watcher.addPaths({_path, "D:/dir/папка/1"});//todo
+        _watcher.addPath(_path);
+        add_dirs_path(present_dirs);
         _watcher.addPaths(files);
 
         auto size_files = fsi::get_size_files(files);
@@ -43,6 +46,184 @@ void WorkerMetaData::scan_dir()
         emit upload_tree(_present_meta_data);
     }
 }
+
+void WorkerMetaData::add_dirs_path(QStringList &dirs)
+{
+    for(auto &dir:dirs)
+    {
+        auto path = dir.split('/');
+        path.removeAll("");
+        auto temp = _path + '/';
+        for (int i = 0; i < path.size(); i++)
+        {
+            temp += path[i] + '/';
+            if(!(i % 2 == 0))
+            {
+                _watcher.addPath(temp);
+            }
+        }
+    }
+}
+
+void WorkerMetaData::change_dir(QString &path)
+{
+    if(!path.isEmpty())
+    {
+        _path = path;
+    }
+}
+
+void WorkerMetaData::change_dir(QString &&path)
+{
+    if(!path.isEmpty())
+    {
+        _path = path;
+    }
+}
+
+void WorkerMetaData::remove_root_path(QString &path, QStringList &data)
+{
+    path.replace("\\","/");
+    for(auto &value : data)
+    {
+        value.remove(path);
+    }
+}
+
+void WorkerMetaData::create_sended_data(QByteArray &data)
+{
+    QDataStream stream(&data,QIODevice::WriteOnly);
+    stream << _present_meta_data.first;
+
+    auto &map = _present_meta_data.second;
+    for(auto it = map.begin(); it != map.end(); it++)
+    {
+        stream << it.key() << std::get<0>(it.value())
+                           << std::get<1>(it.value())
+                           << std::get<2>(it.value());
+    }
+}
+
+void WorkerMetaData::files_changed(const QString &path)
+{
+    if(_proxy)
+    {
+        auto task = new TaskFileChanged(&_meta_data, &_present_meta_data, path, _path, &_mutex);
+        connect(task,&TaskFileChanged::complete_task,this,[this]
+        {
+            emit upload_tree(_present_meta_data);
+        });
+        _proxy->push(task);
+    }
+    else
+    {
+        TaskFileChanged task(&_meta_data, &_present_meta_data, path, _path);
+        task.exec();
+        emit upload_tree(_present_meta_data);
+    }
+
+}
+
+void WorkerMetaData::dir_changed(const QString &path)
+{
+    if(_proxy)
+    {
+        auto task = new TaskDirChanged(&_meta_data, &_present_meta_data, path, _path, &_watcher, &_mutex);
+        connect(task,&TaskDirChanged::complete_task,this,[this](bool is_changed)
+        {
+            if(is_changed)
+            {
+                emit upload_tree(_present_meta_data);
+            }
+        });
+        _proxy->push(task);
+    }
+    else
+    {
+        TaskDirChanged task(&_meta_data, &_present_meta_data, path, _path, &_watcher );
+        if(task.exec())
+        {
+            emit upload_tree(_present_meta_data);
+        }
+    }
+}
+
+QStringList WorkerMetaData::get_removed_files(const QStringList &scan_files, const QString &path)const
+{
+    QStringList result;
+    auto it = _meta_data.second.begin();
+    while(it != _meta_data.second.end())
+    {
+        if(it.key().indexOf(path) != -1 && it.key()[path.size()] == '/' && scan_files.indexOf(it.key()) == -1)
+        {
+            result.append(it.key());
+        }
+        ++it;
+    }
+    return result;
+}
+
+QStringList WorkerMetaData::get_added_files(const QStringList &scan_files)const
+{
+    auto files = scan_files;
+    auto it = _meta_data.second.begin();
+    while(it != _meta_data.second.end())
+    {
+        files.removeOne(it.key());
+        ++it;
+    }
+    return files;
+}
+
+QStringList WorkerMetaData::get_removed_folders(const QStringList &scan_dirs, const QString &path)const
+{
+    QStringList result;
+    for(auto &dir : _meta_data.first)
+    {
+        if(dir.indexOf(path) != -1 && dir != path && scan_dirs.indexOf(dir) == -1)
+        {
+            result.append(dir);
+        }
+    }
+    return result;
+}
+
+QStringList WorkerMetaData::get_added_folders(const QStringList &scan_dirs)const
+{
+    auto dirs = scan_dirs;
+    for(auto &dir : _meta_data.first)
+    {
+        dirs.removeOne(dir);
+    }
+    return dirs;
+}
+
+WorkerMetaData::WorkerMetaData(PROXY *proxy, QString &path):
+    _path(path),
+    _proxy(proxy)
+{
+    scan_dir();
+    connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
+    connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
+}
+
+WorkerMetaData::WorkerMetaData(PROXY *proxy, QString &&path):
+    _path(path),
+    _proxy(proxy)
+{
+    scan_dir();
+    connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
+    connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
+}
+
+WorkerMetaData::WorkerMetaData(PROXY *proxy):_proxy(proxy)
+{
+    connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
+    connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
+}
+
+WorkerMetaData::~WorkerMetaData()
+{}
 
 /*void WorkerMetaData::insert_dir(QString &dir)
 {
@@ -105,196 +286,3 @@ void WorkerMetaData::init_dir_tree(QStringList &files, QStringList &dirs)
        insert_file(_tree,v);
     }
 }*/
-
-void WorkerMetaData::change_dir(QString &path)
-{
-    if(!path.isEmpty())
-    {
-        _path = path;
-    }
-}
-
-void WorkerMetaData::change_dir(QString &&path)
-{
-    if(!path.isEmpty())
-    {
-        _path = path;
-    }
-}
-
-void WorkerMetaData::remove_root_path(QString &path, QStringList &data) const
-{
-    path.replace("\\","/");
-    for(auto &value : data)
-    {
-        value.remove(path);
-    }
-}
-
-void WorkerMetaData::create_sended_data(QByteArray &data)
-{
-    QDataStream stream(&data,QIODevice::WriteOnly);
-    stream << _present_meta_data.first;
-
-    auto &map = _present_meta_data.second;
-    for(auto it = map.begin(); it != map.end(); it++)
-    {
-        stream << it.key() << std::get<0>(it.value())
-                           << std::get<1>(it.value())
-                           << std::get<2>(it.value());
-    }
-}
-
-//todo
-void WorkerMetaData::files_changed(const QString &path)
-{
-    QFileInfo info(path);
-    if(info.isFile())
-    {
-        QStringList list{path};
-        auto size_files = fsi::get_size_files(list);
-        auto date_last_modified_files = fsi::get_date_last_modified_files(list);
-        auto date_create_files = fsi::get_date_created_files(list);
-        _meta_data.second[path] = std::make_tuple(size_files[0],date_create_files[0],date_last_modified_files[0]);
-        auto temp = path.mid(_path.size());
-        _present_meta_data.second[temp] = std::make_tuple(size_files[0],date_create_files[0],date_last_modified_files[0]);
-    }
-    else
-    {
-        _meta_data.second.remove(path);
-        auto temp = path.mid(_path.size());
-        _present_meta_data.second.remove(temp);
-        //_tree.remove_file(path);
-    }
-    emit upload_tree(_present_meta_data);
-    qDebug() << "f" << path;
-}
-
-//todo
-void WorkerMetaData::dir_changed(const QString &path)
-{
-    auto dirs = fsi::get_terminal_directories(path);
-    auto new_dirs = get_added_folders(dirs);
-    auto removed_dirs = get_removed_folders(dirs,path);
-
-    if(new_dirs.size())
-    {
-        for(int i = 0; i < new_dirs.size(); i++)
-        {
-            _meta_data.first.push_back(new_dirs[i]);
-            _present_meta_data.first.push_back(new_dirs[i].mid(_path.size()));
-        }
-    }
-    if(removed_dirs.size())
-    {
-        for(int i = 0; i < removed_dirs.size(); i++)
-        {
-            _meta_data.first.removeOne(removed_dirs[i]);
-            _present_meta_data.first.removeOne(removed_dirs[i].mid(_path.size()));
-        }
-    }
-
-    auto files = fsi::get_files(path);
-    auto new_files = get_added_files(files);
-    auto removed_files = get_removed_files(files,path);
-
-    if(new_files.size())
-    {
-        _watcher.addPaths(new_files);
-        auto size_files = fsi::get_size_files(new_files);
-        auto date_last_modified_files = fsi::get_date_last_modified_files(new_files);
-        auto date_create_files = fsi::get_date_created_files(new_files);
-        for(int i = 0; i < new_files.size(); i++)
-        {
-            _meta_data.second.insert(new_files[i],std::make_tuple(size_files[i],date_create_files[i],date_last_modified_files[i]));
-            _present_meta_data.second.insert(new_files[i].mid(_path.size()),std::make_tuple(size_files[i],date_create_files[i],date_last_modified_files[i]));
-        }
-    }
-
-    if(removed_files.size())
-    {
-        _watcher.removePaths(removed_files);
-        for(auto &file : removed_files)
-        {
-            _meta_data.second.remove(file);
-            _present_meta_data.second.remove(file.mid(_path.size()));
-        }
-    }
-
-    emit upload_tree(_present_meta_data);
-    qDebug() << "d" << path;
-
-}
-
-QStringList WorkerMetaData::get_removed_files(const QStringList &scan_files, const QString &path)const
-{
-    QStringList result;
-    auto it = _meta_data.second.begin();
-    while(it != _meta_data.second.end())
-    {
-        if(it.key().indexOf(path) != -1 && it.key()[path.size()] == '/' && scan_files.indexOf(it.key()) == -1)
-        {
-            result.append(it.key());
-        }
-        ++it;
-    }
-    return result;
-}
-
-QStringList WorkerMetaData::get_added_files(const QStringList &scan_files)const
-{
-    auto files = scan_files;
-    auto it = _meta_data.second.begin();
-    while(it != _meta_data.second.end())
-    {
-        files.removeOne(it.key());
-        ++it;
-    }
-    return files;
-}
-
-QStringList WorkerMetaData::get_removed_folders(const QStringList &scan_dirs, const QString &path)const
-{
-    QStringList result;
-    for(auto &dir : _meta_data.first)
-    {
-        if(dir.indexOf(path) != -1 && dir != path && scan_dirs.indexOf(dir) == -1)
-        {
-            result.append(dir);
-        }
-    }
-    return result;
-}
-
-QStringList WorkerMetaData::get_added_folders(const QStringList &scan_dirs)const
-{
-    auto dirs = scan_dirs;
-    for(auto &dir : _meta_data.first)
-    {
-        dirs.removeOne(dir);
-    }
-    return dirs;
-}
-
-WorkerMetaData::WorkerMetaData(QString &path):_path(path)
-{
-    scan_dir();
-    connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
-    connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
-}
-
-WorkerMetaData::WorkerMetaData(QString &&path):_path(path)
-{
-    scan_dir();
-    connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
-    connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
-}
-
-WorkerMetaData::WorkerMetaData()
-{
-    connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
-    connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
-}
-
-WorkerMetaData::~WorkerMetaData()
-{}

@@ -35,7 +35,9 @@ SOURCES += \
     FileSystemWatcher/filesystem_informer.cpp \
     tasksendmsg.cpp \
     taskrecvmsg.cpp \
-    FileSystemWatcher/workermetadata.cpp
+    FileSystemWatcher/workermetadata.cpp \
+    taskfilechanged.cpp \
+    taskdirchanged.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -47,7 +49,9 @@ HEADERS += \
     tasksendmsg.h \
     taskrecvmsg.h \
     FileSystemWatcher/workermetadata.h \
-    FileSystemWatcher/dirtree.h
+    FileSystemWatcher/dirtree.h \
+    taskfilechanged.h \
+    taskdirchanged.h
 
 FORMS += \
         mainwindow.ui

@@ -8,8 +8,12 @@ release/filesystem_informer.o
 release/tasksendmsg.o
 release/taskrecvmsg.o
 release/workermetadata.o
+release/taskfilechanged.o
+release/taskdirchanged.o
 release/moc_mainwindow.o
 release/moc_base_client.o
 release/moc_tasksendmsg.o
 release/moc_taskrecvmsg.o
 release/moc_workermetadata.o
+release/moc_taskfilechanged.o
+release/moc_taskdirchanged.o

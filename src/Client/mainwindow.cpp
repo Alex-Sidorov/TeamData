@@ -8,13 +8,15 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    info_recv_data({"",0,false})
+    info_recv_data({"",0,false}),
+    worker_meta_data(&_proxy)
 {
-    //_proxy.start();
+    _proxy.start();
     ui->setupUi(this);
     ui->terminal->setVisible(false);
 
-    connect(&worker_meta_data,&WorkerMetaData::upload_tree,this,&MainWindow::load_tree);
+    connect(&worker_meta_data,&WorkerMetaData::upload_tree,this,&MainWindow::slot_load_tree);
+    //connect(&worker_meta_data,&WorkerMetaData::removed_dirs,this,&MainWindow::slot_removed_dirs);
     connect(ui->tree_dir,&QTreeWidget::doubleClicked,this,&MainWindow::slot_exec_file);
 
     worker_meta_data.change_dir("D:\\dir");
@@ -26,7 +28,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::load_tree(WorkerMetaData::MetaDataDir data)
+void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data)
 {
     ui->tree_dir->clear();
     add_dirs(data.first);
@@ -123,6 +125,36 @@ void MainWindow::add_files(WorkerMetaData::FileMetaData &files)
     }
 }
 
+//todo
+void MainWindow::slot_removed_dirs(QStringList dirs)
+{
+    for(int i = 0; i < dirs.size(); i++)
+    {
+        auto path = dirs[i].split('/');
+        path.removeAll("");
+        auto values = ui->tree_dir->findItems(path.back(),Qt::MatchFlag::MatchRecursive);
+        for(auto item : values)
+        {
+            QString temp;
+            auto value = item;
+            do
+            {
+                temp.push_front('/' + value->text(0));
+                value = value->parent();
+            }while(value);
+            if(temp == dirs[i])
+            {
+                while(item->childCount())
+                {
+                   item->removeChild(item->child(0));
+                }
+                ui->tree_dir->removeItemWidget(item,0);
+                break;
+            }
+        }
+    }
+}
+
 void MainWindow::on_pushButton_clicked()
 {
     if(_client.isNull())
@@ -199,6 +231,6 @@ void MainWindow::slot_exec_file(const QModelIndex &index)
 {
     if(index.isValid())
     {
-
+        qDebug() << index;
     }
 }

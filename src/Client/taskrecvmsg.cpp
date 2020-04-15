@@ -1,4 +1,5 @@
 #include "taskrecvmsg.h"
+
 void TaskRecvMsg::run_process()
 {
     if(_new_data.isEmpty())

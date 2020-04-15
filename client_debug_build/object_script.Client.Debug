@@ -8,8 +8,12 @@ debug/filesystem_informer.o
 debug/tasksendmsg.o
 debug/taskrecvmsg.o
 debug/workermetadata.o
+debug/taskfilechanged.o
+debug/taskdirchanged.o
 debug/moc_mainwindow.o
 debug/moc_base_client.o
 debug/moc_tasksendmsg.o
 debug/moc_taskrecvmsg.o
 debug/moc_workermetadata.o
+debug/moc_taskfilechanged.o
+debug/moc_taskdirchanged.o
