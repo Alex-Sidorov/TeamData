@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSharedPointer>
+#include <QDirModel>
 
 #include <tasksendmsg.h>
 #include <taskrecvmsg.h>
@@ -44,6 +45,8 @@ private:
     ActiveObject::ProxyActiveObject _proxy;
     TaskRecvMsg::WorkInfo info_recv_data;
     WorkerMetaData worker_meta_data;
+    QDirModel _model;
+
     void remove_items_tree(WorkerMetaData::MetaDataDir data);
 
     void add_dirs(QStringList &dirs);

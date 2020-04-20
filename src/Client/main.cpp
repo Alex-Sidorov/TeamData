@@ -2,34 +2,24 @@
 #include <QApplication>
 #include <QDebug>
 
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
-#include <QStyle>
+#include <QFileSystemModel>
+#include <QDirModel>
+#include <QHostInfo>
 
 int main(int argc, char *argv[])
 {
 
     QApplication a(argc, argv);
 
-    /*QTreeWidget *treeWidget = new QTreeWidget();
-    treeWidget->setColumnCount(1);
-    QList<QTreeWidgetItem *> items;
-    for (int i = 0; i < 10; ++i)
-    {
-        items.append(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString("item: %1").arg(i))));
-        QList<QTreeWidgetItem *> files;
-        for (int j = 0; j < 5; j++)
-        {
-            files.append(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString("file: %1").arg(i))));
-            files.last()->setIcon(0,QApplication::style()->standardIcon(QStyle::SP_FileIcon));
-        }
-        items.last()->insertChildren(0,files);
-        items.last()->setIcon(0,QApplication::style()->standardIcon(QStyle::SP_DirIcon));
-    }
-    treeWidget->insertTopLevelItems(0, items);
-    treeWidget->setCurrentItem(items[0]);
-    auto t = treeWidget->findItems("file: 1",Qt::MatchFlag::MatchCaseSensitive);
-    treeWidget->show();
+    //QHostInfo info =QHostInfo::fromName("192.168.43.246");
+    /*QDirModel model;
+    QTreeView view;
+    view.setModel(&model);
+    view.setRootIndex(model.index("D://dir"));
+    view.show();
+    for(volatile double i = 0; i < 1000000000; i++);
+    for(volatile double i = 0; i < 1000000000; i++);
+    model.refresh();
     return a.exec();*/
 
     MainWindow w;

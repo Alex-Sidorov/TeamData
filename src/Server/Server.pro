@@ -33,7 +33,8 @@ SOURCES += \
     ActiveObject/scheduler.cpp \
     BaseServer/base_server.cpp \
     Tasks/taskrecvmsg.cpp \
-    Tasks/tasksendmsg.cpp
+    Tasks/tasksendmsg.cpp \
+    workerdataclient.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -42,7 +43,8 @@ HEADERS += \
     ActiveObject/scheduler.h \
     BaseServer/base_server.h \
     Tasks/taskrecvmsg.h \
-    Tasks/tasksendmsg.h
+    Tasks/tasksendmsg.h \
+    workerdataclient.h
 
 FORMS += \
         mainwindow.ui

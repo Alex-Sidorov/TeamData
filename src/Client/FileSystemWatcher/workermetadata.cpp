@@ -7,6 +7,8 @@
 #include <QDataStream>
 #include <QFileInfo>
 
+#include "tasksendmsg.h"
+
 using fsi = FileSystemWatcher::FileSystemInformer;
 
 void WorkerMetaData::scan_dir()
@@ -16,13 +18,10 @@ void WorkerMetaData::scan_dir()
         auto dirs = fsi::get_terminal_directories(_path);
         auto present_dirs = dirs;
         remove_root_path(_path,present_dirs);
-        //dirs.push_front(_path);
 
         auto files = fsi::get_files(_path);
         auto present_files = files;
         remove_root_path(_path,present_files);
-
-        //init_dir_tree(files,present_dirs);
 
         _watcher.addPath(_path);
         add_dirs_path(present_dirs);
@@ -93,6 +92,8 @@ void WorkerMetaData::remove_root_path(QString &path, QStringList &data)
 void WorkerMetaData::create_sended_data(QByteArray &data)
 {
     QDataStream stream(&data,QIODevice::WriteOnly);
+
+    QMutexLocker lock(&_mutex);
     stream << _present_meta_data.first;
 
     auto &map = _present_meta_data.second;
@@ -101,6 +102,34 @@ void WorkerMetaData::create_sended_data(QByteArray &data)
         stream << it.key() << std::get<0>(it.value())
                            << std::get<1>(it.value())
                            << std::get<2>(it.value());
+    }
+}
+
+void WorkerMetaData::parse_recved_data(QByteArray &data)
+{
+    QDataStream stream(&data,QIODevice::ReadOnly);
+
+    size_t count_user_data;
+
+    stream >> count_user_data;
+    for(size_t i = 0; i < count_user_data; i++)
+    {
+        int count_files;
+        QString name;
+        QString addr;
+        MetaDataDir meta_data;
+
+        stream >> addr >> name >> meta_data.first >> count_files;
+        for(int j = 0; j < count_files; j++)
+        {
+            QString name_file;
+            FileCharacteristics file_info;
+            stream >> name_file >> std::get<0>(file_info)
+                                >> std::get<1>(file_info)
+                                >> std::get<2>(file_info);
+            meta_data.second.insert(name_file,file_info);
+        }
+        _remote_meta_data[qMakePair(name,addr)] = meta_data;
     }
 }
 
@@ -148,78 +177,101 @@ void WorkerMetaData::dir_changed(const QString &path)
     }
 }
 
-QStringList WorkerMetaData::get_removed_files(const QStringList &scan_files, const QString &path)const
+void WorkerMetaData::change_client(CLIENT *client)
 {
-    QStringList result;
-    auto it = _meta_data.second.begin();
-    while(it != _meta_data.second.end())
-    {
-        if(it.key().indexOf(path) != -1 && it.key()[path.size()] == '/' && scan_files.indexOf(it.key()) == -1)
-        {
-            result.append(it.key());
-        }
-        ++it;
-    }
-    return result;
+   _client = client;
+   if(_client)
+   {
+       connect(_client,&CLIENT::ready_data_read,this,[this]
+       {
+           QByteArray data;
+           _client->read_data(data);
+
+           auto task = new TaskRecvMsg(&info_recv_data,data);
+           connect(task,&TaskRecvMsg::recved_data,_client,[this]()
+           {
+               parse_recved_data(info_recv_data._msg);
+               info_recv_data.clear();
+           }, Qt::ConnectionType::DirectConnection);
+           _proxy->push(task);
+       });
+   }
 }
 
-QStringList WorkerMetaData::get_added_files(const QStringList &scan_files)const
-{
-    auto files = scan_files;
-    auto it = _meta_data.second.begin();
-    while(it != _meta_data.second.end())
-    {
-        files.removeOne(it.key());
-        ++it;
-    }
-    return files;
-}
-
-QStringList WorkerMetaData::get_removed_folders(const QStringList &scan_dirs, const QString &path)const
-{
-    QStringList result;
-    for(auto &dir : _meta_data.first)
-    {
-        if(dir.indexOf(path) != -1 && dir != path && scan_dirs.indexOf(dir) == -1)
-        {
-            result.append(dir);
-        }
-    }
-    return result;
-}
-
-QStringList WorkerMetaData::get_added_folders(const QStringList &scan_dirs)const
-{
-    auto dirs = scan_dirs;
-    for(auto &dir : _meta_data.first)
-    {
-        dirs.removeOne(dir);
-    }
-    return dirs;
-}
-
-WorkerMetaData::WorkerMetaData(PROXY *proxy, QString &path):
+WorkerMetaData::WorkerMetaData(PROXY *proxy, QString &path, CLIENT *client):
     _path(path),
     _proxy(proxy)
 {
     scan_dir();
     connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
     connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
+
+    connect(this,&WorkerMetaData::upload_tree,this,[this]
+    {
+        if(_client)
+        {
+            QByteArray temp;
+            create_sended_data(temp);
+            auto task = new TaskSendMsg(temp,_proxy);
+            connect(task,&TaskSendMsg::send_data,_client,[&](QByteArray array)
+            {
+                _client->write_data(array);
+            }, Qt::ConnectionType::QueuedConnection);
+            _proxy->push(task);
+        }
+    });
+
+    change_client(client);
 }
 
-WorkerMetaData::WorkerMetaData(PROXY *proxy, QString &&path):
+WorkerMetaData::WorkerMetaData(PROXY *proxy, QString &&path, CLIENT *client):
     _path(path),
     _proxy(proxy)
 {
     scan_dir();
     connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
     connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
+
+    connect(this,&WorkerMetaData::upload_tree,this,[this]
+    {
+        if(_client)
+        {
+            QByteArray temp;
+            create_sended_data(temp);
+            auto task = new TaskSendMsg(temp,_proxy);
+            connect(task,&TaskSendMsg::send_data,_client,[&](QByteArray array)
+            {
+                _client->write_data(array);
+            }, Qt::ConnectionType::QueuedConnection);
+            _proxy->push(task);
+        }
+    });
+
+    change_client(client);
 }
 
-WorkerMetaData::WorkerMetaData(PROXY *proxy):_proxy(proxy)
+WorkerMetaData::WorkerMetaData(PROXY *proxy, CLIENT *client):
+    _proxy(proxy)
 {
     connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
     connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
+
+    connect(this,&WorkerMetaData::upload_tree,this,[this]
+    {
+        if(_client)
+        {
+            QByteArray temp;
+            create_sended_data(temp);
+            auto task = new TaskSendMsg(temp,_proxy);
+            connect(task,&TaskSendMsg::send_data,_client,[&](QByteArray array)
+            {
+                _client->write_data(array);
+            }, Qt::ConnectionType::QueuedConnection);
+            _proxy->push(task);
+        }
+    });
+
+    change_client(client);
 }
 
 WorkerMetaData::~WorkerMetaData()

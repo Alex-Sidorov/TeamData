@@ -2,41 +2,41 @@
 
 void TaskRecvMsg::run_process()
 {
-    QByteArray temp;
-    _serv->read_data(_client,temp);
-
-    if(!_is_recved)
+    if(_new_data.isEmpty())
     {
-        _is_recved = true;
-        _size = BaseServer::ArrayToInt(temp);
-        temp.remove(0,sizeof (_size));
-    }
-    if(temp.size())
-    {
-        _msg += temp;
-        _size -= temp.size() + sizeof (_size);
-    }
-
-    if(_size > 0)
-    {
-        _proxy->push(this,100,ActiveObject::Scheduler::TypeDefferedTask::EXPRESS);
         return;
     }
-    emit _serv->recved_data();
+
+    if(!_info->_size)
+    {
+        _info-> _size = DataTransfer::BaseServer::ArrayToInt(_new_data);
+        _new_data.remove(0,sizeof (_info->_size));
+    }
+    if(_new_data.size())
+    {
+        _info->_msg += _new_data;
+        _info->_size -= _new_data.size();
+    }
+
+    if(_info->_size > 0)
+    {
+
+        delete this;
+        return;
+    }
+    _info->_is_recved = true;
+    emit recved_data();
+    delete this;
 }
 
-QByteArray TaskRecvMsg::get_msg()const
-{
-    return _msg;
-}
 
 TaskRecvMsg::~TaskRecvMsg()
 {
 
 }
 
-TaskRecvMsg::TaskRecvMsg(BaseServer* serv,QTcpSocket *client, ProxyActiveObject *proxy):
-    _serv(serv), _client(client), _proxy(proxy), _size(0), _is_recved(false)
+TaskRecvMsg::TaskRecvMsg(WorkInfo *info,QByteArray &new_data):
+    _info(info), _new_data(new_data)
 {
 
 }

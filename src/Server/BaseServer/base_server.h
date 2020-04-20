@@ -40,6 +40,8 @@ namespace DataTransfer
 
         QVector<QPair<QString,quint16>> info_connection();
 
+        QList<QTcpSocket*> get_client_sockets() const;
+
         bool write_data(QTcpSocket *socket, QByteArray &data);
         bool write_data(int index, QByteArray &data);
         bool read_data(QTcpSocket *socket, QByteArray &data);

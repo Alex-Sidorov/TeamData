@@ -22,6 +22,13 @@ public:
 
     struct WorkInfo
     {
+        WorkInfo():_size(0), _is_recved(false){}
+        void clear()
+        {
+            _size = 0;
+            _is_recved = false;
+            _msg.clear();
+        }
         QByteArray _msg;
         qint32 _size;
         bool _is_recved;

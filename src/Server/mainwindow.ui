@@ -64,13 +64,36 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QListWidget" name="users">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
+       <widget class="QTreeWidget" name="tree_dir">
+        <attribute name="headerCascadingSectionResizes">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="headerDefaultSectionSize">
+         <number>200</number>
+        </attribute>
+        <attribute name="headerHighlightSections">
+         <bool>true</bool>
+        </attribute>
+        <column>
+         <property name="text">
+          <string>Директория</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Размер файла</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Дата последней модификации</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Дата создания</string>
+         </property>
+        </column>
        </widget>
       </item>
       <item>

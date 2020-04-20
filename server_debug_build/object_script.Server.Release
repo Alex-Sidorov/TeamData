@@ -6,5 +6,8 @@ release/scheduler.o
 release/base_server.o
 release/taskrecvmsg.o
 release/tasksendmsg.o
+release/workerdataclient.o
 release/moc_mainwindow.o
 release/moc_base_server.o
+release/moc_taskrecvmsg.o
+release/moc_tasksendmsg.o

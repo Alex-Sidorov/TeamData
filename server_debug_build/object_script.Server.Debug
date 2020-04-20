@@ -6,5 +6,8 @@ debug/scheduler.o
 debug/base_server.o
 debug/taskrecvmsg.o
 debug/tasksendmsg.o
+debug/workerdataclient.o
 debug/moc_mainwindow.o
 debug/moc_base_server.o
+debug/moc_taskrecvmsg.o
+debug/moc_tasksendmsg.o

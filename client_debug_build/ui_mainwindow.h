@@ -32,12 +32,6 @@ class Ui_MainWindow
 public:
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout;
-    QHBoxLayout *horizontalLayout;
-    QLabel *label_5;
-    QLabel *label;
-    QLineEdit *client_addr;
-    QLabel *label_2;
-    QLineEdit *client_port;
     QHBoxLayout *horizontalLayout_2;
     QLabel *label_6;
     QLabel *label_3;
@@ -69,37 +63,6 @@ public:
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
-        horizontalLayout = new QHBoxLayout();
-        horizontalLayout->setSpacing(6);
-        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
-        label_5 = new QLabel(centralWidget);
-        label_5->setObjectName(QString::fromUtf8("label_5"));
-
-        horizontalLayout->addWidget(label_5);
-
-        label = new QLabel(centralWidget);
-        label->setObjectName(QString::fromUtf8("label"));
-
-        horizontalLayout->addWidget(label);
-
-        client_addr = new QLineEdit(centralWidget);
-        client_addr->setObjectName(QString::fromUtf8("client_addr"));
-
-        horizontalLayout->addWidget(client_addr);
-
-        label_2 = new QLabel(centralWidget);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-
-        horizontalLayout->addWidget(label_2);
-
-        client_port = new QLineEdit(centralWidget);
-        client_port->setObjectName(QString::fromUtf8("client_port"));
-
-        horizontalLayout->addWidget(client_port);
-
-
-        verticalLayout->addLayout(horizontalLayout);
-
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
@@ -206,11 +169,6 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", nullptr));
-        label_5->setText(QApplication::translate("MainWindow", "\320\232\320\273\320\270\320\265\320\275\321\202|", nullptr));
-        label->setText(QApplication::translate("MainWindow", "IP \320\260\320\264\321\200\320\265\321\201:", nullptr));
-        client_addr->setText(QApplication::translate("MainWindow", "192.168.100.4", nullptr));
-        label_2->setText(QApplication::translate("MainWindow", "\320\237\320\276\321\200\321\202", nullptr));
-        client_port->setText(QApplication::translate("MainWindow", "8080", nullptr));
         label_6->setText(QApplication::translate("MainWindow", "\320\241\320\265\321\200\320\262\320\265\321\200|", nullptr));
         label_3->setText(QApplication::translate("MainWindow", "IP \320\260\320\264\321\200\320\265\321\201:", nullptr));
         serv_addr->setText(QApplication::translate("MainWindow", "192.168.100.4", nullptr));

@@ -41,7 +41,7 @@ bool dt::BaseClient::write_data(QByteArray &data)
 {
     if(is_connected() && !data.isEmpty())
     {
-        _socket.write(QByteArray::number(data.size()));
+        //_socket.write(QByteArray::number(data.size()));
         _socket.write(data);
         return _wait_for_bytes_written ? _socket.waitForBytesWritten(_wait_for_bytes_written) : true;
     }

@@ -3,29 +3,28 @@
 #include <QDirIterator>
 #include <QDateTime>
 
+#include <QDebug>
+
 namespace fsw = FileSystemWatcher;
 
 void fsw::FileSystemInformer::remove_intermediary_directories(QStringList &directories)
 {
     if(!directories.isEmpty())
     {
-        auto first_it_paths = directories.begin();
-        auto second_it_paths = first_it_paths + 1;
-        while(first_it_paths != directories.end() && second_it_paths != directories.end())
+        for(auto i = 0; i < directories.size() - 1;)
         {
-            if(second_it_paths->indexOf(*first_it_paths) != -1)
+            auto &cur = directories[i];
+            auto &next = directories[i + 1];
+            if(next.indexOf(cur) != -1)
             {
-                auto temp = first_it_paths;
-                first_it_paths++;
-                second_it_paths++;
-                directories.erase(temp);
+                directories.removeAt(i);
             }
             else
             {
-                first_it_paths++;
-                second_it_paths++;
+                i++;
             }
         }
+
     }
 }
 

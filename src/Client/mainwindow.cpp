@@ -4,11 +4,13 @@
 #include <QFileDialog>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QDataStream>
+
+#include <QThread>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    info_recv_data({"",0,false}),
     worker_meta_data(&_proxy)
 {
     _proxy.start();
@@ -17,10 +19,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(&worker_meta_data,&WorkerMetaData::upload_tree,this,&MainWindow::slot_load_tree);
     //connect(&worker_meta_data,&WorkerMetaData::removed_dirs,this,&MainWindow::slot_removed_dirs);
-    connect(ui->tree_dir,&QTreeWidget::doubleClicked,this,&MainWindow::slot_exec_file);
+    //connect(ui->tree_dir,&QTreeWidget::doubleClicked,this,&MainWindow::slot_exec_file);
 
     worker_meta_data.change_dir("D:\\dir");
     worker_meta_data.scan_dir();
+
+
 }
 
 MainWindow::~MainWindow()
@@ -33,43 +37,75 @@ void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data)
     ui->tree_dir->clear();
     add_dirs(data.first);
     add_files(data.second);
+
 }
 
 void MainWindow::add_dirs(QStringList &dirs)
 {
-    for(int i = 0; i < dirs.size(); i++)
+    for(auto it = dirs.begin(); it != dirs.end(); it++)
     {
-        auto path = dirs[i].split('/');
+        auto path = it->split('/');
         ui->tree_dir->setCurrentItem(nullptr);
-        for(auto &p: path)
+        for(int i = 0; i < path.size(); i++)
         {
-            if(p.isEmpty())
+            if(!path[i].isEmpty())
             {
-                continue;
-            }
-            auto item = ui->tree_dir->findItems(p,Qt::MatchFlag::MatchFixedString);
-            if(!item.empty())
-            {
-                ui->tree_dir->setCurrentItem(item[0]);
-                continue;
-            }
-            else
-            {
-                auto value = new QTreeWidgetItem(QStringList(p));
-                value->setIcon(0,QApplication::style()->standardIcon(QStyle::SP_DirIcon));
-                if(ui->tree_dir->currentItem())
+                auto cur = ui->tree_dir->currentItem();
+                if(!cur)
                 {
-                    ui->tree_dir->currentItem()->addChild(value);
-                    ui->tree_dir->setCurrentItem(value);
+                    auto v = ui->tree_dir->findItems(path[i],Qt::MatchFlag::MatchFixedString);
+                    if(v.size())
+                    {
+                        ui->tree_dir->setCurrentItem(v[0]);
+                    }
+                    else
+                    {
+                        auto name = new QTreeWidgetItem(QStringList(path[i]));
+                        name->setIcon(0,QApplication::style()->standardIcon(QStyle::SP_DirIcon));
+                        auto ptr = ui->tree_dir->currentItem();
+                        if(ptr)
+                        {
+                            ptr->addChild(name);
+                        }
+                        else
+                        {
+                            ui->tree_dir->insertTopLevelItem(0,name);
+                        }
+                        ui->tree_dir->setCurrentItem(name);
+                    }
                 }
                 else
                 {
-                    ui->tree_dir->insertTopLevelItem(0,value);
-                    ui->tree_dir->setCurrentItem(value);
+                    bool is_be = false;
+                    for(int j = 0; j < cur->childCount(); j++)
+                    {
+                        if(cur->child(j)->text(0) == path[i])
+                        {
+                            is_be = true;
+                            ui->tree_dir->setCurrentItem(cur->child(j));
+                            break;
+                        }
+                    }
+                    if(!is_be)
+                    {
+                        auto name = new QTreeWidgetItem(QStringList(path[i]));
+                        name->setIcon(0,QApplication::style()->standardIcon(QStyle::SP_DirIcon));
+                        auto ptr = ui->tree_dir->currentItem();
+                        if(ptr)
+                        {
+                            ptr->addChild(name);
+                        }
+                        else
+                        {
+                            ui->tree_dir->insertTopLevelItem(0,name);
+                        }
+                        ui->tree_dir->setCurrentItem(name);
+                    }
                 }
             }
         }
     }
+    ui->tree_dir->setCurrentItem(nullptr);
 }
 
 void MainWindow::add_files(WorkerMetaData::FileMetaData &files)
@@ -123,9 +159,9 @@ void MainWindow::add_files(WorkerMetaData::FileMetaData &files)
             }
         }
     }
+    ui->tree_dir->setCurrentItem(nullptr);
 }
 
-//todo
 void MainWindow::slot_removed_dirs(QStringList dirs)
 {
     for(int i = 0; i < dirs.size(); i++)
@@ -144,11 +180,8 @@ void MainWindow::slot_removed_dirs(QStringList dirs)
             }while(value);
             if(temp == dirs[i])
             {
-                while(item->childCount())
-                {
-                   item->removeChild(item->child(0));
-                }
-                ui->tree_dir->removeItemWidget(item,0);
+                item->parent()->removeChild(item);
+                delete item;
                 break;
             }
         }
@@ -160,6 +193,7 @@ void MainWindow::on_pushButton_clicked()
     if(_client.isNull())
     {
         _client.reset(new BaseClient(ui->serv_addr->text(),ui->serv_port->text().toInt()));
+
         connect(_client.get(),&BaseClient::connected_socket,this,[&]
         {
             ui->terminal->addItem("connected to " + ui->serv_addr->text() + ":" + ui->serv_port->text());
@@ -172,7 +206,10 @@ void MainWindow::on_pushButton_clicked()
         {
             ui->terminal->addItem("Error " + QString::number(state));
         });
-        connect(_client.get(),&BaseClient::ready_data_read,this,&MainWindow::slot_ready_read);
+        //connect(_client.get(),&BaseClient::ready_data_read,this,&MainWindow::slot_ready_read);
+
+
+        worker_meta_data.change_client(_client.data());
     }
     if(_client->is_connected())
     {
@@ -193,7 +230,7 @@ void MainWindow::slot_ready_read()
     connect(task,&TaskRecvMsg::recved_data,_client.get(),[&]()
     {
         ui->terminal->addItem(info_recv_data._msg);
-        info_recv_data = {"",0,false};
+        info_recv_data.clear();
     }, Qt::ConnectionType::DirectConnection);
     _proxy.push(task);
 }
@@ -232,5 +269,7 @@ void MainWindow::slot_exec_file(const QModelIndex &index)
     if(index.isValid())
     {
         qDebug() << index;
+        //slot_removed_dirs({"/папка/4/Новая папка1"});
+
     }
 }

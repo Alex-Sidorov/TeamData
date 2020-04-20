@@ -145,10 +145,8 @@ bool dt::BaseServer::read_data(QTcpSocket *socket, QByteArray &data)
     bool is_thread_safe = _sockets_mutexes.find(socket) != _sockets_mutexes.end();
     QMutexLocker lock(is_thread_safe ? _sockets_mutexes[socket].get() : nullptr);
 
-    qDebug()<<"1" << _sockets.indexOf(socket) << _sockets.size();
     if(is_valid_socket(socket) && socket->bytesAvailable())
     {
-        qDebug()<<"2";
         data = socket->readAll();
         return true;
     }
@@ -193,6 +191,11 @@ qint32 dt::BaseServer::ArrayToInt(QByteArray temp)
     QDataStream data(&temp, QIODevice::ReadWrite);
     data >> value;
     return value;
+}
+
+QList<QTcpSocket*> dt::BaseServer::get_client_sockets() const
+{
+    return _sockets;
 }
 
 dt::BaseServer::~BaseServer()

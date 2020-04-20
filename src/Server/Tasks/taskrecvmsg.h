@@ -1,31 +1,43 @@
 #ifndef TASKRECVMSG_H
 #define TASKRECVMSG_H
 
+#include <QObject>
 
 #include <ActiveObject/abstracttask.h>
 #include <ActiveObject/proxyactiveobject.h>
+
 #include <BaseServer/base_server.h>
 
-using DataTransfer::BaseServer;
-using ActiveObject::ProxyActiveObject;
-
-class TaskRecvMsg : public ActiveObject::AbstractTask
+class TaskRecvMsg : public QObject, public ActiveObject::AbstractTask
 {
+    Q_OBJECT
+
+signals:
+    void recved_data();
 public:
+
+    struct WorkInfo
+    {
+        WorkInfo():_size(0), _is_recved(false){}
+        void clear()
+        {
+            _size = 0;
+            _is_recved = false;
+            _msg.clear();
+        }
+        QByteArray _msg;
+        qint32 _size;
+        bool _is_recved;
+    };
+
     void run_process() override;
 
-    QByteArray get_msg()const;
-
-    TaskRecvMsg(BaseServer* serv, QTcpSocket *client, ProxyActiveObject *proxy);
-    virtual ~TaskRecvMsg() override;
+    TaskRecvMsg(WorkInfo *_info,QByteArray &new_data);
+    virtual ~TaskRecvMsg()  override;
 
 private:
-    BaseServer *_serv;
-    QTcpSocket *_client;
-    QByteArray _msg;
-    ProxyActiveObject *_proxy;
-    qint32 _size;
-    bool _is_recved;
+    WorkInfo *_info;
+    QByteArray _new_data;
 };
 
 #endif // TASKRECVMSG_H
