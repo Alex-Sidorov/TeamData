@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT       += network
+QT       += sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -34,7 +35,8 @@ SOURCES += \
     BaseServer/base_server.cpp \
     Tasks/taskrecvmsg.cpp \
     Tasks/tasksendmsg.cpp \
-    workerdataclient.cpp
+    workerdataclient.cpp \
+    workerserverdatabase.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -44,7 +46,8 @@ HEADERS += \
     BaseServer/base_server.h \
     Tasks/taskrecvmsg.h \
     Tasks/tasksendmsg.h \
-    workerdataclient.h
+    workerdataclient.h \
+    workerserverdatabase.h
 
 FORMS += \
         mainwindow.ui

@@ -9,6 +9,7 @@
 #include "../../src/Server/mainwindow.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
+#include <QtCore/QList>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'mainwindow.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
@@ -21,8 +22,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[7];
-    char stringdata0[93];
+    QByteArrayData data[9];
+    char stringdata0[111];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -37,12 +38,15 @@ QT_MOC_LITERAL(2, 34, 0), // ""
 QT_MOC_LITERAL(3, 35, 15), // "slot_ready_read"
 QT_MOC_LITERAL(4, 51, 11), // "QTcpSocket*"
 QT_MOC_LITERAL(5, 63, 6), // "socket"
-QT_MOC_LITERAL(6, 70, 22) // "on_send_button_clicked"
+QT_MOC_LITERAL(6, 70, 14), // "slot_send_data"
+QT_MOC_LITERAL(7, 85, 18), // "QList<QTcpSocket*>"
+QT_MOC_LITERAL(8, 104, 6) // "source"
 
     },
     "MainWindow\0on_work_button_clicked\0\0"
     "slot_ready_read\0QTcpSocket*\0socket\0"
-    "on_send_button_clicked"
+    "slot_send_data\0QList<QTcpSocket*>\0"
+    "source"
 };
 #undef QT_MOC_LITERAL
 
@@ -62,12 +66,12 @@ static const uint qt_meta_data_MainWindow[] = {
  // slots: name, argc, parameters, tag, flags
        1,    0,   29,    2, 0x08 /* Private */,
        3,    1,   30,    2, 0x08 /* Private */,
-       6,    0,   33,    2, 0x08 /* Private */,
+       6,    1,   33,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 4,    5,
-    QMetaType::Void,
+    QMetaType::Void, 0x80000000 | 7,    8,
 
        0        // eod
 };
@@ -80,7 +84,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         switch (_id) {
         case 0: _t->on_work_button_clicked(); break;
         case 1: _t->slot_ready_read((*reinterpret_cast< QTcpSocket*(*)>(_a[1]))); break;
-        case 2: _t->on_send_button_clicked(); break;
+        case 2: _t->slot_send_data((*reinterpret_cast< const QList<QTcpSocket*>(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
@@ -91,6 +95,13 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
             default: *reinterpret_cast<int*>(_a[0]) = -1; break;
             case 0:
                 *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< QTcpSocket* >(); break;
+            }
+            break;
+        case 2:
+            switch (*reinterpret_cast<int*>(_a[1])) {
+            default: *reinterpret_cast<int*>(_a[0]) = -1; break;
+            case 0:
+                *reinterpret_cast<int*>(_a[0]) = qRegisterMetaType< QList<QTcpSocket*> >(); break;
             }
             break;
         }

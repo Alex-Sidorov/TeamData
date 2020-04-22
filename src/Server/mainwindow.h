@@ -10,6 +10,8 @@
 
 #include <BaseServer/base_server.h>
 
+#include <workerdataclient.h>
+
 namespace Ui {
 class MainWindow;
 }
@@ -31,28 +33,18 @@ public:
 private slots:
     void on_work_button_clicked();
     void slot_ready_read(QTcpSocket *socket);
-
-    void on_send_button_clicked();
+    void slot_send_data(const QList<QTcpSocket *> &source);
 
 private:
     Ui::MainWindow *ui;
+    WorkerDataClient _worker_data_client;
 
     QSharedPointer<DataTransfer::BaseServer> _serv;
     ActiveObject::ProxyActiveObject _proxy;
 
     QMap<QTcpSocket*,TaskRecvMsg::WorkInfo> info_recv_data;
 
-    QSharedPointer<TaskRecvMsg>task_recv_msg;
 
-    void create_sended_data(QByteArray &data, const QList<QTcpSocket *> &source);
-    void parse_recved_data(QTcpSocket *client, QByteArray &data);
-    void add_files(FileMetaData &files);
-    void add_dirs(QStringList &dirs);
-
-    void send_data(const QList<QTcpSocket *> &source);
-
-
-    QMap<QTcpSocket*,MetaDataDir> _remote_meta_data;
 };
 
 #endif // MAINWINDOW_H
