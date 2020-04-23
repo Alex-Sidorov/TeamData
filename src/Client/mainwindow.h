@@ -29,11 +29,8 @@ public:
 
 private slots:
     void on_pushButton_clicked();
-    void on_send_button_clicked();
-    void slot_ready_read();
     void on_select_path_button_clicked();
     void on_scan_dir_button_clicked();
-    void slot_exec_file(const QModelIndex &index);
 
     void slot_removed_dirs(QStringList dirs);
     void slot_load_tree(WorkerMetaData::MetaDataDir data);

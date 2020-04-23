@@ -4,8 +4,8 @@
 namespace dt = DataTransfer;
 
 dt::BaseClient::BaseClient(const QString &addr,quint16 port) :
-    _addr(addr),
-    _port(port),
+    _serv_addr(addr),
+    _serv_port(port),
     _wait_for_bytes_written(0),
     _wait_for_connect(0)
 {
@@ -22,7 +22,7 @@ void dt::BaseClient::connect_to_host()
         disconnect_to_host();
     }
 
-    _socket.connectToHost(_addr,_port);
+    _socket.connectToHost(_serv_addr,_serv_port);
     if(_wait_for_connect)
     {
         _socket.waitForConnected(_wait_for_connect);

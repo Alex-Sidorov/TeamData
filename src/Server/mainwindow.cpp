@@ -28,19 +28,19 @@ void MainWindow::on_work_button_clicked()
             auto temp = _serv->info_connection();
             if(temp.size())
             {
-                ui->terminal->addItem("new connection " + temp[temp.size() - 1].first + ":" + QString::number(temp[temp.size() - 1].second));
+                //ui->terminal->addItem("new connection " + temp[temp.size() - 1].first + ":" + QString::number(temp[temp.size() - 1].second));
             }
 
         });
 
         connect(_serv.get(),&BaseServer::socket_error,this,[&](QTcpSocket *socket, QAbstractSocket::SocketError state)
         {
-            ui->terminal->addItem("Error " + QString::number(state));
+           // ui->terminal->addItem("Error " + QString::number(state));
         });
 
         connect(_serv.get(),&BaseServer::disconnected_socket,this,[&](QTcpSocket *socket)
         {
-            ui->terminal->addItem("disconnected ");
+            //ui->terminal->addItem("disconnected ");
             _worker_data_client.remove_client(socket);
         });
         connect(_serv.get(),&BaseServer::ready_data_read,this,&MainWindow::slot_ready_read);

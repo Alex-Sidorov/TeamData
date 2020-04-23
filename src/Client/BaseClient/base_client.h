@@ -34,10 +34,9 @@ namespace DataTransfer
 
         static QByteArray IntToArray(qint32 source);
         static qint32 ArrayToInt(QByteArray &temp);
-    private:
-
-        QString _addr;
-        quint16 _port;
+    private:        
+        QString _serv_addr;
+        quint16 _serv_port;
         QTcpSocket  _socket;
         int _wait_for_bytes_written;
         int _wait_for_connect;

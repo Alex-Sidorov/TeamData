@@ -13,6 +13,8 @@
 #include <QMap>
 #include <QMutex>
 
+#include "workerusers.h"
+
 #include "BaseClient/base_client.h"
 #include "ActiveObject/proxyactiveobject.h"
 #include "taskrecvmsg.h"
@@ -28,15 +30,17 @@ public:
     using FileMetaData = QMap<QString,FileCharacteristics>;
     using DirsPath = QStringList;
     using MetaDataDir = QPair<DirsPath,FileMetaData>;
-    using UserInfo = QPair<QString,QString>;
+    using UserInfo = QPair<QString,quint16>;
 
-    WorkerMetaData(PROXY *proxy, CLIENT *client = nullptr);
-    WorkerMetaData(PROXY *proxy, QString &path, CLIENT *client = nullptr);
-    WorkerMetaData(PROXY *proxy, QString &&path, CLIENT *client = nullptr);
+    WorkerMetaData(PROXY *proxy,const QString &name = "", CLIENT *client = nullptr);
+    WorkerMetaData(PROXY *proxy, QString &path,const QString &name, CLIENT *client = nullptr);
     virtual ~WorkerMetaData();
 
     void change_dir(QString &path);
     void change_dir(QString &&path);
+
+    void change_name(QString &name);
+    void change_name(QString &&name);
 
     void change_client(CLIENT *client);
 
@@ -58,11 +62,15 @@ public slots:
     static void remove_root_path(QString &path, QStringList &data);
 
 private:
+    QString _name;
     QString _path;
     PROXY *_proxy;
     CLIENT *_client;
 
-    QMap<UserInfo,MetaDataDir> _remote_meta_data;
+    WorkerUsers _worker_users;
+
+    QMap<QString,UserInfo> _users;
+    QMap<QString,MetaDataDir> _remote_meta_data;
 
     MetaDataDir _meta_data;
     MetaDataDir _present_meta_data;
@@ -73,10 +81,6 @@ private:
     QMutex _mutex;
 
     void add_dirs_path(QStringList &dirs);
-
-    /*void init_dir_tree(QStringList &files, QStringList &dirs);
-    void insert_dir(QString &dir);
-    void insert_file(DirTree &tree, QString &file);*/
 };
 
 #endif // WORKERMETADATA_H

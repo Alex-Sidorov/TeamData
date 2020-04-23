@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>708</width>
-    <height>446</height>
+    <width>748</width>
+    <height>464</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,124 +16,261 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>Сервер|</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>IP адрес:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="serv_addr">
-        <property name="text">
-         <string>192.168.100.4</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Порт</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="serv_port">
-        <property name="text">
-         <string>8000</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>connect/disconnect</string>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>1</number>
       </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item>
-       <widget class="QTreeWidget" name="tree_dir">
-        <attribute name="headerCascadingSectionResizes">
-         <bool>true</bool>
-        </attribute>
-        <attribute name="headerDefaultSectionSize">
-         <number>200</number>
-        </attribute>
-        <attribute name="headerHighlightSections">
-         <bool>true</bool>
-        </attribute>
-        <column>
-         <property name="text">
-          <string>Директория</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Размер файла</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Дата последней модификации</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Дата создания</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-      <item>
-       <widget class="QListWidget" name="terminal"/>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <item>
-       <widget class="QLineEdit" name="path">
-        <property name="text">
-         <string>D:\\dir</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="select_path_button">
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QPushButton" name="scan_dir_button">
-      <property name="text">
-       <string>scan</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLineEdit" name="input_line"/>
-    </item>
-    <item>
-     <widget class="QPushButton" name="send_button">
-      <property name="text">
-       <string>Ок</string>
-      </property>
+      <widget class="QWidget" name="main_tab">
+       <attribute name="title">
+        <string>Директории</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QStackedWidget" name="stack_widget">
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="main_page">
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item>
+               <widget class="QTreeWidget" name="tree_dir">
+                <attribute name="headerCascadingSectionResizes">
+                 <bool>true</bool>
+                </attribute>
+                <attribute name="headerDefaultSectionSize">
+                 <number>200</number>
+                </attribute>
+                <attribute name="headerHighlightSections">
+                 <bool>true</bool>
+                </attribute>
+                <column>
+                 <property name="text">
+                  <string>Директория</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Размер файла</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Дата последней модификации</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>Дата создания</string>
+                 </property>
+                </column>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="remote_page"/>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="option_tab">
+       <attribute name="title">
+        <string>Настройки</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_4">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Сервер</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>IP адрес:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="serv_addr">
+            <property name="text">
+             <string>192.168.100.4</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Порт</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="serv_port">
+            <property name="text">
+             <string>8000</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="text">
+           <string>connect/disconnect</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>81</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Свой</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Line" name="line">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>IP адрес:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="self_addr">
+            <property name="text">
+             <string>192.168.100.4</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Порт</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="self_port">
+            <property name="text">
+             <string>80</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="work_serv">
+          <property name="text">
+           <string>start/stop</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Имя:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="name_line">
+            <property name="text">
+             <string>Alex</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLineEdit" name="path">
+            <property name="text">
+             <string>D:\\dir</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="select_path_button">
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="scan_dir_button">
+          <property name="text">
+           <string>scan</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -143,7 +280,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>708</width>
+     <width>748</width>
      <height>21</height>
     </rect>
    </property>

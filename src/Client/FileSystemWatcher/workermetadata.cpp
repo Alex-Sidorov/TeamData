@@ -94,7 +94,12 @@ void WorkerMetaData::create_sended_data(QByteArray &data)
     QDataStream stream(&data,QIODevice::WriteOnly);
 
     QMutexLocker lock(&_mutex);
-    stream << _present_meta_data.first;
+
+    stream << _worker_users.get_self_addr()
+           << _worker_users.get_self_port()
+           << _name
+           << _present_meta_data.first
+           << static_cast<size_t>(_present_meta_data.second.size());
 
     auto &map = _present_meta_data.second;
     for(auto it = map.begin(); it != map.end(); it++)
@@ -109,7 +114,7 @@ void WorkerMetaData::parse_recved_data(QByteArray &data)
 {
     QDataStream stream(&data,QIODevice::ReadOnly);
 
-    size_t count_user_data;
+    size_t count_user_data = 0;
 
     stream >> count_user_data;
     for(size_t i = 0; i < count_user_data; i++)
@@ -117,9 +122,10 @@ void WorkerMetaData::parse_recved_data(QByteArray &data)
         int count_files;
         QString name;
         QString addr;
+        quint16 port;
         MetaDataDir meta_data;
 
-        stream >> addr >> name >> meta_data.first >> count_files;
+        stream >> addr >> port >> name >> meta_data.first >> count_files;
         for(int j = 0; j < count_files; j++)
         {
             QString name_file;
@@ -129,7 +135,8 @@ void WorkerMetaData::parse_recved_data(QByteArray &data)
                                 >> std::get<2>(file_info);
             meta_data.second.insert(name_file,file_info);
         }
-        _remote_meta_data[qMakePair(name,addr)] = meta_data;
+        _remote_meta_data[name] = meta_data;
+        _users[name] = qMakePair(addr,port);
     }
 }
 
@@ -198,11 +205,27 @@ void WorkerMetaData::change_client(CLIENT *client)
    }
 }
 
-WorkerMetaData::WorkerMetaData(PROXY *proxy, QString &path, CLIENT *client):
+void WorkerMetaData::change_name(QString &name)
+{
+    if(!name.isEmpty())
+    {
+        _name = name;
+    }
+}
+
+void WorkerMetaData::change_name(QString &&name)
+{
+    if(!name.isEmpty())
+    {
+        _name = name;
+    }
+}
+
+WorkerMetaData::WorkerMetaData(PROXY *proxy, QString &path,const QString &name, CLIENT *client):
+    _name(name),
     _path(path),
     _proxy(proxy)
 {
-    scan_dir();
     connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
     connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
 
@@ -224,33 +247,8 @@ WorkerMetaData::WorkerMetaData(PROXY *proxy, QString &path, CLIENT *client):
     change_client(client);
 }
 
-WorkerMetaData::WorkerMetaData(PROXY *proxy, QString &&path, CLIENT *client):
-    _path(path),
-    _proxy(proxy)
-{
-    scan_dir();
-    connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
-    connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
-
-    connect(this,&WorkerMetaData::upload_tree,this,[this]
-    {
-        if(_client)
-        {
-            QByteArray temp;
-            create_sended_data(temp);
-            auto task = new TaskSendMsg(temp,_proxy);
-            connect(task,&TaskSendMsg::send_data,_client,[&](QByteArray array)
-            {
-                _client->write_data(array);
-            }, Qt::ConnectionType::QueuedConnection);
-            _proxy->push(task);
-        }
-    });
-
-    change_client(client);
-}
-
-WorkerMetaData::WorkerMetaData(PROXY *proxy, CLIENT *client):
+WorkerMetaData::WorkerMetaData(PROXY *proxy,const QString &name, CLIENT *client):
+    _name(name),
     _proxy(proxy)
 {
     connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
@@ -277,64 +275,3 @@ WorkerMetaData::WorkerMetaData(PROXY *proxy, CLIENT *client):
 WorkerMetaData::~WorkerMetaData()
 {}
 
-/*void WorkerMetaData::insert_dir(QString &dir)
-{
-    auto path = dir.split('/');
-    auto *tree = &_tree;
-    for (int i = 0; i < path.size(); i++)
-    {
-        if(path[i].isEmpty())continue;
-
-        bool be_dir = false;
-        for(auto &cur_branch_dir : tree->dirs)
-        {
-            if(cur_branch_dir.name.split('/').last() == path[i])
-            {
-                be_dir = true;
-                tree = &cur_branch_dir;
-                break;
-            }
-        }
-        if(!be_dir)
-        {
-            tree->dirs.push_back(DirTree{});
-            tree->dirs.last().name = tree->name + '/' + path[i];
-            tree->dirs.last().last_modify = QFileInfo(tree->name).lastModified();
-            tree = &tree->dirs.last();
-        }
-    }
-}
-
-void WorkerMetaData::insert_file(DirTree &tree, QString &file)
-{
-    if(file.indexOf(tree.name) != -1)
-    {
-        if(tree.name + '/' == file.mid(0,file.indexOf(file.split('/').last())))
-        {
-            tree.files.push_back(file);
-            return;
-        }
-        for (auto &sub_dir : tree.dirs)
-        {
-            if(file.indexOf(sub_dir.name) != -1)
-            {
-                insert_file(sub_dir,file);
-                break;
-            }
-        }
-    }
-}
-
-void WorkerMetaData::init_dir_tree(QStringList &files, QStringList &dirs)
-{
-    _tree.name = _path;
-    _tree.last_modify = QFileInfo(_tree.name).lastModified();
-    for(auto &v : dirs)
-    {
-        insert_dir(v);
-    }
-    for(auto &v : files)
-    {
-       insert_file(_tree,v);
-    }
-}*/

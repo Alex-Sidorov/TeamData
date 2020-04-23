@@ -10,6 +10,7 @@ debug/taskrecvmsg.o
 debug/workermetadata.o
 debug/taskfilechanged.o
 debug/taskdirchanged.o
+debug/workerusers.o
 debug/moc_mainwindow.o
 debug/moc_base_client.o
 debug/moc_tasksendmsg.o

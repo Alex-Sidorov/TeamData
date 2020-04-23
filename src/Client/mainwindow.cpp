@@ -15,16 +15,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     _proxy.start();
     ui->setupUi(this);
-    ui->terminal->setVisible(false);
 
     connect(&worker_meta_data,&WorkerMetaData::upload_tree,this,&MainWindow::slot_load_tree);
-    //connect(&worker_meta_data,&WorkerMetaData::removed_dirs,this,&MainWindow::slot_removed_dirs);
-    //connect(ui->tree_dir,&QTreeWidget::doubleClicked,this,&MainWindow::slot_exec_file);
 
     worker_meta_data.change_dir("D:\\dir");
     worker_meta_data.scan_dir();
-
-
 }
 
 MainWindow::~MainWindow()
@@ -191,24 +186,23 @@ void MainWindow::slot_removed_dirs(QStringList dirs)
 void MainWindow::on_pushButton_clicked()
 {
     if(_client.isNull())
-    {
+    {        
         _client.reset(new BaseClient(ui->serv_addr->text(),ui->serv_port->text().toInt()));
 
         connect(_client.get(),&BaseClient::connected_socket,this,[&]
         {
-            ui->terminal->addItem("connected to " + ui->serv_addr->text() + ":" + ui->serv_port->text());
+            //ui->terminal->addItem("connected to " + ui->serv_addr->text() + ":" + ui->serv_port->text());
         });
         connect(_client.get(),&BaseClient::disconnected_socket,this,[&]
         {
-            ui->terminal->addItem("disconnected from " + ui->serv_addr->text() + ":" + ui->serv_port->text());
+           // ui->terminal->addItem("disconnected from " + ui->serv_addr->text() + ":" + ui->serv_port->text());
         });
         connect(_client.get(),&BaseClient::socket_error,this,[&](QAbstractSocket::SocketError state)
         {
-            ui->terminal->addItem("Error " + QString::number(state));
+            //ui->terminal->addItem("Error " + QString::number(state));
         });
-        //connect(_client.get(),&BaseClient::ready_data_read,this,&MainWindow::slot_ready_read);
 
-
+        worker_meta_data.change_name(ui->name_line->text());
         worker_meta_data.change_client(_client.data());
     }
     if(_client->is_connected())
@@ -221,30 +215,6 @@ void MainWindow::on_pushButton_clicked()
     }
 }
 
-void MainWindow::slot_ready_read()
-{
-    QByteArray data;
-    _client->read_data(data);
-
-    auto task = new TaskRecvMsg(&info_recv_data,data);
-    connect(task,&TaskRecvMsg::recved_data,_client.get(),[&]()
-    {
-        ui->terminal->addItem(info_recv_data._msg);
-        info_recv_data.clear();
-    }, Qt::ConnectionType::DirectConnection);
-    _proxy.push(task);
-}
-
-void MainWindow::on_send_button_clicked()
-{
-    auto temp = ui->input_line->text().toLatin1();
-    auto task = new TaskSendMsg(temp,&_proxy);
-    connect(task,&TaskSendMsg::send_data,_client.get(),[&](QByteArray array)
-    {
-        _client->write_data(array);
-    }, Qt::ConnectionType::QueuedConnection);
-    _proxy.push(task);
-}
 
 void MainWindow::on_select_path_button_clicked()
 {
@@ -259,17 +229,5 @@ void MainWindow::on_select_path_button_clicked()
 void MainWindow::on_scan_dir_button_clicked()
 {
     worker_meta_data.scan_dir();
-    QByteArray data;
-    worker_meta_data.create_sended_data(data);
 
-}
-
-void MainWindow::slot_exec_file(const QModelIndex &index)
-{
-    if(index.isValid())
-    {
-        qDebug() << index;
-        //slot_removed_dirs({"/папка/4/Новая папка1"});
-
-    }
 }

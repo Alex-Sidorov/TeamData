@@ -1,6 +1,7 @@
 #include "workerdataclient.h"
 
 #include <QDataStream>
+#include <QHostAddress>
 
 void WorkerDataClient::change_data(QTcpSocket *client, TransferData &data)
 {
@@ -22,8 +23,9 @@ QPair<QString,WorkerDataClient::MetaDataDir> WorkerDataClient::parse_recved_data
     MetaDataDir meta_data;
     QString name;
 
-    stream >> name >> meta_data.first;
-    while(!stream.atEnd())
+    size_t count_files = 0;
+    stream >> name >> meta_data.first >> count_files;
+    for(size_t i = 0; i < count_files; i++)
     {
         QString name_file;
         FileCharacteristics file_info;

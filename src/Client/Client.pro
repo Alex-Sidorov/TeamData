@@ -37,7 +37,8 @@ SOURCES += \
     taskrecvmsg.cpp \
     FileSystemWatcher/workermetadata.cpp \
     taskfilechanged.cpp \
-    taskdirchanged.cpp
+    taskdirchanged.cpp \
+    workerusers.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -49,9 +50,9 @@ HEADERS += \
     tasksendmsg.h \
     taskrecvmsg.h \
     FileSystemWatcher/workermetadata.h \
-    FileSystemWatcher/dirtree.h \
     taskfilechanged.h \
-    taskdirchanged.h
+    taskdirchanged.h \
+    workerusers.h
 
 FORMS += \
         mainwindow.ui

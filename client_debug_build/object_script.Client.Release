@@ -10,6 +10,7 @@ release/taskrecvmsg.o
 release/workermetadata.o
 release/taskfilechanged.o
 release/taskdirchanged.o
+release/workerusers.o
 release/moc_mainwindow.o
 release/moc_base_client.o
 release/moc_tasksendmsg.o
