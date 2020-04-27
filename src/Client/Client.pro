@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT       += network
+QT       += sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -38,7 +39,8 @@ SOURCES += \
     FileSystemWatcher/workermetadata.cpp \
     taskfilechanged.cpp \
     taskdirchanged.cpp \
-    settings.cpp
+    settings.cpp \
+    workerclientdatabase.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -52,7 +54,8 @@ HEADERS += \
     FileSystemWatcher/workermetadata.h \
     taskfilechanged.h \
     taskdirchanged.h \
-    settings.h
+    settings.h \
+    workerclientdatabase.h
 
 FORMS += \
         mainwindow.ui

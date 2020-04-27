@@ -48,6 +48,8 @@ public:
     void create_sended_data(QByteArray &data);
     void parse_recved_data(QByteArray &data);
 
+    static void remove_root_path(QString &path, QStringList &data);
+
 signals:
     void upload_tree(MetaDataDir data, QString name);
     void new_files(FileMetaData data);
@@ -58,8 +60,6 @@ signals:
 public slots:
     void files_changed(const QString &path);
     void dir_changed(const QString &path);
-
-    static void remove_root_path(QString &path, QStringList &data);
 
 private:
     QString _name;

@@ -11,6 +11,7 @@ release/workermetadata.o
 release/taskfilechanged.o
 release/taskdirchanged.o
 release/settings.o
+release/workerclientdatabase.o
 release/moc_mainwindow.o
 release/moc_base_client.o
 release/moc_tasksendmsg.o

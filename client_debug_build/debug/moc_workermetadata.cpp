@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_WorkerMetaData_t {
-    QByteArrayData data[17];
-    char stringdata0[179];
+    QByteArrayData data[14];
+    char stringdata0[140];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -44,17 +44,13 @@ QT_MOC_LITERAL(9, 87, 8), // "new_dirs"
 QT_MOC_LITERAL(10, 96, 12), // "removed_dirs"
 QT_MOC_LITERAL(11, 109, 13), // "files_changed"
 QT_MOC_LITERAL(12, 123, 4), // "path"
-QT_MOC_LITERAL(13, 128, 11), // "dir_changed"
-QT_MOC_LITERAL(14, 140, 16), // "remove_root_path"
-QT_MOC_LITERAL(15, 157, 8), // "QString&"
-QT_MOC_LITERAL(16, 166, 12) // "QStringList&"
+QT_MOC_LITERAL(13, 128, 11) // "dir_changed"
 
     },
     "WorkerMetaData\0upload_tree\0\0MetaDataDir\0"
     "data\0name\0new_files\0FileMetaData\0"
     "removed_files\0new_dirs\0removed_dirs\0"
-    "files_changed\0path\0dir_changed\0"
-    "remove_root_path\0QString&\0QStringList&"
+    "files_changed\0path\0dir_changed"
 };
 #undef QT_MOC_LITERAL
 
@@ -64,7 +60,7 @@ static const uint qt_meta_data_WorkerMetaData[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+       7,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -72,16 +68,15 @@ static const uint qt_meta_data_WorkerMetaData[] = {
        5,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    2,   54,    2, 0x06 /* Public */,
-       6,    1,   59,    2, 0x06 /* Public */,
-       8,    1,   62,    2, 0x06 /* Public */,
-       9,    1,   65,    2, 0x06 /* Public */,
-      10,    1,   68,    2, 0x06 /* Public */,
+       1,    2,   49,    2, 0x06 /* Public */,
+       6,    1,   54,    2, 0x06 /* Public */,
+       8,    1,   57,    2, 0x06 /* Public */,
+       9,    1,   60,    2, 0x06 /* Public */,
+      10,    1,   63,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      11,    1,   71,    2, 0x0a /* Public */,
-      13,    1,   74,    2, 0x0a /* Public */,
-      14,    2,   77,    2, 0x0a /* Public */,
+      11,    1,   66,    2, 0x0a /* Public */,
+      13,    1,   69,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, 0x80000000 | 3, QMetaType::QString,    4,    5,
@@ -93,7 +88,6 @@ static const uint qt_meta_data_WorkerMetaData[] = {
  // slots: parameters
     QMetaType::Void, QMetaType::QString,   12,
     QMetaType::Void, QMetaType::QString,   12,
-    QMetaType::Void, 0x80000000 | 15, 0x80000000 | 16,   12,    4,
 
        0        // eod
 };
@@ -111,7 +105,6 @@ void WorkerMetaData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
         case 4: _t->removed_dirs((*reinterpret_cast< QStringList(*)>(_a[1]))); break;
         case 5: _t->files_changed((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         case 6: _t->dir_changed((*reinterpret_cast< const QString(*)>(_a[1]))); break;
-        case 7: _t->remove_root_path((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QStringList(*)>(_a[2]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -183,13 +176,13 @@ int WorkerMetaData::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 7)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 7;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
+        if (_id < 7)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 8;
+        _id -= 7;
     }
     return _id;
 }
