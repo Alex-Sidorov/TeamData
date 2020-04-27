@@ -1,11 +1,14 @@
 #include "mainwindow.h"
 #include <QApplication>
 
-#include <workerserverdatabase.h>
+
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    //WorkerServerDataBase w1;
+    //w1.delete_data_dir_user("Alex");
 
     MainWindow w;
     w.show();

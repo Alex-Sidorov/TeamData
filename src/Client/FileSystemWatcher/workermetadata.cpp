@@ -42,7 +42,7 @@ void WorkerMetaData::scan_dir()
         _meta_data = qMakePair(dirs,data);
         _present_meta_data = qMakePair(present_dirs, present_data);
 
-        emit upload_tree(_present_meta_data);
+        emit upload_tree(_present_meta_data, _name);
     }
 }
 
@@ -95,8 +95,8 @@ void WorkerMetaData::create_sended_data(QByteArray &data)
 
     QMutexLocker lock(&_mutex);
 
-    stream << _worker_users.get_self_addr()
-           << _worker_users.get_self_port()
+    stream << _settings.get_self_addr()
+           << _settings.get_self_port()
            << _name
            << _present_meta_data.first
            << static_cast<size_t>(_present_meta_data.second.size());
@@ -105,8 +105,8 @@ void WorkerMetaData::create_sended_data(QByteArray &data)
     for(auto it = map.begin(); it != map.end(); it++)
     {
         stream << it.key() << std::get<0>(it.value())
-                           << std::get<1>(it.value())
-                           << std::get<2>(it.value());
+                           << std::get<2>(it.value())
+                           << std::get<1>(it.value());
     }
 }
 
@@ -119,24 +119,30 @@ void WorkerMetaData::parse_recved_data(QByteArray &data)
     stream >> count_user_data;
     for(size_t i = 0; i < count_user_data; i++)
     {
-        int count_files;
+        QByteArray useful_data;
+        stream >> useful_data;
+
+        QDataStream sub_stream(&useful_data,QIODevice::ReadOnly);
+
+        size_t count_files;
         QString name;
         QString addr;
         quint16 port;
         MetaDataDir meta_data;
 
-        stream >> addr >> port >> name >> meta_data.first >> count_files;
-        for(int j = 0; j < count_files; j++)
+        sub_stream >> addr >> port >> name >> meta_data.first >> count_files;
+        for(size_t j = 0; j < count_files; j++)
         {
             QString name_file;
             FileCharacteristics file_info;
-            stream >> name_file >> std::get<0>(file_info)
-                                >> std::get<1>(file_info)
-                                >> std::get<2>(file_info);
+            sub_stream >> name_file >> std::get<0>(file_info)
+                                >> std::get<2>(file_info)
+                                >> std::get<1>(file_info);
             meta_data.second.insert(name_file,file_info);
         }
         _remote_meta_data[name] = meta_data;
         _users[name] = qMakePair(addr,port);
+        emit upload_tree(meta_data, name);
     }
 }
 
@@ -147,7 +153,7 @@ void WorkerMetaData::files_changed(const QString &path)
         auto task = new TaskFileChanged(&_meta_data, &_present_meta_data, path, _path, &_mutex);
         connect(task,&TaskFileChanged::complete_task,this,[this]
         {
-            emit upload_tree(_present_meta_data);
+            emit upload_tree(_present_meta_data, _name);
         });
         _proxy->push(task);
     }
@@ -155,7 +161,7 @@ void WorkerMetaData::files_changed(const QString &path)
     {
         TaskFileChanged task(&_meta_data, &_present_meta_data, path, _path);
         task.exec();
-        emit upload_tree(_present_meta_data);
+        emit upload_tree(_present_meta_data, _name);
     }
 
 }
@@ -169,7 +175,7 @@ void WorkerMetaData::dir_changed(const QString &path)
         {
             if(is_changed)
             {
-                emit upload_tree(_present_meta_data);
+                emit upload_tree(_present_meta_data, _name);
             }
         });
         _proxy->push(task);
@@ -179,7 +185,7 @@ void WorkerMetaData::dir_changed(const QString &path)
         TaskDirChanged task(&_meta_data, &_present_meta_data, path, _path, &_watcher );
         if(task.exec())
         {
-            emit upload_tree(_present_meta_data);
+            emit upload_tree(_present_meta_data, _name);
         }
     }
 }
@@ -229,9 +235,9 @@ WorkerMetaData::WorkerMetaData(PROXY *proxy, QString &path,const QString &name, 
     connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
     connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
 
-    connect(this,&WorkerMetaData::upload_tree,this,[this]
+    connect(this,&WorkerMetaData::upload_tree,this,[this](MetaDataDir data, QString name)
     {
-        if(_client)
+        if(_client && name == _name)
         {
             QByteArray temp;
             create_sended_data(temp);
@@ -254,9 +260,9 @@ WorkerMetaData::WorkerMetaData(PROXY *proxy,const QString &name, CLIENT *client)
     connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
     connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
 
-    connect(this,&WorkerMetaData::upload_tree,this,[this]
+    connect(this,&WorkerMetaData::upload_tree,this,[this](MetaDataDir data, QString name)
     {
-        if(_client)
+        if(_client && name == _name)
         {
             QByteArray temp;
             create_sended_data(temp);

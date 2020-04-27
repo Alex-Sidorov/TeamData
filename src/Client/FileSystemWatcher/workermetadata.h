@@ -13,7 +13,7 @@
 #include <QMap>
 #include <QMutex>
 
-#include "workerusers.h"
+#include "settings.h"
 
 #include "BaseClient/base_client.h"
 #include "ActiveObject/proxyactiveobject.h"
@@ -49,7 +49,7 @@ public:
     void parse_recved_data(QByteArray &data);
 
 signals:
-    void upload_tree(MetaDataDir data);
+    void upload_tree(MetaDataDir data, QString name);
     void new_files(FileMetaData data);
     void removed_files(FileMetaData data);
     void new_dirs(QStringList data);
@@ -67,7 +67,7 @@ private:
     PROXY *_proxy;
     CLIENT *_client;
 
-    WorkerUsers _worker_users;
+    Settings _settings;
 
     QMap<QString,UserInfo> _users;
     QMap<QString,MetaDataDir> _remote_meta_data;

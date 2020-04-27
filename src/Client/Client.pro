@@ -38,7 +38,7 @@ SOURCES += \
     FileSystemWatcher/workermetadata.cpp \
     taskfilechanged.cpp \
     taskdirchanged.cpp \
-    workerusers.cpp
+    settings.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -52,7 +52,7 @@ HEADERS += \
     FileSystemWatcher/workermetadata.h \
     taskfilechanged.h \
     taskdirchanged.h \
-    workerusers.h
+    settings.h
 
 FORMS += \
         mainwindow.ui

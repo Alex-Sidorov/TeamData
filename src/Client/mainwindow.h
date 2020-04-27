@@ -3,7 +3,9 @@
 
 #include <QMainWindow>
 #include <QSharedPointer>
-#include <QDirModel>
+#include <QTreeWidget>
+#include <QMap>
+#include <QPair>
 
 #include <tasksendmsg.h>
 #include <taskrecvmsg.h>
@@ -33,21 +35,26 @@ private slots:
     void on_scan_dir_button_clicked();
 
     void slot_removed_dirs(QStringList dirs);
-    void slot_load_tree(WorkerMetaData::MetaDataDir data);
+    void slot_load_tree(WorkerMetaData::MetaDataDir data, QString name);
+
+    void on_users_doubleClicked(const QModelIndex &index);
+
+    void on_pushButton_2_clicked();
 
 private:
     Ui::MainWindow *ui;
+
+    QMap<QString,QPair<size_t,QTreeWidget*>> _remote_dir;
 
     QSharedPointer<BaseClient>_client;
     ActiveObject::ProxyActiveObject _proxy;
     TaskRecvMsg::WorkInfo info_recv_data;
     WorkerMetaData worker_meta_data;
-    QDirModel _model;
 
     void remove_items_tree(WorkerMetaData::MetaDataDir data);
 
-    void add_dirs(QStringList &dirs);
-    void add_files(WorkerMetaData::FileMetaData &files);
+    void add_dirs(QTreeWidget *tree, QStringList &dirs);
+    void add_files(QTreeWidget *tree, WorkerMetaData::FileMetaData &files);
 };
 
 #endif // MAINWINDOW_H

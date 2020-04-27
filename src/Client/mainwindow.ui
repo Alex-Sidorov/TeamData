@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="main_tab">
        <attribute name="title">
@@ -33,7 +33,7 @@
              <number>0</number>
             </property>
             <widget class="QWidget" name="main_page">
-             <layout class="QVBoxLayout" name="verticalLayout_2">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
               <item>
                <widget class="QTreeWidget" name="tree_dir">
                 <attribute name="headerCascadingSectionResizes">
@@ -72,7 +72,24 @@
             <widget class="QWidget" name="remote_page"/>
            </widget>
           </item>
+          <item>
+           <widget class="QListWidget" name="users">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
          </layout>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

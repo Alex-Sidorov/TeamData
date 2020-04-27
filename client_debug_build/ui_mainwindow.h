@@ -16,6 +16,7 @@
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
+#include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
@@ -41,9 +42,11 @@ public:
     QHBoxLayout *horizontalLayout_3;
     QStackedWidget *stack_widget;
     QWidget *main_page;
-    QVBoxLayout *verticalLayout_2;
+    QHBoxLayout *horizontalLayout_6;
     QTreeWidget *tree_dir;
     QWidget *remote_page;
+    QListWidget *users;
+    QPushButton *pushButton_2;
     QWidget *option_tab;
     QVBoxLayout *verticalLayout_4;
     QHBoxLayout *horizontalLayout_2;
@@ -102,17 +105,17 @@ public:
         stack_widget->setObjectName(QString::fromUtf8("stack_widget"));
         main_page = new QWidget();
         main_page->setObjectName(QString::fromUtf8("main_page"));
-        verticalLayout_2 = new QVBoxLayout(main_page);
-        verticalLayout_2->setSpacing(6);
-        verticalLayout_2->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        horizontalLayout_6 = new QHBoxLayout(main_page);
+        horizontalLayout_6->setSpacing(6);
+        horizontalLayout_6->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
         tree_dir = new QTreeWidget(main_page);
         tree_dir->setObjectName(QString::fromUtf8("tree_dir"));
         tree_dir->header()->setCascadingSectionResizes(true);
         tree_dir->header()->setDefaultSectionSize(200);
         tree_dir->header()->setHighlightSections(true);
 
-        verticalLayout_2->addWidget(tree_dir);
+        horizontalLayout_6->addWidget(tree_dir);
 
         stack_widget->addWidget(main_page);
         remote_page = new QWidget();
@@ -121,8 +124,23 @@ public:
 
         horizontalLayout_3->addWidget(stack_widget);
 
+        users = new QListWidget(main_tab);
+        users->setObjectName(QString::fromUtf8("users"));
+        QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+        sizePolicy.setHorizontalStretch(0);
+        sizePolicy.setVerticalStretch(0);
+        sizePolicy.setHeightForWidth(users->sizePolicy().hasHeightForWidth());
+        users->setSizePolicy(sizePolicy);
+
+        horizontalLayout_3->addWidget(users);
+
 
         verticalLayout_3->addLayout(horizontalLayout_3);
+
+        pushButton_2 = new QPushButton(main_tab);
+        pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
+
+        verticalLayout_3->addWidget(pushButton_2);
 
         tabWidget->addTab(main_tab, QString());
         option_tab = new QWidget();
@@ -284,7 +302,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
         stack_widget->setCurrentIndex(0);
 
 
@@ -299,6 +317,7 @@ public:
         ___qtreewidgetitem->setText(2, QApplication::translate("MainWindow", "\320\224\320\260\321\202\320\260 \320\277\320\276\321\201\320\273\320\265\320\264\320\275\320\265\320\271 \320\274\320\276\320\264\320\270\321\204\320\270\320\272\320\260\321\206\320\270\320\270", nullptr));
         ___qtreewidgetitem->setText(1, QApplication::translate("MainWindow", "\320\240\320\260\320\267\320\274\320\265\321\200 \321\204\320\260\320\271\320\273\320\260", nullptr));
         ___qtreewidgetitem->setText(0, QApplication::translate("MainWindow", "\320\224\320\270\321\200\320\265\320\272\321\202\320\276\321\200\320\270\321\217", nullptr));
+        pushButton_2->setText(QApplication::translate("MainWindow", "PushButton", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(main_tab), QApplication::translate("MainWindow", "\320\224\320\270\321\200\320\265\320\272\321\202\320\276\321\200\320\270\320\270", nullptr));
         label_6->setText(QApplication::translate("MainWindow", "\320\241\320\265\321\200\320\262\320\265\321\200", nullptr));
         label_3->setText(QApplication::translate("MainWindow", "IP \320\260\320\264\321\200\320\265\321\201:", nullptr));

@@ -9,11 +9,12 @@ void WorkerDataClient::change_data(QTcpSocket *client, TransferData &data)
     _username[client] = meta_data.first;
     _clients_data[client] = std::make_tuple(meta_data.second,data);
 
-    _worker_data_base.insert_user(_username[client]);
-    _worker_data_base.delete_data_dir_user(meta_data.first);
-    _worker_data_base.insert_data_dir_user(meta_data.first, meta_data.second.first);
-    _worker_data_base.delete_data_files_user(meta_data.first);
-    _worker_data_base.insert_data_files_user(meta_data.first, meta_data.second.second);
+    WorkerServerDataBase worker_data_base;
+    worker_data_base.insert_user(_username[client]);
+    worker_data_base.delete_data_dir_user(meta_data.first);
+    worker_data_base.insert_data_dir_user(meta_data.first, meta_data.second.first);
+    worker_data_base.delete_data_files_user(meta_data.first);
+    worker_data_base.insert_data_files_user(meta_data.first, meta_data.second.second);
 }
 
 QPair<QString,WorkerDataClient::MetaDataDir> WorkerDataClient::parse_recved_data(TransferData &data)
@@ -23,8 +24,11 @@ QPair<QString,WorkerDataClient::MetaDataDir> WorkerDataClient::parse_recved_data
     MetaDataDir meta_data;
     QString name;
 
+    QString addr;//unused;
+    quint16 port;//unused;
+
     size_t count_files = 0;
-    stream >> name >> meta_data.first >> count_files;
+    stream >> addr >> port >> name >> meta_data.first >> count_files;
     for(size_t i = 0; i < count_files; i++)
     {
         QString name_file;

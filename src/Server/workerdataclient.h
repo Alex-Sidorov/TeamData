@@ -34,8 +34,6 @@ public:
     void create_sended_data(QByteArray &data, const QList<QTcpSocket*> &source);
 
 private:
-    WorkerServerDataBase _worker_data_base;
-
     QMap<QTcpSocket*,std::tuple<MetaDataDir,TransferData>> _clients_data;
     QMap<QTcpSocket*,QString> _username;
 
