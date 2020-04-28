@@ -35,7 +35,7 @@ public:
     bool insert_task_user(const QString &user,const QStringList &files);
     bool delete_task_user(const QString &user);
     Tasks get_task_user(const QString &user)const;
-    QMap<QString,QStringList> get_all_task_user()const;
+    UsersTasks get_all_task_user()const;
 
 private:
     QSqlDatabase _base;

@@ -21,6 +21,7 @@
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
@@ -46,16 +47,15 @@ public:
     QTreeWidget *tree_dir;
     QWidget *remote_page;
     QListWidget *users;
-    QPushButton *pushButton_2;
     QWidget *option_tab;
-    QVBoxLayout *verticalLayout_4;
+    QVBoxLayout *verticalLayout_2;
     QHBoxLayout *horizontalLayout_2;
     QLabel *label_6;
     QFrame *line_2;
     QLabel *label_3;
     QLineEdit *serv_addr;
     QLabel *label_4;
-    QLineEdit *serv_port;
+    QSpinBox *serv_port;
     QPushButton *pushButton;
     QSpacerItem *verticalSpacer_2;
     QHBoxLayout *horizontalLayout_5;
@@ -64,7 +64,7 @@ public:
     QLabel *label_5;
     QLineEdit *self_addr;
     QLabel *label_8;
-    QLineEdit *self_port;
+    QSpinBox *self_port;
     QPushButton *work_serv;
     QSpacerItem *verticalSpacer_3;
     QHBoxLayout *horizontalLayout;
@@ -72,9 +72,8 @@ public:
     QLineEdit *name_line;
     QSpacerItem *verticalSpacer;
     QHBoxLayout *horizontalLayout_4;
-    QLineEdit *path;
+    QLineEdit *path_line;
     QPushButton *select_path_button;
-    QPushButton *scan_dir_button;
     QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -137,18 +136,13 @@ public:
 
         verticalLayout_3->addLayout(horizontalLayout_3);
 
-        pushButton_2 = new QPushButton(main_tab);
-        pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
-
-        verticalLayout_3->addWidget(pushButton_2);
-
         tabWidget->addTab(main_tab, QString());
         option_tab = new QWidget();
         option_tab->setObjectName(QString::fromUtf8("option_tab"));
-        verticalLayout_4 = new QVBoxLayout(option_tab);
-        verticalLayout_4->setSpacing(6);
-        verticalLayout_4->setContentsMargins(11, 11, 11, 11);
-        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
+        verticalLayout_2 = new QVBoxLayout(option_tab);
+        verticalLayout_2->setSpacing(6);
+        verticalLayout_2->setContentsMargins(11, 11, 11, 11);
+        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setSpacing(6);
         horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
@@ -179,22 +173,24 @@ public:
 
         horizontalLayout_2->addWidget(label_4);
 
-        serv_port = new QLineEdit(option_tab);
+        serv_port = new QSpinBox(option_tab);
         serv_port->setObjectName(QString::fromUtf8("serv_port"));
+        serv_port->setMaximum(65535);
+        serv_port->setValue(0);
 
         horizontalLayout_2->addWidget(serv_port);
 
 
-        verticalLayout_4->addLayout(horizontalLayout_2);
+        verticalLayout_2->addLayout(horizontalLayout_2);
 
         pushButton = new QPushButton(option_tab);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
 
-        verticalLayout_4->addWidget(pushButton);
+        verticalLayout_2->addWidget(pushButton);
 
         verticalSpacer_2 = new QSpacerItem(20, 81, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        verticalLayout_4->addItem(verticalSpacer_2);
+        verticalLayout_2->addItem(verticalSpacer_2);
 
         horizontalLayout_5 = new QHBoxLayout();
         horizontalLayout_5->setSpacing(6);
@@ -226,22 +222,24 @@ public:
 
         horizontalLayout_5->addWidget(label_8);
 
-        self_port = new QLineEdit(option_tab);
+        self_port = new QSpinBox(option_tab);
         self_port->setObjectName(QString::fromUtf8("self_port"));
+        self_port->setMaximum(65535);
+        self_port->setValue(0);
 
         horizontalLayout_5->addWidget(self_port);
 
 
-        verticalLayout_4->addLayout(horizontalLayout_5);
+        verticalLayout_2->addLayout(horizontalLayout_5);
 
         work_serv = new QPushButton(option_tab);
         work_serv->setObjectName(QString::fromUtf8("work_serv"));
 
-        verticalLayout_4->addWidget(work_serv);
+        verticalLayout_2->addWidget(work_serv);
 
         verticalSpacer_3 = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        verticalLayout_4->addItem(verticalSpacer_3);
+        verticalLayout_2->addItem(verticalSpacer_3);
 
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(6);
@@ -257,19 +255,19 @@ public:
         horizontalLayout->addWidget(name_line);
 
 
-        verticalLayout_4->addLayout(horizontalLayout);
+        verticalLayout_2->addLayout(horizontalLayout);
 
         verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-        verticalLayout_4->addItem(verticalSpacer);
+        verticalLayout_2->addItem(verticalSpacer);
 
         horizontalLayout_4 = new QHBoxLayout();
         horizontalLayout_4->setSpacing(6);
         horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
-        path = new QLineEdit(option_tab);
-        path->setObjectName(QString::fromUtf8("path"));
+        path_line = new QLineEdit(option_tab);
+        path_line->setObjectName(QString::fromUtf8("path_line"));
 
-        horizontalLayout_4->addWidget(path);
+        horizontalLayout_4->addWidget(path_line);
 
         select_path_button = new QPushButton(option_tab);
         select_path_button->setObjectName(QString::fromUtf8("select_path_button"));
@@ -277,12 +275,7 @@ public:
         horizontalLayout_4->addWidget(select_path_button);
 
 
-        verticalLayout_4->addLayout(horizontalLayout_4);
-
-        scan_dir_button = new QPushButton(option_tab);
-        scan_dir_button->setObjectName(QString::fromUtf8("scan_dir_button"));
-
-        verticalLayout_4->addWidget(scan_dir_button);
+        verticalLayout_2->addLayout(horizontalLayout_4);
 
         tabWidget->addTab(option_tab, QString());
 
@@ -302,7 +295,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(0);
+        tabWidget->setCurrentIndex(1);
         stack_widget->setCurrentIndex(0);
 
 
@@ -317,25 +310,21 @@ public:
         ___qtreewidgetitem->setText(2, QApplication::translate("MainWindow", "\320\224\320\260\321\202\320\260 \320\277\320\276\321\201\320\273\320\265\320\264\320\275\320\265\320\271 \320\274\320\276\320\264\320\270\321\204\320\270\320\272\320\260\321\206\320\270\320\270", nullptr));
         ___qtreewidgetitem->setText(1, QApplication::translate("MainWindow", "\320\240\320\260\320\267\320\274\320\265\321\200 \321\204\320\260\320\271\320\273\320\260", nullptr));
         ___qtreewidgetitem->setText(0, QApplication::translate("MainWindow", "\320\224\320\270\321\200\320\265\320\272\321\202\320\276\321\200\320\270\321\217", nullptr));
-        pushButton_2->setText(QApplication::translate("MainWindow", "PushButton", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(main_tab), QApplication::translate("MainWindow", "\320\224\320\270\321\200\320\265\320\272\321\202\320\276\321\200\320\270\320\270", nullptr));
         label_6->setText(QApplication::translate("MainWindow", "\320\241\320\265\321\200\320\262\320\265\321\200", nullptr));
         label_3->setText(QApplication::translate("MainWindow", "IP \320\260\320\264\321\200\320\265\321\201:", nullptr));
-        serv_addr->setText(QApplication::translate("MainWindow", "192.168.100.4", nullptr));
+        serv_addr->setText(QString());
         label_4->setText(QApplication::translate("MainWindow", "\320\237\320\276\321\200\321\202", nullptr));
-        serv_port->setText(QApplication::translate("MainWindow", "8000", nullptr));
         pushButton->setText(QApplication::translate("MainWindow", "connect/disconnect", nullptr));
         label_7->setText(QApplication::translate("MainWindow", "\320\241\320\262\320\276\320\271", nullptr));
         label_5->setText(QApplication::translate("MainWindow", "IP \320\260\320\264\321\200\320\265\321\201:", nullptr));
-        self_addr->setText(QApplication::translate("MainWindow", "192.168.100.4", nullptr));
+        self_addr->setText(QString());
         label_8->setText(QApplication::translate("MainWindow", "\320\237\320\276\321\200\321\202", nullptr));
-        self_port->setText(QApplication::translate("MainWindow", "80", nullptr));
         work_serv->setText(QApplication::translate("MainWindow", "start/stop", nullptr));
         label->setText(QApplication::translate("MainWindow", "\320\230\320\274\321\217:", nullptr));
-        name_line->setText(QApplication::translate("MainWindow", "Alex", nullptr));
-        path->setText(QApplication::translate("MainWindow", "D:\\\\dir", nullptr));
+        name_line->setText(QString());
+        path_line->setText(QString());
         select_path_button->setText(QApplication::translate("MainWindow", "...", nullptr));
-        scan_dir_button->setText(QApplication::translate("MainWindow", "scan", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(option_tab), QApplication::translate("MainWindow", "\320\235\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\270", nullptr));
     } // retranslateUi
 

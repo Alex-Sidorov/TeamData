@@ -10,6 +10,7 @@
 #include <tasksendmsg.h>
 #include <taskrecvmsg.h>
 
+#include <settings.h>
 #include <BaseClient/base_client.h>
 #include <ActiveObject/proxyactiveobject.h>
 #include <FileSystemWatcher/workermetadata.h>
@@ -32,14 +33,22 @@ public:
 private slots:
     void on_pushButton_clicked();
     void on_select_path_button_clicked();
-    void on_scan_dir_button_clicked();
-
     void slot_removed_dirs(QStringList dirs);
     void slot_load_tree(WorkerMetaData::MetaDataDir data, QString name);
 
     void on_users_doubleClicked(const QModelIndex &index);
 
-    void on_pushButton_2_clicked();
+    void on_name_line_editingFinished();
+
+    void on_self_addr_editingFinished();
+
+    void on_serv_addr_editingFinished();
+
+    void on_serv_port_valueChanged(int arg1);
+
+    void on_self_port_valueChanged(int arg1);
+
+    void on_path_line_editingFinished();
 
 private:
     Ui::MainWindow *ui;
@@ -51,10 +60,14 @@ private:
     TaskRecvMsg::WorkInfo info_recv_data;
     WorkerMetaData worker_meta_data;
 
+    Settings _settings;
+
     void remove_items_tree(WorkerMetaData::MetaDataDir data);
 
     void add_dirs(QTreeWidget *tree, QStringList &dirs);
     void add_files(QTreeWidget *tree, WorkerMetaData::FileMetaData &files);
+
+
 };
 
 #endif // MAINWINDOW_H

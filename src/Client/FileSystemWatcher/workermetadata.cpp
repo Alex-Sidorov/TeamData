@@ -68,7 +68,14 @@ void WorkerMetaData::change_dir(QString &path)
 {
     if(!path.isEmpty())
     {
+        _watcher.removePath(_path);
+        auto files = _watcher.files();
+        for(auto &file : files)
+        {
+            _watcher.removePath(file);
+        }
         _path = path;
+        scan_dir();
     }
 }
 
@@ -76,7 +83,14 @@ void WorkerMetaData::change_dir(QString &&path)
 {
     if(!path.isEmpty())
     {
+        _watcher.removePath(_path);
+        auto files = _watcher.files();
+        for(auto &file : files)
+        {
+            _watcher.removePath(file);
+        }
         _path = path;
+        scan_dir();
     }
 }
 
@@ -227,36 +241,14 @@ void WorkerMetaData::change_name(QString &&name)
     }
 }
 
-WorkerMetaData::WorkerMetaData(PROXY *proxy, QString &path,const QString &name, CLIENT *client):
-    _name(name),
-    _path(path),
+
+WorkerMetaData::WorkerMetaData(PROXY *proxy, CLIENT *client):
     _proxy(proxy)
 {
-    connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
-    connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
+    _settings.read_settings();
+    _path = _settings.get_path();
+    _name = _settings.get_name();
 
-    connect(this,&WorkerMetaData::upload_tree,this,[this](MetaDataDir data, QString name)
-    {
-        if(_client && name == _name)
-        {
-            QByteArray temp;
-            create_sended_data(temp);
-            auto task = new TaskSendMsg(temp,_proxy);
-            connect(task,&TaskSendMsg::send_data,_client,[&](QByteArray array)
-            {
-                _client->write_data(array);
-            }, Qt::ConnectionType::QueuedConnection);
-            _proxy->push(task);
-        }
-    });
-
-    change_client(client);
-}
-
-WorkerMetaData::WorkerMetaData(PROXY *proxy,const QString &name, CLIENT *client):
-    _name(name),
-    _proxy(proxy)
-{
     connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
     connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
 

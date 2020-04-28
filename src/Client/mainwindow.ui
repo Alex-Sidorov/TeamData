@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="main_tab">
        <attribute name="title">
@@ -84,20 +84,13 @@
           </item>
          </layout>
         </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_2">
-          <property name="text">
-           <string>PushButton</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="option_tab">
        <attribute name="title">
         <string>Настройки</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
@@ -124,7 +117,7 @@
           <item>
            <widget class="QLineEdit" name="serv_addr">
             <property name="text">
-             <string>192.168.100.4</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -136,9 +129,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="serv_port">
-            <property name="text">
-             <string>8000</string>
+           <widget class="QSpinBox" name="serv_port">
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>0</number>
             </property>
            </widget>
           </item>
@@ -190,7 +186,7 @@
           <item>
            <widget class="QLineEdit" name="self_addr">
             <property name="text">
-             <string>192.168.100.4</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -202,9 +198,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="self_port">
-            <property name="text">
-             <string>80</string>
+           <widget class="QSpinBox" name="self_port">
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>0</number>
             </property>
            </widget>
           </item>
@@ -242,7 +241,7 @@
           <item>
            <widget class="QLineEdit" name="name_line">
             <property name="text">
-             <string>Alex</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -264,9 +263,9 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
-           <widget class="QLineEdit" name="path">
+           <widget class="QLineEdit" name="path_line">
             <property name="text">
-             <string>D:\\dir</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -278,13 +277,6 @@
            </widget>
           </item>
          </layout>
-        </item>
-        <item>
-         <widget class="QPushButton" name="scan_dir_button">
-          <property name="text">
-           <string>scan</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </widget>

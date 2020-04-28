@@ -20,13 +20,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(&worker_meta_data,&WorkerMetaData::upload_tree,this,&MainWindow::slot_load_tree,Qt::ConnectionType::QueuedConnection);
 
-    /*auto name = ui->name_line->text();
+    _settings.read_settings();
+
+    auto name = _settings.get_name();
+
+    ui->name_line->setText(name);
     _remote_dir.insert(name,qMakePair(0,ui->tree_dir));
     ui->users->addItem(name + ("(user)"));
 
-    worker_meta_data.change_name(name);
-    worker_meta_data.change_dir("D:\\dir");
-    worker_meta_data.scan_dir();*/
+    auto path = _settings.get_path();
+    ui->path_line->setText(path);
+
+    ui->self_addr->setText(_settings.get_self_addr());
+    ui->serv_addr->setText(_settings.get_serv_addr());
+
+    ui->serv_port->setValue(_settings.get_serv_port());
+    ui->self_port->setValue(_settings.get_self_port());
+
+    worker_meta_data.scan_dir();
 }
 
 MainWindow::~MainWindow()
@@ -210,16 +221,20 @@ void MainWindow::on_pushButton_clicked()
 {
     if(_client.isNull())
     {        
-        _client.reset(new BaseClient(ui->serv_addr->text(),ui->serv_port->text().toInt()));
+        _client.reset(new BaseClient(_settings.get_serv_addr(),_settings.get_serv_port()));
 
         connect(_client.get(),&BaseClient::connected_socket,this,[&]
         {
             ui->statusBar->showMessage("CONNECTED");
+            ui->serv_addr->setEnabled(false);
+            ui->serv_port->setEnabled(false);
             //ui->terminal->addItem("connected to " + ui->serv_addr->text() + ":" + ui->serv_port->text());
         });
         connect(_client.get(),&BaseClient::disconnected_socket,this,[&]
         {
             ui->statusBar->clearMessage();
+            ui->serv_addr->setEnabled(true);
+            ui->serv_port->setEnabled(true);
            // ui->terminal->addItem("disconnected from " + ui->serv_addr->text() + ":" + ui->serv_port->text());
         });
         connect(_client.get(),&BaseClient::socket_error,this,[&](QAbstractSocket::SocketError state)
@@ -232,6 +247,7 @@ void MainWindow::on_pushButton_clicked()
     if(_client->is_connected())
     {
         _client->disconnect_to_host();
+        _client.reset();   
     }
     else
     {
@@ -245,15 +261,10 @@ void MainWindow::on_select_path_button_clicked()
     auto dir = QFileDialog::getExistingDirectory(nullptr,"Выбор рабочей директории","",nullptr);
     if(!dir.isEmpty())
     {
+        ui->path_line->setText(dir);
+        on_path_line_editingFinished();
         worker_meta_data.change_dir(dir);
     }
-}
-
-
-void MainWindow::on_scan_dir_button_clicked()
-{
-    worker_meta_data.scan_dir();
-
 }
 
 void MainWindow::on_users_doubleClicked(const QModelIndex &index)
@@ -267,13 +278,50 @@ void MainWindow::on_users_doubleClicked(const QModelIndex &index)
     }
 }
 
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::on_name_line_editingFinished()
 {
     auto name = ui->name_line->text();
-    _remote_dir.insert(name,qMakePair(0,ui->tree_dir));
-    ui->users->addItem(name + ("(user)"));
 
+    auto text = ui->users->item(0)->text();
+    auto old_name = text.mid(0,text.indexOf('('));
+    if(_remote_dir.find(name) != _remote_dir.end())
+    {
+        ui->name_line->setText(old_name);
+        return;
+    }
+    auto data = _remote_dir[old_name];
+    _remote_dir.remove(old_name);
+
+
+    _remote_dir.insert(name,data);
+
+    _settings.set_name(name);
     worker_meta_data.change_name(name);
-    worker_meta_data.change_dir(ui->path->text());
-    worker_meta_data.scan_dir();
+    name += "(user)";
+    ui->users->item(0)->setText(name);
+}
+
+void MainWindow::on_self_addr_editingFinished()
+{
+    _settings.set_self_addr(ui->self_addr->text());
+}
+
+void MainWindow::on_serv_addr_editingFinished()
+{
+    _settings.set_serv_addr(ui->serv_addr->text());
+}
+
+void MainWindow::on_serv_port_valueChanged(int value)
+{
+    _settings.set_serv_port(value);
+}
+
+void MainWindow::on_self_port_valueChanged(int value)
+{
+    _settings.set_self_port(value);
+}
+
+void MainWindow::on_path_line_editingFinished()
+{
+    _settings.set_path(ui->path_line->text());
 }

@@ -32,8 +32,7 @@ public:
     using MetaDataDir = QPair<DirsPath,FileMetaData>;
     using UserInfo = QPair<QString,quint16>;
 
-    WorkerMetaData(PROXY *proxy,const QString &name = "", CLIENT *client = nullptr);
-    WorkerMetaData(PROXY *proxy, QString &path,const QString &name, CLIENT *client = nullptr);
+    WorkerMetaData(PROXY *proxy, CLIENT *client = nullptr);
     virtual ~WorkerMetaData();
 
     void change_dir(QString &path);
