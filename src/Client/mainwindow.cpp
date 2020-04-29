@@ -11,7 +11,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    worker_meta_data(&_proxy)
+    worker_meta_data(&_proxy),
+    _worker_remote_client(&_proxy)
 {
     _proxy.start();
     ui->setupUi(this);
@@ -58,6 +59,8 @@ void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data, QString name)
     {
         ui->users->addItem(name);
         auto new_tree = new QTreeWidget;
+        connect(new_tree,&QTreeWidget::doubleClicked, this, &MainWindow::slot_tree_double_clicked);
+
         new_tree->setHeaderItem(ui->tree_dir->headerItem()->clone());
         int index = ui->stack_widget->addWidget(new_tree);
         _remote_dir[name] = qMakePair(index,new_tree);
@@ -67,6 +70,35 @@ void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data, QString name)
     tree->clear();
     add_dirs(tree, data.first);
     add_files(tree, data.second);
+}
+
+void MainWindow::slot_tree_double_clicked(const QModelIndex &index)
+{
+    if(index.isValid())
+    {
+        auto tree = static_cast<QTreeWidget*>(ui->stack_widget->currentWidget());
+        auto item = tree->itemAt(index.row(),index.column());
+        if(!item->childCount())
+        {
+            QString path;
+            QString file_name = item->text(0);
+            while(item)
+            {
+                path.push_front(item->text(0));
+                if(item->childCount())
+                {
+                     path.push_back('/');
+                }
+                item = item->parent();
+            }
+            auto dst = QFileDialog::getSaveFileName(nullptr,"Выберите место сохранения файла",file_name);
+            if(!dst.isEmpty())
+            {
+                _worker_remote_client.download_file(path,dst,"192.168.100.4",80);
+            }
+        }
+
+    }
 }
 
 void MainWindow::add_dirs(QTreeWidget *tree, QStringList &dirs)
@@ -324,4 +356,45 @@ void MainWindow::on_self_port_valueChanged(int value)
 void MainWindow::on_path_line_editingFinished()
 {
     _settings.set_path(ui->path_line->text());
+}
+
+void MainWindow::on_work_serv_clicked()
+{
+    if(!_worker_remote_client.is_serv_run())
+    {
+        _worker_remote_client.run_serv();
+    }
+    else
+    {
+        _worker_remote_client.stop_serv();
+    }
+}
+
+void MainWindow::on_tree_dir_doubleClicked(const QModelIndex &index)
+{
+    if(index.isValid())
+    {
+        auto tree = ui->tree_dir;
+        auto item = tree->itemAt(index.row(),index.column());
+        if(!item->childCount())
+        {
+            QString path;
+            QString file_name = item->text(0);
+            while(item)
+            {
+                path.push_front(item->text(0));
+                if(item->childCount())
+                {
+                     path.push_back('/');
+                }
+                item = item->parent();
+            }
+            auto dst = QFileDialog::getSaveFileName(nullptr,"Выберите место сохранения файла",file_name);
+            if(!dst.isEmpty())
+            {
+                _worker_remote_client.download_file(path,dst,"192.168.100.4",80);
+            }
+        }
+
+    }
 }

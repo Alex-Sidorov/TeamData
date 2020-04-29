@@ -12,6 +12,10 @@ debug/taskfilechanged.o
 debug/taskdirchanged.o
 debug/settings.o
 debug/workerclientdatabase.o
+debug/base_server.o
+debug/workerremoteclient.o
+debug/tasksendfile.o
+debug/taskrecvfile.o
 debug/moc_mainwindow.o
 debug/moc_base_client.o
 debug/moc_tasksendmsg.o
@@ -19,3 +23,7 @@ debug/moc_taskrecvmsg.o
 debug/moc_workermetadata.o
 debug/moc_taskfilechanged.o
 debug/moc_taskdirchanged.o
+debug/moc_base_server.o
+debug/moc_workerremoteclient.o
+debug/moc_tasksendfile.o
+debug/moc_taskrecvfile.o

@@ -14,6 +14,7 @@
 #include <BaseClient/base_client.h>
 #include <ActiveObject/proxyactiveobject.h>
 #include <FileSystemWatcher/workermetadata.h>
+#include <workerremoteclient.h>
 
 using DataTransfer::BaseClient;
 
@@ -37,6 +38,7 @@ private slots:
     void slot_load_tree(WorkerMetaData::MetaDataDir data, QString name);
 
     void on_users_doubleClicked(const QModelIndex &index);
+    void slot_tree_double_clicked(const QModelIndex &index);
 
     void on_name_line_editingFinished();
 
@@ -50,6 +52,10 @@ private slots:
 
     void on_path_line_editingFinished();
 
+    void on_work_serv_clicked();
+
+    void on_tree_dir_doubleClicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
 
@@ -59,6 +65,7 @@ private:
     ActiveObject::ProxyActiveObject _proxy;
     TaskRecvMsg::WorkInfo info_recv_data;
     WorkerMetaData worker_meta_data;
+    WorkerRemoteClient _worker_remote_client;
 
     Settings _settings;
 

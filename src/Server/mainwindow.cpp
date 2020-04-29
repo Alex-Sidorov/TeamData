@@ -41,6 +41,7 @@ void MainWindow::on_work_button_clicked()
         connect(_serv.get(),&BaseServer::disconnected_socket,this,[&](QTcpSocket *socket)
         {
             //ui->terminal->addItem("disconnected ");
+            _serv->remove_connection(socket);
             _worker_data_client.remove_client(socket);
         });
         connect(_serv.get(),&BaseServer::ready_data_read,this,&MainWindow::slot_ready_read);

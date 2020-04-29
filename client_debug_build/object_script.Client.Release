@@ -12,6 +12,10 @@ release/taskfilechanged.o
 release/taskdirchanged.o
 release/settings.o
 release/workerclientdatabase.o
+release/base_server.o
+release/workerremoteclient.o
+release/tasksendfile.o
+release/taskrecvfile.o
 release/moc_mainwindow.o
 release/moc_base_client.o
 release/moc_tasksendmsg.o
@@ -19,3 +23,7 @@ release/moc_taskrecvmsg.o
 release/moc_workermetadata.o
 release/moc_taskfilechanged.o
 release/moc_taskdirchanged.o
+release/moc_base_server.o
+release/moc_workerremoteclient.o
+release/moc_tasksendfile.o
+release/moc_taskrecvfile.o

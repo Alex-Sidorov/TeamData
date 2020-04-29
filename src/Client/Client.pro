@@ -40,7 +40,11 @@ SOURCES += \
     taskfilechanged.cpp \
     taskdirchanged.cpp \
     settings.cpp \
-    workerclientdatabase.cpp
+    workerclientdatabase.cpp \
+    BaseServer/base_server.cpp \
+    workerremoteclient.cpp \
+    tasksendfile.cpp \
+    taskrecvfile.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -55,7 +59,11 @@ HEADERS += \
     taskfilechanged.h \
     taskdirchanged.h \
     settings.h \
-    workerclientdatabase.h
+    workerclientdatabase.h \
+    BaseServer/base_server.h \
+    workerremoteclient.h \
+    tasksendfile.h \
+    taskrecvfile.h
 
 FORMS += \
         mainwindow.ui

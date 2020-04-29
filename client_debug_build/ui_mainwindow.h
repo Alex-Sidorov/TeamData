@@ -295,7 +295,7 @@ public:
 
         retranslateUi(MainWindow);
 
-        tabWidget->setCurrentIndex(1);
+        tabWidget->setCurrentIndex(0);
         stack_widget->setCurrentIndex(0);
 
 

@@ -3,8 +3,6 @@
 
 #include <QObject>
 
-#include <atomic>
-#include <map>
 
 #include <ActiveObject/abstracttask.h>
 #include <ActiveObject/proxyactiveobject.h>

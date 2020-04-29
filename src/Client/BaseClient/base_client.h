@@ -24,7 +24,7 @@ namespace DataTransfer
         void connect_to_host();
         void disconnect_to_host();
 
-        bool write_data(QByteArray &data);
+        bool write_data(const QByteArray &data);
         bool read_data(QByteArray &data);
 
         void set_wait_for_bytes_written(int value);

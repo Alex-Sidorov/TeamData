@@ -37,7 +37,7 @@ void dt::BaseClient::disconnect_to_host()
     }
 }
 
-bool dt::BaseClient::write_data(QByteArray &data)
+bool dt::BaseClient::write_data(const QByteArray &data)
 {
     if(is_connected() && !data.isEmpty())
     {
@@ -92,6 +92,9 @@ qint32 dt::BaseClient::ArrayToInt(QByteArray &temp)
 
 dt::BaseClient::~BaseClient()
 {
-
+    if(is_connected())
+    {
+        disconnect_to_host();
+    }
 }
 
