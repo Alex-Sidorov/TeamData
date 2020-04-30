@@ -3,7 +3,7 @@
 
 #include <QFileInfo>
 
-void WorkerRemoteClient::run_serv()
+bool WorkerRemoteClient::run_serv()
 {
     _settings.read_settings();
 
@@ -24,7 +24,7 @@ void WorkerRemoteClient::run_serv()
 
     connect(_serv.get(),&SERVER::ready_data_read,this,&WorkerRemoteClient::slot_ready_read);
 
-    _serv->run();
+    return _serv->run();
 }
 
 void WorkerRemoteClient::slot_ready_read(QTcpSocket *socket)
@@ -63,20 +63,22 @@ void WorkerRemoteClient::download_file(const QString &src_file, const QString &d
 {
     if(src_file.isEmpty() || dst_file.isEmpty())
     {
+        emit error_name_file();
         return;
     }
 
     auto client = new CLIENT(addr,port);
     auto work_info = &_info_for_recv[client];
 
-    connect(client,&CLIENT::ready_data_read,this,[client, work_info,this, &dst_file]
+    connect(client,&CLIENT::ready_data_read,this,[client, work_info,this, dst_file]
     {
         QByteArray data;
         client->read_data(data);
         if(!work_info->_is_recved && data == "null")
         {
-            delete client;
             _info_for_recv.remove(client);
+            emit error_didnt_found_file();
+            client->deleteLater();
             return;
         }
         else if(!work_info->_is_recved)
@@ -85,24 +87,35 @@ void WorkerRemoteClient::download_file(const QString &src_file, const QString &d
             if(!work_info->_file->open(QIODevice::WriteOnly))
             {
                 delete work_info->_file;
-                delete client;
+                client->deleteLater();
                 _info_for_recv.remove(client);
+                emit error_open_file();
                 return;
             }
         }
 
         auto task = new TaskRecvFile(work_info,data);
-        connect(task,&TaskRecvFile::recved_data,client,[&]()
+        connect(task,&TaskRecvFile::recved_data,client,[this, client]()
         {
-            delete client;
             _info_for_recv.remove(client);
-        }, Qt::ConnectionType::DirectConnection);
+            client->deleteLater();
+            emit downloaded_file();
+        }, Qt::ConnectionType::QueuedConnection);
         _proxy->push(task);
     });
 
-    connect(client,&CLIENT::connected_socket,this,[&src_file,client]
+    connect(client,&CLIENT::socket_error,this,[client,this](QAbstractSocket::SocketError state)
     {
-        client->write_data(src_file.toLatin1());
+        qDebug() << state;
+        emit error_connect_to_host();
+        _info_for_recv.remove(client);
+        client->deleteLater();
+    });
+
+    connect(client,&CLIENT::connected_socket,this,[src_file,client, this]
+    {
+        client->write_data(src_file.toUtf8());
+        emit connect_to_host();
     });
 
     client->connect_to_host();

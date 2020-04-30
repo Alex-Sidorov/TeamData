@@ -38,7 +38,6 @@ private slots:
     void slot_load_tree(WorkerMetaData::MetaDataDir data, QString name);
 
     void on_users_doubleClicked(const QModelIndex &index);
-    void slot_tree_double_clicked(const QModelIndex &index);
 
     void on_name_line_editingFinished();
 
@@ -54,7 +53,8 @@ private slots:
 
     void on_work_serv_clicked();
 
-    void on_tree_dir_doubleClicked(const QModelIndex &index);
+
+    void on_tree_dir_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
 private:
     Ui::MainWindow *ui;

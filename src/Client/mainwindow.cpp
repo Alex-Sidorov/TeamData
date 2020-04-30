@@ -7,6 +7,8 @@
 #include <QDataStream>
 
 #include <QThread>
+#include <QMessageBox>
+#include <QIcon>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,6 +18,31 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     _proxy.start();
     ui->setupUi(this);
+
+    connect(&_worker_remote_client,&WorkerRemoteClient::error_name_file,this,[]
+    {
+        QMessageBox::warning(nullptr,"Ошибка","Неверное имя файла");
+    });
+    connect(&_worker_remote_client,&WorkerRemoteClient::error_open_file,this,[]
+    {
+        QMessageBox::warning(nullptr,"Ошибка","Ошибка открытия файла");
+    });
+    connect(&_worker_remote_client,&WorkerRemoteClient::error_connect_to_host,this,[]
+    {
+        QMessageBox::warning(nullptr,"Ошибка","Ошибка подключения");
+    });
+    connect(&_worker_remote_client,&WorkerRemoteClient::error_didnt_found_file,this,[]
+    {
+        QMessageBox::warning(nullptr,"Ошибка","Файл на устройстве не найден");
+    });
+    connect(&_worker_remote_client,&WorkerRemoteClient::connect_to_host,this,[]
+    {
+        QMessageBox::information(nullptr,"Информация","Устройство подключено");
+    });
+    connect(&_worker_remote_client,&WorkerRemoteClient::downloaded_file,this,[]
+    {
+        QMessageBox::information(nullptr,"Информация","Файл скачен");
+    });
 
     qRegisterMetaType<WorkerMetaData::MetaDataDir>("MetaDataDir");
 
@@ -50,6 +77,7 @@ MainWindow::~MainWindow()
             delete widget.second;
         }
     }
+    _client->disconnect_to_host();
     delete ui;
 }
 
@@ -59,7 +87,7 @@ void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data, QString name)
     {
         ui->users->addItem(name);
         auto new_tree = new QTreeWidget;
-        connect(new_tree,&QTreeWidget::doubleClicked, this, &MainWindow::slot_tree_double_clicked);
+        connect(new_tree,&QTreeWidget::itemDoubleClicked, this, &MainWindow::on_tree_dir_itemDoubleClicked);
 
         new_tree->setHeaderItem(ui->tree_dir->headerItem()->clone());
         int index = ui->stack_widget->addWidget(new_tree);
@@ -72,34 +100,6 @@ void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data, QString name)
     add_files(tree, data.second);
 }
 
-void MainWindow::slot_tree_double_clicked(const QModelIndex &index)
-{
-    if(index.isValid())
-    {
-        auto tree = static_cast<QTreeWidget*>(ui->stack_widget->currentWidget());
-        auto item = tree->itemAt(index.row(),index.column());
-        if(!item->childCount())
-        {
-            QString path;
-            QString file_name = item->text(0);
-            while(item)
-            {
-                path.push_front(item->text(0));
-                if(item->childCount())
-                {
-                     path.push_back('/');
-                }
-                item = item->parent();
-            }
-            auto dst = QFileDialog::getSaveFileName(nullptr,"Выберите место сохранения файла",file_name);
-            if(!dst.isEmpty())
-            {
-                _worker_remote_client.download_file(path,dst,"192.168.100.4",80);
-            }
-        }
-
-    }
-}
 
 void MainWindow::add_dirs(QTreeWidget *tree, QStringList &dirs)
 {
@@ -260,6 +260,7 @@ void MainWindow::on_pushButton_clicked()
             ui->statusBar->showMessage("CONNECTED");
             ui->serv_addr->setEnabled(false);
             ui->serv_port->setEnabled(false);
+            worker_meta_data.scan_dir();
             //ui->terminal->addItem("connected to " + ui->serv_addr->text() + ":" + ui->serv_port->text());
         });
         connect(_client.get(),&BaseClient::disconnected_socket,this,[&]
@@ -356,36 +357,44 @@ void MainWindow::on_self_port_valueChanged(int value)
 void MainWindow::on_path_line_editingFinished()
 {
     _settings.set_path(ui->path_line->text());
+    worker_meta_data.change_dir(ui->path_line->text());
 }
 
 void MainWindow::on_work_serv_clicked()
 {
     if(!_worker_remote_client.is_serv_run())
     {
-        _worker_remote_client.run_serv();
+        if(_worker_remote_client.run_serv())
+        {
+            ui->self_addr->setEnabled(false);
+            ui->self_port->setEnabled(false);
+        }
     }
     else
     {
         _worker_remote_client.stop_serv();
+        ui->self_addr->setEnabled(true);
+        ui->self_port->setEnabled(true);
     }
 }
 
-void MainWindow::on_tree_dir_doubleClicked(const QModelIndex &index)
+void MainWindow::on_tree_dir_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
-    if(index.isValid())
+    if(item && ui->stack_widget->currentIndex())
     {
-        auto tree = ui->tree_dir;
-        auto item = tree->itemAt(index.row(),index.column());
-        if(!item->childCount())
+        if(!item->text(1).isEmpty())
         {
             QString path;
             QString file_name = item->text(0);
             while(item)
             {
-                path.push_front(item->text(0));
                 if(item->childCount())
                 {
-                     path.push_back('/');
+                    path.push_front(item->text(0) + '/');
+                }
+                else
+                {
+                    path.push_front(item->text(0));
                 }
                 item = item->parent();
             }

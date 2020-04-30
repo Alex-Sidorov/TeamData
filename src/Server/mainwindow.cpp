@@ -22,15 +22,14 @@ void MainWindow::on_work_button_clicked()
     {
         _serv.reset(new BaseServer(ui->serv_addr->text(),ui->serv_port->text().toInt()));
 
-        connect(_serv.get(),&BaseServer::new_connection,this,[&]
+        connect(_serv.get(),&BaseServer::new_connection,this,[this]
         {
             _serv->add_connection();
-            auto temp = _serv->info_connection();
-            if(temp.size())
+            auto list = _serv->get_client_sockets();
+            for(auto client:list)
             {
-                //ui->terminal->addItem("new connection " + temp[temp.size() - 1].first + ":" + QString::number(temp[temp.size() - 1].second));
+                slot_send_data({client});
             }
-
         });
 
         connect(_serv.get(),&BaseServer::socket_error,this,[&](QTcpSocket *socket, QAbstractSocket::SocketError state)

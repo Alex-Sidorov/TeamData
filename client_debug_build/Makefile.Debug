@@ -348,6 +348,13 @@ debug/moc_mainwindow.cpp: ../src/Client/mainwindow.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QDateTime \
 		../../programms/5.12.1/mingw73_64/include/QtCore/qdatetime.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QMutex \
+		../src/Client/workerremoteclient.h \
+		../src/Client/BaseServer/base_server.h \
+		../../programms/5.12.1/mingw73_64/include/QtNetwork/QTcpServer \
+		../../programms/5.12.1/mingw73_64/include/QtNetwork/qtcpserver.h \
+		../../programms/5.12.1/mingw73_64/include/QtNetwork/qhostaddress.h \
+		../src/Client/taskrecvfile.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/QFile \
 		debug/moc_predefs.h \
 		../../programms/5.12.1/mingw73_64/bin/moc.exe
 	D:\programms\5.12.1\mingw73_64\bin\moc.exe $(DEFINES) --include D:/TeamData/client_debug_build/debug/moc_predefs.h -ID:/programms/5.12.1/mingw73_64/mkspecs/win32-g++ -ID:/TeamData/src/Client -ID:/programms/5.12.1/mingw73_64/include -ID:/programms/5.12.1/mingw73_64/include/QtWidgets -ID:/programms/5.12.1/mingw73_64/include/QtGui -ID:/programms/5.12.1/mingw73_64/include/QtANGLE -ID:/programms/5.12.1/mingw73_64/include/QtNetwork -ID:/programms/5.12.1/mingw73_64/include/QtSql -ID:/programms/5.12.1/mingw73_64/include/QtCore -I. -ID:/programms/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++ -ID:/programms/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32 -ID:/programms/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward -ID:/programms/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include -ID:/programms/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed -ID:/programms/Tools/mingw730_64/x86_64-w64-mingw32/include ..\src\Client\mainwindow.h -o debug\moc_mainwindow.cpp
@@ -1018,26 +1025,27 @@ debug/moc_workerremoteclient.cpp: ../src/Client/workerremoteclient.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QVector \
 		../../programms/5.12.1/mingw73_64/include/QtCore/qvector.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/qpoint.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/QMap \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qmap.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qdebug.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qtextstream.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qiodevice.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qlocale.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qvariant.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qset.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qcontiguouscache.h \
 		../src/Client/BaseServer/base_server.h \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/QTcpServer \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/qtcpserver.h \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/qtnetworkglobal.h \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/qtnetwork-config.h \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/qabstractsocket.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qiodevice.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qdebug.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qmap.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qtextstream.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qlocale.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qvariant.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qset.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qcontiguouscache.h \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/qhostaddress.h \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/QTcpSocket \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/qtcpsocket.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QMutex \
-		../../programms/5.12.1/mingw73_64/include/QtCore/QMap \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QPair \
+		../src/Client/BaseClient/base_client.h \
 		../src/Client/workerclientdatabase.h \
 		../../programms/5.12.1/mingw73_64/include/QtSql/QSqlDatabase \
 		../../programms/5.12.1/mingw73_64/include/QtSql/qsqldatabase.h \
@@ -1051,6 +1059,10 @@ debug/moc_workerremoteclient.cpp: ../src/Client/workerremoteclient.h \
 		../src/Client/ActiveObject/proxyactiveobject.h \
 		../src/Client/ActiveObject/scheduler.h \
 		../src/Client/ActiveObject/abstracttask.h \
+		../src/Client/taskrecvfile.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/QFile \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qfile.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qfiledevice.h \
 		debug/moc_predefs.h \
 		../../programms/5.12.1/mingw73_64/bin/moc.exe
 	D:\programms\5.12.1\mingw73_64\bin\moc.exe $(DEFINES) --include D:/TeamData/client_debug_build/debug/moc_predefs.h -ID:/programms/5.12.1/mingw73_64/mkspecs/win32-g++ -ID:/TeamData/src/Client -ID:/programms/5.12.1/mingw73_64/include -ID:/programms/5.12.1/mingw73_64/include/QtWidgets -ID:/programms/5.12.1/mingw73_64/include/QtGui -ID:/programms/5.12.1/mingw73_64/include/QtANGLE -ID:/programms/5.12.1/mingw73_64/include/QtNetwork -ID:/programms/5.12.1/mingw73_64/include/QtSql -ID:/programms/5.12.1/mingw73_64/include/QtCore -I. -ID:/programms/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++ -ID:/programms/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32 -ID:/programms/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward -ID:/programms/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include -ID:/programms/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed -ID:/programms/Tools/mingw730_64/x86_64-w64-mingw32/include ..\src\Client\workerremoteclient.h -o debug\moc_workerremoteclient.cpp
@@ -1399,6 +1411,13 @@ debug/main.o: ../src/Client/main.cpp ../src/Client/mainwindow.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QDateTime \
 		../../programms/5.12.1/mingw73_64/include/QtCore/qdatetime.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QMutex \
+		../src/Client/workerremoteclient.h \
+		../src/Client/BaseServer/base_server.h \
+		../../programms/5.12.1/mingw73_64/include/QtNetwork/QTcpServer \
+		../../programms/5.12.1/mingw73_64/include/QtNetwork/qtcpserver.h \
+		../../programms/5.12.1/mingw73_64/include/QtNetwork/qhostaddress.h \
+		../src/Client/taskrecvfile.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/QFile \
 		../../programms/5.12.1/mingw73_64/include/QtWidgets/QApplication \
 		../../programms/5.12.1/mingw73_64/include/QtWidgets/qapplication.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/qcoreapplication.h \
@@ -1406,8 +1425,7 @@ debug/main.o: ../src/Client/main.cpp ../src/Client/mainwindow.h \
 		../../programms/5.12.1/mingw73_64/include/QtWidgets/qdesktopwidget.h \
 		../../programms/5.12.1/mingw73_64/include/QtGui/qguiapplication.h \
 		../../programms/5.12.1/mingw73_64/include/QtGui/qinputmethod.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/QDebug \
-		../../programms/5.12.1/mingw73_64/include/QtCore/QFile
+		../../programms/5.12.1/mingw73_64/include/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\main.o ..\src\Client\main.cpp
 
 debug/mainwindow.o: ../src/Client/mainwindow.cpp ../src/Client/mainwindow.h \
@@ -1569,6 +1587,13 @@ debug/mainwindow.o: ../src/Client/mainwindow.cpp ../src/Client/mainwindow.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QDateTime \
 		../../programms/5.12.1/mingw73_64/include/QtCore/qdatetime.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QMutex \
+		../src/Client/workerremoteclient.h \
+		../src/Client/BaseServer/base_server.h \
+		../../programms/5.12.1/mingw73_64/include/QtNetwork/QTcpServer \
+		../../programms/5.12.1/mingw73_64/include/QtNetwork/qtcpserver.h \
+		../../programms/5.12.1/mingw73_64/include/QtNetwork/qhostaddress.h \
+		../src/Client/taskrecvfile.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/QFile \
 		ui_mainwindow.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QVariant \
 		../../programms/5.12.1/mingw73_64/include/QtWidgets/QApplication \
@@ -1625,7 +1650,10 @@ debug/mainwindow.o: ../src/Client/mainwindow.cpp ../src/Client/mainwindow.h \
 		../../programms/5.12.1/mingw73_64/include/QtWidgets/QTreeWidgetItem \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QDataStream \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QThread \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qthread.h
+		../../programms/5.12.1/mingw73_64/include/QtCore/qthread.h \
+		../../programms/5.12.1/mingw73_64/include/QtWidgets/QMessageBox \
+		../../programms/5.12.1/mingw73_64/include/QtWidgets/qmessagebox.h \
+		../../programms/5.12.1/mingw73_64/include/QtGui/QIcon
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug\mainwindow.o ..\src\Client\mainwindow.cpp
 
 debug/abstracttask.o: ../src/Client/ActiveObject/abstracttask.cpp ../src/Client/ActiveObject/abstracttask.h
@@ -2554,26 +2582,27 @@ debug/workerremoteclient.o: ../src/Client/workerremoteclient.cpp ../src/Client/w
 		../../programms/5.12.1/mingw73_64/include/QtCore/QVector \
 		../../programms/5.12.1/mingw73_64/include/QtCore/qvector.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/qpoint.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/QMap \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qmap.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qdebug.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qtextstream.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qiodevice.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qlocale.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qvariant.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qset.h \
+		../../programms/5.12.1/mingw73_64/include/QtCore/qcontiguouscache.h \
 		../src/Client/BaseServer/base_server.h \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/QTcpServer \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/qtcpserver.h \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/qtnetworkglobal.h \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/qtnetwork-config.h \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/qabstractsocket.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qiodevice.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qdebug.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qmap.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qtextstream.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qlocale.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qvariant.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qset.h \
-		../../programms/5.12.1/mingw73_64/include/QtCore/qcontiguouscache.h \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/qhostaddress.h \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/QTcpSocket \
 		../../programms/5.12.1/mingw73_64/include/QtNetwork/qtcpsocket.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QMutex \
-		../../programms/5.12.1/mingw73_64/include/QtCore/QMap \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QPair \
+		../src/Client/BaseClient/base_client.h \
 		../src/Client/workerclientdatabase.h \
 		../../programms/5.12.1/mingw73_64/include/QtSql/QSqlDatabase \
 		../../programms/5.12.1/mingw73_64/include/QtSql/qsqldatabase.h \
@@ -2591,7 +2620,6 @@ debug/workerremoteclient.o: ../src/Client/workerremoteclient.cpp ../src/Client/w
 		../../programms/5.12.1/mingw73_64/include/QtCore/QFile \
 		../../programms/5.12.1/mingw73_64/include/QtCore/qfile.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/qfiledevice.h \
-		../src/Client/BaseClient/base_client.h \
 		../src/Client/tasksendfile.h \
 		../../programms/5.12.1/mingw73_64/include/QtCore/QFileInfo \
 		../../programms/5.12.1/mingw73_64/include/QtCore/qfileinfo.h

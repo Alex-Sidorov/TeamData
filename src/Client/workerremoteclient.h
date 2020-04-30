@@ -21,11 +21,19 @@ class WorkerRemoteClient : public QObject
     using SERVER = DataTransfer::BaseServer;
     using PROXY = ActiveObject::ProxyActiveObject;
 
+signals:
+    void error_name_file();
+    void error_open_file();
+    void error_connect_to_host();
+    void error_didnt_found_file();
+    void connect_to_host();
+    void downloaded_file();
+
 public:
     WorkerRemoteClient(PROXY *proxy);
     virtual ~WorkerRemoteClient();
 
-    void run_serv();
+    bool run_serv();
     void stop_serv();
 
     bool is_serv_run()const;

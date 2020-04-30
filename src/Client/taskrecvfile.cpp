@@ -35,7 +35,7 @@ void TaskRecvFile::run_process()
     if(_new_data.size())
     {
         _info->_file->write(_new_data);
-        _info->_size -= _new_data.size() + sizeof (_info->_size);
+        _info->_size -= _new_data.size();
     }
 
     if(_info->_size > 0)
@@ -44,11 +44,10 @@ void TaskRecvFile::run_process()
         return;
     }
 
-    emit recved_data();
-
     _info->_file->close();
     delete _info->_file;
 
+    emit recved_data();
     delete this;
 
 }
