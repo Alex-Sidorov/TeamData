@@ -38,9 +38,6 @@ public:
     void change_dir(QString &path);
     void change_dir(QString &&path);
 
-    void change_name(QString &name);
-    void change_name(QString &&name);
-
     void change_client(CLIENT *client);
 
     void scan_dir();
@@ -48,6 +45,8 @@ public:
     void parse_recved_data(QByteArray &data);
 
     static void remove_root_path(QString &path, QStringList &data);
+
+    void load_data_from_database();
 
 signals:
     void upload_tree(MetaDataDir data, QString name);
@@ -75,11 +74,12 @@ private:
     MetaDataDir _present_meta_data;
 
     QFileSystemWatcher _watcher;
-    TaskRecvMsg::WorkInfo info_recv_data;
+    TaskRecvMsg::WorkInfo _info_recv_data;
 
     QMutex _mutex;
 
     void add_dirs_path(QStringList &dirs);
+    void remove_watcher_path();
 };
 
 #endif // WORKERMETADATA_H

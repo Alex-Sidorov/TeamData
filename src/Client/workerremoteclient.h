@@ -40,7 +40,7 @@ public:
 
     QString parse_request(QByteArray &msg);
 
-    void download_file(const QString &src_file, const QString &dst_file, const QString &addr, quint16 port);
+    void download_file(const QString &src_file, const QString &dst_file, const QString &user);
 
 public slots:
     void slot_ready_read(QTcpSocket *socket);

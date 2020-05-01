@@ -6,6 +6,7 @@
 #include <QTreeWidget>
 #include <QMap>
 #include <QPair>
+#include <QColor>
 
 #include <tasksendmsg.h>
 #include <taskrecvmsg.h>
@@ -36,6 +37,7 @@ private slots:
     void on_select_path_button_clicked();
     void slot_removed_dirs(QStringList dirs);
     void slot_load_tree(WorkerMetaData::MetaDataDir data, QString name);
+    void slot_sub_menu(const QPoint &pos);
 
     void on_users_doubleClicked(const QModelIndex &index);
 
@@ -54,7 +56,7 @@ private slots:
     void on_work_serv_clicked();
 
 
-    void on_tree_dir_itemDoubleClicked(QTreeWidgetItem *item, int column);
+    void slot_download_file(QTreeWidgetItem *item);
 
 private:
     Ui::MainWindow *ui;
@@ -74,6 +76,8 @@ private:
     void add_dirs(QTreeWidget *tree, QStringList &dirs);
     void add_files(QTreeWidget *tree, WorkerMetaData::FileMetaData &files);
 
+    static const QColor TASK_COLOR;
+    static const QColor DEFAULT_COLOR;
 
 };
 

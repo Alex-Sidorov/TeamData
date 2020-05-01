@@ -18,7 +18,6 @@
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSpinBox>
@@ -74,7 +73,6 @@ public:
     QHBoxLayout *horizontalLayout_4;
     QLineEdit *path_line;
     QPushButton *select_path_button;
-    QMenuBar *menuBar;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
 
@@ -105,9 +103,10 @@ public:
         main_page = new QWidget();
         main_page->setObjectName(QString::fromUtf8("main_page"));
         horizontalLayout_6 = new QHBoxLayout(main_page);
-        horizontalLayout_6->setSpacing(6);
+        horizontalLayout_6->setSpacing(0);
         horizontalLayout_6->setContentsMargins(11, 11, 11, 11);
         horizontalLayout_6->setObjectName(QString::fromUtf8("horizontalLayout_6"));
+        horizontalLayout_6->setContentsMargins(0, 0, 0, 0);
         tree_dir = new QTreeWidget(main_page);
         tree_dir->setObjectName(QString::fromUtf8("tree_dir"));
         tree_dir->header()->setCascadingSectionResizes(true);
@@ -282,10 +281,6 @@ public:
         verticalLayout->addWidget(tabWidget);
 
         MainWindow->setCentralWidget(centralWidget);
-        menuBar = new QMenuBar(MainWindow);
-        menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 748, 21));
-        MainWindow->setMenuBar(menuBar);
         mainToolBar = new QToolBar(MainWindow);
         mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
         MainWindow->addToolBar(Qt::TopToolBarArea, mainToolBar);
@@ -304,7 +299,7 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", nullptr));
+        MainWindow->setWindowTitle(QApplication::translate("MainWindow", "TeamData", nullptr));
         QTreeWidgetItem *___qtreewidgetitem = tree_dir->headerItem();
         ___qtreewidgetitem->setText(3, QApplication::translate("MainWindow", "\320\224\320\260\321\202\320\260 \321\201\320\276\320\267\320\264\320\260\320\275\320\270\321\217", nullptr));
         ___qtreewidgetitem->setText(2, QApplication::translate("MainWindow", "\320\224\320\260\321\202\320\260 \320\277\320\276\321\201\320\273\320\265\320\264\320\275\320\265\320\271 \320\274\320\276\320\264\320\270\321\204\320\270\320\272\320\260\321\206\320\270\320\270", nullptr));

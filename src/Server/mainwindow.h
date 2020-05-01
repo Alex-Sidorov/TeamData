@@ -44,6 +44,8 @@ private:
 
     QMap<QTcpSocket*,TaskRecvMsg::WorkInfo> info_recv_data;
 
+    void send_msg(QTcpSocket *socket, const QByteArray &data);
+
 
 };
 

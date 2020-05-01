@@ -5,10 +5,8 @@
 
 bool WorkerRemoteClient::run_serv()
 {
-    _settings.read_settings();
-
-    auto addr = _settings.get_self_addr();
-    auto port = _settings.get_self_port();
+    auto addr = _settings.read_self_addr();
+    auto port = _settings.read_self_port();
 
     _serv.reset(new SERVER(addr, port));
 
@@ -32,7 +30,7 @@ void WorkerRemoteClient::slot_ready_read(QTcpSocket *socket)
     QByteArray data;
     _serv->read_data(socket, data);
 
-    auto path = _settings.get_path() + '/' + data;
+    auto path = _settings.read_path() + '/' + data;
     path.replace('\\','/');
 
     QFileInfo info(path);
@@ -59,13 +57,17 @@ void WorkerRemoteClient::slot_ready_read(QTcpSocket *socket)
     }
 }
 
-void WorkerRemoteClient::download_file(const QString &src_file, const QString &dst_file, const QString &addr, quint16 port)
+void WorkerRemoteClient::download_file(const QString &src_file, const QString &dst_file, const QString &user)
 {
     if(src_file.isEmpty() || dst_file.isEmpty())
     {
         emit error_name_file();
         return;
     }
+
+    auto addr_info = _settings.get_addr_info_user(user);
+    auto &addr = addr_info.first;
+    auto &port = addr_info.second;
 
     auto client = new CLIENT(addr,port);
     auto work_info = &_info_for_recv[client];

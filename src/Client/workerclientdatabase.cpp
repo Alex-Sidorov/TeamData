@@ -22,9 +22,9 @@ const char* WorkerClientDataBase::INSERT_FILES_REQUEST = "INSERT INTO files (nam
 const char* WorkerClientDataBase::DELETE_FILES_REQUEST = "DELETE FROM files WHERE name = :name;";
 const char* WorkerClientDataBase::SELECT_FILES_REQUEST = "SELECT path,created_data,last_modified_data,size FROM files WHERE name = :name;";
 
-const char* WorkerClientDataBase::INSERT_TASK_REQUEST = "INSERT INTO tasks (name,file) VALUES (:name,:file);";
+const char* WorkerClientDataBase::INSERT_TASK_REQUEST = "INSERT INTO tasks (name,file,local_file) VALUES (:name,:file,:local_file);";
 const char* WorkerClientDataBase::DELETE_TASK_REQUEST = "DELETE FROM tasks WHERE name = :name;";
-const char* WorkerClientDataBase::SELECT_ANY_TASK_REQUEST = "SELECT file FROM tasks  WHERE name = :name;";
+const char* WorkerClientDataBase::SELECT_ANY_TASK_REQUEST = "SELECT file,local_file FROM tasks  WHERE name = :name;";
 const char* WorkerClientDataBase::SELECT_TASK_REQUEST = "SELECT * FROM tasks;";
 
 QStringList WorkerClientDataBase::get_all_user()const
@@ -199,27 +199,29 @@ WorkerClientDataBase::FileMetaData WorkerClientDataBase::get_data_files_user(con
     {
         while(query.next())
         {
+            auto path = query.value("path").toString();
             quint64 size = static_cast<quint64>(query.value("size").toString().toDouble());
             auto created_data = query.value("created_data").toString();
             auto last_modified_data = query.value("last_modified_data").toString();
             FileCharacteristics data = std::make_tuple(size,last_modified_data,created_data);
-            res.insert(user,data);
+            res.insert(path,data);
         }
     }
     return res;
 }
 
-bool WorkerClientDataBase::insert_task_user(const QString &user,const QStringList &files)
+bool WorkerClientDataBase::insert_task_user(const QString &user, const QStringList &files, const QStringList &local_files)
 {
     if(_base.isOpen() && is_user(user))
     {
         _base.transaction();
         QSqlQuery query;
         query.prepare(INSERT_TASK_REQUEST);
-        for(auto &file : files)
+        for(int index = 0; index < files.size(); index++)
         {
             query.bindValue(":name",user);
-            query.bindValue(":file",file);
+            query.bindValue(":file",files[index]);
+            query.bindValue(":local_file",local_files[index]);
             if(!query.exec())
             {
                 _base.rollback();
@@ -253,7 +255,8 @@ bool WorkerClientDataBase::delete_task_user(const QString &user)
 
 WorkerClientDataBase::Tasks WorkerClientDataBase::get_task_user(const QString &user)const
 {
-    Tasks res;
+    QStringList files;
+    QStringList local_files;
     QSqlQuery query;
     query.prepare(SELECT_ANY_TASK_REQUEST);
     query.bindValue(":name",user);
@@ -261,15 +264,16 @@ WorkerClientDataBase::Tasks WorkerClientDataBase::get_task_user(const QString &u
     {
         while(query.next())
         {
-            res += query.value("file").toString();
+            files += query.value("file").toString();
+            local_files += query.value("local_file").toString();
         }
     }
-    return res;
+    return qMakePair(files,local_files);
 }
 
-QMap<QString,QStringList> WorkerClientDataBase::get_all_task_user()const
+QMap<QString,WorkerClientDataBase::Tasks> WorkerClientDataBase::get_all_task_user()const
 {
-    QMap<QString,QStringList> res;
+    QMap<QString,Tasks> res;
     QSqlQuery query;
     query.prepare(SELECT_TASK_REQUEST);
     if(_base.isOpen() && query.exec())
@@ -277,10 +281,41 @@ QMap<QString,QStringList> WorkerClientDataBase::get_all_task_user()const
         while(query.next())
         {
             auto user = query.value("name").toString();
-            res[user].append(query.value("file").toString());
+            res[user].first.append(query.value("file").toString());
+            res[user].second.append(query.value("local_file").toString());
         }
     }
     return res;
+}
+
+bool WorkerClientDataBase::is_user_info(const QString &user)
+{
+
+}
+
+bool WorkerClientDataBase::insert_addr_info_user(const QString &user,const QString &addr, quint16 port)
+{
+
+}
+
+bool WorkerClientDataBase::change_addr_user(const QString &user,const QString &addr)
+{
+
+}
+
+bool WorkerClientDataBase::change_port_user(const QString &user,quint16 port)
+{
+
+}
+
+bool WorkerClientDataBase::delete_addr_info_user(const QString &user)
+{
+
+}
+
+QPair<QString,quint16> WorkerClientDataBase::get_addr_info_user(const QString &user)
+{
+
 }
 
 WorkerClientDataBase::WorkerClientDataBase():

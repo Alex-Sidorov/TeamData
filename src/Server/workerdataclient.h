@@ -31,7 +31,11 @@ public:
 
     bool remove_client(QTcpSocket *client);
 
-    void create_sended_data(QByteArray &data, const QList<QTcpSocket*> &source);
+    void fill_transfers_data(QByteArray &data, const QList<QTcpSocket*> &source);
+
+    void get_full_meta_data(QByteArray &data, const QStringList& filter = {});
+
+    void create_sended_data(QByteArray &data, QString &name, MetaDataDir &meta_data);
 
 private:
     QMap<QTcpSocket*,std::tuple<MetaDataDir,TransferData>> _clients_data;

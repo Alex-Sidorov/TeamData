@@ -9,6 +9,10 @@
 #include <QThread>
 #include <QMessageBox>
 #include <QIcon>
+#include <QMenu>
+
+const QColor MainWindow::TASK_COLOR = qRgb(65,105,225);
+const QColor MainWindow::DEFAULT_COLOR = qRgb(255,255,255);
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -52,12 +56,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     auto name = _settings.get_name();
 
-    ui->name_line->setText(name);
+
     _remote_dir.insert(name,qMakePair(0,ui->tree_dir));
     ui->users->addItem(name + ("(user)"));
 
-    auto path = _settings.get_path();
-    ui->path_line->setText(path);
+    auto path = _settings.get_path();    
 
     ui->self_addr->setText(_settings.get_self_addr());
     ui->serv_addr->setText(_settings.get_serv_addr());
@@ -65,7 +68,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->serv_port->setValue(_settings.get_serv_port());
     ui->self_port->setValue(_settings.get_self_port());
 
+    worker_meta_data.load_data_from_database();
     worker_meta_data.scan_dir();
+
+    ui->name_line->setText(name);
+    ui->path_line->setText(path);
 }
 
 MainWindow::~MainWindow()
@@ -77,7 +84,6 @@ MainWindow::~MainWindow()
             delete widget.second;
         }
     }
-    _client->disconnect_to_host();
     delete ui;
 }
 
@@ -87,7 +93,9 @@ void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data, QString name)
     {
         ui->users->addItem(name);
         auto new_tree = new QTreeWidget;
-        connect(new_tree,&QTreeWidget::itemDoubleClicked, this, &MainWindow::on_tree_dir_itemDoubleClicked);
+
+        new_tree->setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(new_tree,&QTreeWidget::customContextMenuRequested,this, &MainWindow::slot_sub_menu);
 
         new_tree->setHeaderItem(ui->tree_dir->headerItem()->clone());
         int index = ui->stack_widget->addWidget(new_tree);
@@ -100,6 +108,43 @@ void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data, QString name)
     add_files(tree, data.second);
 }
 
+void MainWindow::slot_sub_menu(const QPoint &pos)
+{
+    auto tree = static_cast<QTreeWidget*>(ui->stack_widget->currentWidget());
+    auto item = tree->itemAt(pos);
+    if(item && !item->text(1).isEmpty())
+    {
+        QMenu sub_menu;
+        QAction *download = sub_menu.addAction("Скачать файл");
+
+        QAction *tasks_option = nullptr;
+        if(item->backgroundColor(0) != TASK_COLOR)
+        {
+            tasks_option = sub_menu.addAction("Добавить задачу");
+            connect(tasks_option,&QAction::triggered,this,[item]
+            {
+                item->setBackgroundColor(0,TASK_COLOR);
+                qDebug() << "task";
+            });
+        }
+        else
+        {
+            tasks_option = sub_menu.addAction("Снять задачу");
+            connect(tasks_option,&QAction::triggered,this,[item]
+            {
+                item->setBackgroundColor(0,DEFAULT_COLOR);
+                qDebug() << "task";
+            });
+        }
+
+        connect(download,&QAction::triggered,this,[this, item]
+        {
+            slot_download_file(item);
+        });
+
+        sub_menu.exec(tree->mapToGlobal(pos));
+    }
+}
 
 void MainWindow::add_dirs(QTreeWidget *tree, QStringList &dirs)
 {
@@ -261,20 +306,13 @@ void MainWindow::on_pushButton_clicked()
             ui->serv_addr->setEnabled(false);
             ui->serv_port->setEnabled(false);
             worker_meta_data.scan_dir();
-            //ui->terminal->addItem("connected to " + ui->serv_addr->text() + ":" + ui->serv_port->text());
         });
         connect(_client.get(),&BaseClient::disconnected_socket,this,[&]
         {
             ui->statusBar->clearMessage();
             ui->serv_addr->setEnabled(true);
             ui->serv_port->setEnabled(true);
-           // ui->terminal->addItem("disconnected from " + ui->serv_addr->text() + ":" + ui->serv_port->text());
         });
-        connect(_client.get(),&BaseClient::socket_error,this,[&](QAbstractSocket::SocketError state)
-        {
-            //ui->terminal->addItem("Error " + QString::number(state));
-        });
-
         worker_meta_data.change_client(_client.data());
     }
     if(_client->is_connected())
@@ -296,7 +334,6 @@ void MainWindow::on_select_path_button_clicked()
     {
         ui->path_line->setText(dir);
         on_path_line_editingFinished();
-        worker_meta_data.change_dir(dir);
     }
 }
 
@@ -329,7 +366,6 @@ void MainWindow::on_name_line_editingFinished()
     _remote_dir.insert(name,data);
 
     _settings.set_name(name);
-    worker_meta_data.change_name(name);
     name += "(user)";
     ui->users->item(0)->setText(name);
 }
@@ -357,7 +393,7 @@ void MainWindow::on_self_port_valueChanged(int value)
 void MainWindow::on_path_line_editingFinished()
 {
     _settings.set_path(ui->path_line->text());
-    worker_meta_data.change_dir(ui->path_line->text());
+    worker_meta_data.scan_dir();
 }
 
 void MainWindow::on_work_serv_clicked()
@@ -378,9 +414,10 @@ void MainWindow::on_work_serv_clicked()
     }
 }
 
-void MainWindow::on_tree_dir_itemDoubleClicked(QTreeWidgetItem *item, int column)
+void MainWindow::slot_download_file(QTreeWidgetItem *item)
 {
-    if(item && ui->stack_widget->currentIndex())
+    auto index = ui->stack_widget->currentIndex();
+    if(item && index)
     {
         if(!item->text(1).isEmpty())
         {
@@ -401,7 +438,8 @@ void MainWindow::on_tree_dir_itemDoubleClicked(QTreeWidgetItem *item, int column
             auto dst = QFileDialog::getSaveFileName(nullptr,"Выберите место сохранения файла",file_name);
             if(!dst.isEmpty())
             {
-                _worker_remote_client.download_file(path,dst,"192.168.100.4",80);
+                auto name = ui->users->item(index)->text();
+                _worker_remote_client.download_file(path,dst,name);
             }
         }
 

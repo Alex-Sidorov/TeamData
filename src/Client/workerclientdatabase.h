@@ -12,7 +12,7 @@ public:
     using FileCharacteristics = std::tuple<quint64,QString,QString>;
     using FileMetaData = QMap<QString,FileCharacteristics>;
     using DirsPath = QStringList;
-    using Tasks = QStringList;
+    using Tasks = QPair<QStringList,QStringList>;
     using UsersTasks = QMap<QString,Tasks>;
 
 
@@ -24,6 +24,13 @@ public:
     bool is_user(const QString &user);
     QStringList get_all_user()const;
 
+    bool insert_addr_info_user(const QString &user,const QString &addr, quint16 port);
+    bool is_user_info(const QString &user);
+    bool change_addr_user(const QString &user,const QString &addr);
+    bool change_port_user(const QString &user,quint16 port);
+    bool delete_addr_info_user(const QString &user);
+    QPair<QString,quint16> get_addr_info_user(const QString &user);
+
     bool insert_data_dir_user(const QString &user,const QStringList &dirs);
     bool delete_data_dir_user(const QString &user);
     DirsPath get_data_dir_user(const QString &user);
@@ -32,7 +39,7 @@ public:
     bool delete_data_files_user(const QString &user);
     FileMetaData get_data_files_user(const QString &user);
 
-    bool insert_task_user(const QString &user,const QStringList &files);
+    bool insert_task_user(const QString &user,const QStringList &files, const QStringList &local_file);
     bool delete_task_user(const QString &user);
     Tasks get_task_user(const QString &user)const;
     UsersTasks get_all_task_user()const;

@@ -194,11 +194,12 @@ WorkerServerDataBase::FileMetaData WorkerServerDataBase::get_data_files_user(con
     {
         while(query.next())
         {
+            auto path = query.value("path").toString();
             quint64 size = static_cast<quint64>(query.value("size").toString().toDouble());
             auto created_data = query.value("created_data").toString();
             auto last_modified_data = query.value("last_modified_data").toString();
             FileCharacteristics data = std::make_tuple(size,last_modified_data,created_data);
-            res.insert(user,data);
+            res.insert(path,data);
         }
     }
     return res;

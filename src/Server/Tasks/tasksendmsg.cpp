@@ -31,7 +31,7 @@ void TaskSendMsg::run_process()
     }
 }
 
-TaskSendMsg::TaskSendMsg(QByteArray &msg, ProxyActiveObject *proxy, uint32_t MTU):
+TaskSendMsg::TaskSendMsg(const QByteArray &msg, ProxyActiveObject *proxy, uint32_t MTU):
     _msg(msg), _proxy(proxy), _MTU(MTU), _is_sended(false)
 {
 }

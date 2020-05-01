@@ -20,7 +20,7 @@ public:
 
     void run_process() override;
 
-    TaskSendMsg(QByteArray &msg, ProxyActiveObject *proxy, uint32_t MTU = 1500);
+    TaskSendMsg(const QByteArray &msg, ProxyActiveObject *proxy, uint32_t MTU = 1500);
     virtual ~TaskSendMsg() override;
 
 private:

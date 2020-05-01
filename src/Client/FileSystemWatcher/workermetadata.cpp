@@ -15,6 +15,10 @@ void WorkerMetaData::scan_dir()
 {
     if(!_path.isEmpty())
     {
+        remove_watcher_path();
+        _path = _settings.read_path();
+        _name = _settings.read_name();
+
         auto dirs = fsi::get_terminal_directories(_path);
         auto present_dirs = dirs;
         remove_root_path(_path,present_dirs);
@@ -68,12 +72,7 @@ void WorkerMetaData::change_dir(QString &path)
 {
     if(!path.isEmpty())
     {
-        _watcher.removePath(_path);
-        auto files = _watcher.files();
-        for(auto &file : files)
-        {
-            _watcher.removePath(file);
-        }
+        remove_watcher_path();
         _path = path;
         scan_dir();
     }
@@ -83,14 +82,19 @@ void WorkerMetaData::change_dir(QString &&path)
 {
     if(!path.isEmpty())
     {
-        _watcher.removePath(_path);
-        auto files = _watcher.files();
-        for(auto &file : files)
-        {
-            _watcher.removePath(file);
-        }
+        remove_watcher_path();
         _path = path;
         scan_dir();
+    }
+}
+
+void WorkerMetaData::remove_watcher_path()
+{
+    _watcher.removePath(_path);
+    auto files = _watcher.files();
+    for(auto &file : files)
+    {
+        _watcher.removePath(file);
     }
 }
 
@@ -109,8 +113,9 @@ void WorkerMetaData::create_sended_data(QByteArray &data)
 
     QMutexLocker lock(&_mutex);
 
-    stream << _settings.get_self_addr()
-           << _settings.get_self_port()
+    _name = _settings.read_name();
+    stream << _settings.read_self_addr()
+           << _settings.read_self_port()
            << _name
            << _present_meta_data.first
            << static_cast<size_t>(_present_meta_data.second.size());
@@ -126,6 +131,8 @@ void WorkerMetaData::create_sended_data(QByteArray &data)
 
 void WorkerMetaData::parse_recved_data(QByteArray &data)
 {
+    _name = _settings.read_name();
+
     QDataStream stream(&data,QIODevice::ReadOnly);
 
     size_t count_user_data = 0;
@@ -144,24 +151,36 @@ void WorkerMetaData::parse_recved_data(QByteArray &data)
         quint16 port;
         MetaDataDir meta_data;
 
-        sub_stream >> addr >> port >> name >> meta_data.first >> count_files;
+        sub_stream >> addr >> port >> name;
+        if(name == _name)
+        {
+            continue;
+        }
+        sub_stream >> meta_data.first >> count_files;
         for(size_t j = 0; j < count_files; j++)
         {
             QString name_file;
             FileCharacteristics file_info;
-            sub_stream >> name_file >> std::get<0>(file_info)
-                                >> std::get<2>(file_info)
-                                >> std::get<1>(file_info);
+            sub_stream >> name_file
+                       >> std::get<0>(file_info)
+                       >> std::get<2>(file_info)
+                       >> std::get<1>(file_info);
             meta_data.second.insert(name_file,file_info);
         }
         _remote_meta_data[name] = meta_data;
         _users[name] = qMakePair(addr,port);
+
+        _settings.add_user(name);
+        _settings.change_data_dir_user(name,meta_data.first);
+        _settings.change_data_files_user(name,meta_data.second);
+        _settings.insert_addr_info_user(name,addr,port);
         emit upload_tree(meta_data, name);
     }
 }
 
 void WorkerMetaData::files_changed(const QString &path)
 {
+    _name = _settings.read_name();
     if(_proxy)
     {
         auto task = new TaskFileChanged(&_meta_data, &_present_meta_data, path, _path, &_mutex);
@@ -182,6 +201,7 @@ void WorkerMetaData::files_changed(const QString &path)
 
 void WorkerMetaData::dir_changed(const QString &path)
 {
+    _name = _settings.read_name();
     if(_proxy)
     {
         auto task = new TaskDirChanged(&_meta_data, &_present_meta_data, path, _path, &_watcher, &_mutex);
@@ -214,40 +234,22 @@ void WorkerMetaData::change_client(CLIENT *client)
            QByteArray data;
            _client->read_data(data);
 
-           auto task = new TaskRecvMsg(&info_recv_data,data);
+           auto task = new TaskRecvMsg(&_info_recv_data,data);
            connect(task,&TaskRecvMsg::recved_data,_client,[this]()
            {
-               parse_recved_data(info_recv_data._msg);
-               info_recv_data.clear();
+               parse_recved_data(_info_recv_data._msg);
+               _info_recv_data.clear();
            }, Qt::ConnectionType::DirectConnection);
            _proxy->push(task);
        });
    }
 }
 
-void WorkerMetaData::change_name(QString &name)
-{
-    if(!name.isEmpty())
-    {
-        _name = name;
-    }
-}
-
-void WorkerMetaData::change_name(QString &&name)
-{
-    if(!name.isEmpty())
-    {
-        _name = name;
-    }
-}
-
-
 WorkerMetaData::WorkerMetaData(PROXY *proxy, CLIENT *client):
     _proxy(proxy)
 {
-    _settings.read_settings();
-    _path = _settings.get_path();
-    _name = _settings.get_name();
+    _path = _settings.read_path();
+    _name = _settings.read_name();
 
     connect(&_watcher,&QFileSystemWatcher::fileChanged,this,&WorkerMetaData::files_changed);
     connect(&_watcher,&QFileSystemWatcher::directoryChanged,this,&WorkerMetaData::dir_changed);
@@ -268,6 +270,18 @@ WorkerMetaData::WorkerMetaData(PROXY *proxy, CLIENT *client):
     });
 
     change_client(client);
+}
+
+void WorkerMetaData::load_data_from_database()
+{
+    auto users = _settings.get_users();
+    for(auto &user : users)
+    {
+        auto dirs = _settings.get_data_dir_user(user);
+        auto files = _settings.get_data_files_user(user);
+        MetaDataDir data = qMakePair(dirs,files);
+        upload_tree(data,user);
+    }
 }
 
 WorkerMetaData::~WorkerMetaData()

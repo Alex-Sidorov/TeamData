@@ -136,6 +136,54 @@ QString Settings::get_name()const
     return _name;
 }
 
+QString Settings::read_self_addr()const
+{
+    auto key = QString(NAME_GROUP_CLIENT_SETTINGS) +
+                    '/' +
+                    SETTINGS_VALUE_ADDRESS_CLIENT;
+    return _settings.value(key,"").toString();
+}
+
+quint16 Settings::read_self_port()const
+{
+    auto key = QString(NAME_GROUP_CLIENT_SETTINGS) +
+                '/' +
+                SETTINGS_VALUE_PORT_CLIENT;
+    return  static_cast<quint16>(_settings.value(key,0).toInt());
+}
+
+QString Settings::read_serv_addr()const
+{
+    auto key = QString(NAME_GROUP_SERVER_SETTINGS) +
+                    '/' +
+                    SETTINGS_VALUE_ADDRESS_SERVER;
+    return _settings.value(key,"").toString();
+}
+
+quint16 Settings::read_serv_port()const
+{
+    auto key = QString(NAME_GROUP_SERVER_SETTINGS) +
+                '/' +
+                SETTINGS_VALUE_PORT_SERVER;
+    return static_cast<quint16>(_settings.value(key,0).toInt());
+}
+
+QString Settings::read_path()const
+{
+    auto key = QString(NAME_GROUP_CLIENT_SETTINGS) +
+                    '/' +
+                    SETTINGS_VALUE_WORKDIR;
+    return _settings.value(key,"").toString();
+}
+
+QString Settings::read_name()const
+{
+    auto key = QString(NAME_GROUP_CLIENT_SETTINGS) +
+                    '/' +
+                    SETTINGS_VALUE_NAME;
+    return _settings.value(key,"").toString();
+}
+
 bool Settings::read_settings(const QString &name_file)
 {
     if(_settings.fileName() != name_file)
@@ -143,55 +191,37 @@ bool Settings::read_settings(const QString &name_file)
         _settings.setPath(QSettings::IniFormat,QSettings::UserScope,name_file);
     }
 
-    auto key = QString(NAME_GROUP_CLIENT_SETTINGS) +
-                    '/' +
-                    SETTINGS_VALUE_ADDRESS_CLIENT;
-    auto self_addr = _settings.value(key,"").toString();
+    auto self_addr = read_self_addr();
     if(self_addr.isEmpty())
     {
         return false;
     }
 
-    key = QString(NAME_GROUP_CLIENT_SETTINGS) +
-                '/' +
-                SETTINGS_VALUE_PORT_CLIENT;
-    quint16 self_port = static_cast<quint16>(_settings.value(key,0).toInt());
+    quint16 self_port = read_self_port();
     if(!self_port)
     {
         return false;
     }
 
-    key = QString(NAME_GROUP_SERVER_SETTINGS) +
-                    '/' +
-                    SETTINGS_VALUE_ADDRESS_SERVER;
-    auto serv_addr = _settings.value(key,"").toString();
+    auto serv_addr = read_serv_addr();
     if(serv_addr.isEmpty())
     {
         return false;
     }
 
-    key = QString(NAME_GROUP_SERVER_SETTINGS) +
-                '/' +
-                SETTINGS_VALUE_PORT_SERVER;
-    quint16 serv_port = static_cast<quint16>(_settings.value(key,0).toInt());
+    quint16 serv_port = read_serv_port();
     if(!serv_port)
     {
         return false;
     }
 
-    key = QString(NAME_GROUP_CLIENT_SETTINGS) +
-                    '/' +
-                    SETTINGS_VALUE_NAME;
-    auto name = _settings.value(key,"").toString();
+    auto name = read_name();
     if(name.isEmpty())
     {
         return false;
     }
 
-    key = QString(NAME_GROUP_CLIENT_SETTINGS) +
-                    '/' +
-                    SETTINGS_VALUE_WORKDIR;
-    auto path = _settings.value(key,"").toString();
+    auto path = read_path();
     if(path.isEmpty())
     {
         return false;
@@ -254,9 +284,9 @@ WorkerClientDataBase::FileMetaData Settings::get_data_files_user(const QString &
      return WorkerClientDataBase().get_data_files_user(user);
 }
 
-bool Settings::insert_task_user(const QString &user,const QStringList &files)
+bool Settings::insert_task_user(const QString &user,const QStringList &files, const QStringList &local_files)
 {
-    return WorkerClientDataBase().insert_task_user(user,files);
+    return WorkerClientDataBase().insert_task_user(user,files,local_files);
 }
 
 bool Settings::delete_task_user(const QString &user)
@@ -272,6 +302,29 @@ WorkerClientDataBase::Tasks Settings::get_task_user(const QString &user)const
 WorkerClientDataBase::UsersTasks Settings::get_all_task_user()const
 {
     return WorkerClientDataBase().get_all_task_user();
+}
+
+bool Settings::insert_addr_info_user(const QString &user,const QString &addr, quint16 port)
+{
+    WorkerClientDataBase worker;
+    if(worker.is_user(user))
+    {
+        return worker.change_addr_user(user,addr) && worker.change_port_user(user,port);
+    }
+    else
+    {
+        return worker.insert_addr_info_user(user,addr,port);
+    }
+}
+
+bool Settings::delete_addr_info_user(const QString &user)
+{
+    return WorkerClientDataBase().delete_addr_info_user(user);
+}
+
+QPair<QString,quint16> Settings::get_addr_info_user(const QString &user)
+{
+    return WorkerClientDataBase().get_addr_info_user(user);
 }
 
 Settings::Settings():

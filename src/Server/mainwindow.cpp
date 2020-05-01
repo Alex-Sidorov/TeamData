@@ -25,21 +25,15 @@ void MainWindow::on_work_button_clicked()
         connect(_serv.get(),&BaseServer::new_connection,this,[this]
         {
             _serv->add_connection();
-            auto list = _serv->get_client_sockets();
-            for(auto client:list)
-            {
-                slot_send_data({client});
-            }
-        });
+            auto client = _serv->get_client_sockets().back();
 
-        connect(_serv.get(),&BaseServer::socket_error,this,[&](QTcpSocket *socket, QAbstractSocket::SocketError state)
-        {
-           // ui->terminal->addItem("Error " + QString::number(state));
+            QByteArray temp;
+            _worker_data_client.get_full_meta_data(temp);
+            send_msg(client,temp);
         });
 
         connect(_serv.get(),&BaseServer::disconnected_socket,this,[&](QTcpSocket *socket)
         {
-            //ui->terminal->addItem("disconnected ");
             _serv->remove_connection(socket);
             _worker_data_client.remove_client(socket);
         });
@@ -81,17 +75,22 @@ void MainWindow::slot_send_data(const QList<QTcpSocket *> &source)
     }
 
     QByteArray temp;
-    _worker_data_client.create_sended_data(temp,source);
+    _worker_data_client.fill_transfers_data(temp,source);
     if(users.size())
     {
         for(auto user: users)
         {
-            auto task = new TaskSendMsg(temp,&_proxy);
-            connect(task,&TaskSendMsg::send_data,user,[&,user](QByteArray array)
-            {
-               _serv->write_data(user,array);
-            }, Qt::ConnectionType::QueuedConnection);
-            _proxy.push(task);
+            send_msg(user, temp);
         }
     }
+}
+
+void MainWindow::send_msg(QTcpSocket *socket, const QByteArray &data)
+{
+    auto task = new TaskSendMsg(data,&_proxy);
+    connect(task,&TaskSendMsg::send_data,socket,[&,socket](QByteArray array)
+    {
+       _serv->write_data(socket,array);
+    }, Qt::ConnectionType::QueuedConnection);
+    _proxy.push(task);
 }

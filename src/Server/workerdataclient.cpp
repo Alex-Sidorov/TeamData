@@ -41,7 +41,7 @@ QPair<QString,WorkerDataClient::MetaDataDir> WorkerDataClient::parse_recved_data
     return qMakePair(name, meta_data);
 }
 
-void WorkerDataClient::create_sended_data(QByteArray &data, const QList<QTcpSocket *> &users)
+void WorkerDataClient::fill_transfers_data(QByteArray &data, const QList<QTcpSocket *> &users)
 {
     QDataStream stream(&data,QIODevice::WriteOnly);
 
@@ -83,6 +83,54 @@ WorkerDataClient::TransferData WorkerDataClient::get_transfer_data(QTcpSocket *c
     else
     {
         return {};
+    }
+}
+
+void WorkerDataClient::get_full_meta_data(QByteArray &data, const QStringList& filter)
+{
+    WorkerServerDataBase worker_data_base;
+    auto users = worker_data_base.get_all_user();
+
+    for(auto &user : filter)
+    {
+        users.removeOne(user);
+    }
+
+    QDataStream stream(&data,QIODevice::WriteOnly);
+    stream << static_cast<size_t>(users.size());
+
+    auto it = _clients_data.begin();
+    while(it != _clients_data.end())
+    {
+        users.removeOne(_username[it.key()]);
+        stream << std::get<1>(it.value());
+    }
+
+    for(auto &user : users)
+    {
+        QByteArray temp;
+        auto pair = qMakePair(worker_data_base.get_data_dir_user(user),worker_data_base.get_data_files_user(user));
+        create_sended_data(temp, user, pair);
+        stream << temp;
+    }
+}
+
+void WorkerDataClient::create_sended_data(QByteArray &data, QString &name, MetaDataDir &meta_data)
+{
+    QDataStream stream(&data,QIODevice::WriteOnly);
+
+    stream << QString()
+           << static_cast<quint16>(0)
+           << name
+           << meta_data.first
+           << static_cast<size_t>(meta_data.second.size());
+
+    auto &map = meta_data.second;
+    for(auto it = map.begin(); it != map.end(); it++)
+    {
+        stream << it.key() << std::get<0>(it.value())
+                           << std::get<2>(it.value())
+                           << std::get<1>(it.value());
     }
 }
 
