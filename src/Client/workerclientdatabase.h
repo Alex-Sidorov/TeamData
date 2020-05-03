@@ -67,6 +67,12 @@ private:
     static const char* DELETE_TASK_REQUEST;
     static const char* SELECT_TASK_REQUEST;
     static const char* SELECT_ANY_TASK_REQUEST;
+
+    static const char* INSERT_ADDR_INFO_USER_REQUEST;
+    static const char* UPDATE_ADDR_USER_REQUEST;
+    static const char* UPDATE_PORT_USER_REQUEST;
+    static const char* SELECT_ANY_ADDR_INFO_REQUEST;
+    static const char* DELETE_ADDR_INFO_REQUEST;
 };
 
 #endif // WORKERSERVERDATABASE_H

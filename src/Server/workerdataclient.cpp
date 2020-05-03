@@ -104,6 +104,7 @@ void WorkerDataClient::get_full_meta_data(QByteArray &data, const QStringList& f
     {
         users.removeOne(_username[it.key()]);
         stream << std::get<1>(it.value());
+        ++it;
     }
 
     for(auto &user : users)

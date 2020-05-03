@@ -307,7 +307,7 @@ WorkerClientDataBase::UsersTasks Settings::get_all_task_user()const
 bool Settings::insert_addr_info_user(const QString &user,const QString &addr, quint16 port)
 {
     WorkerClientDataBase worker;
-    if(worker.is_user(user))
+    if(worker.is_user_info(user))
     {
         return worker.change_addr_user(user,addr) && worker.change_port_user(user,port);
     }

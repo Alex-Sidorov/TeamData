@@ -27,6 +27,12 @@ const char* WorkerClientDataBase::DELETE_TASK_REQUEST = "DELETE FROM tasks WHERE
 const char* WorkerClientDataBase::SELECT_ANY_TASK_REQUEST = "SELECT file,local_file FROM tasks  WHERE name = :name;";
 const char* WorkerClientDataBase::SELECT_TASK_REQUEST = "SELECT * FROM tasks;";
 
+const char* WorkerClientDataBase::INSERT_ADDR_INFO_USER_REQUEST = "INSERT INTO user_addr_info (name,port,addr) VALUES (:name,:port,:addr);";
+const char* WorkerClientDataBase::DELETE_ADDR_INFO_REQUEST = "DELETE FROM user_addr_info WHERE name = :name;";
+const char* WorkerClientDataBase::UPDATE_ADDR_USER_REQUEST = "UPDATE user_addr_info SET addr = :addr WHERE name = :name;";
+const char* WorkerClientDataBase::UPDATE_PORT_USER_REQUEST = "UPDATE user_addr_info SET port = :port WHERE name = :name;";
+const char* WorkerClientDataBase::SELECT_ANY_ADDR_INFO_REQUEST = "SELECT addr, port FROM user_addr_info WHERE name = :name;";
+
 QStringList WorkerClientDataBase::get_all_user()const
 {
     QStringList res;
@@ -290,32 +296,111 @@ QMap<QString,WorkerClientDataBase::Tasks> WorkerClientDataBase::get_all_task_use
 
 bool WorkerClientDataBase::is_user_info(const QString &user)
 {
-
+    if(get_addr_info_user(user).first.isEmpty())
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
 
 bool WorkerClientDataBase::insert_addr_info_user(const QString &user,const QString &addr, quint16 port)
 {
-
+    if(_base.isOpen() && is_user(user))
+    {
+        _base.transaction();
+        QSqlQuery query;
+        query.prepare(INSERT_ADDR_INFO_USER_REQUEST);
+        query.bindValue(":name",user);
+        query.bindValue(":port",port);
+        query.bindValue(":addr",addr);
+        if(!query.exec())
+        {
+            _base.rollback();
+            return false;
+        }
+        _base.commit();
+        return true;
+    }
+    return false;
 }
 
 bool WorkerClientDataBase::change_addr_user(const QString &user,const QString &addr)
 {
-
+    if(_base.isOpen() && is_user(user))
+    {
+        _base.transaction();
+        QSqlQuery query;
+        query.prepare(UPDATE_ADDR_USER_REQUEST);
+        query.bindValue(":name",user);
+        query.bindValue(":addr",addr);
+        if(!query.exec())
+        {
+            _base.rollback();
+            return false;
+        }
+        _base.commit();
+        return true;
+    }
+    return false;
 }
 
 bool WorkerClientDataBase::change_port_user(const QString &user,quint16 port)
 {
-
+    if(_base.isOpen() && is_user(user))
+    {
+        _base.transaction();
+        QSqlQuery query;
+        query.prepare(UPDATE_PORT_USER_REQUEST);
+        query.bindValue(":name",user);
+        query.bindValue(":port",port);
+        if(!query.exec())
+        {
+            _base.rollback();
+            return false;
+        }
+        _base.commit();
+        return true;
+    }
+    return false;
 }
 
 bool WorkerClientDataBase::delete_addr_info_user(const QString &user)
 {
-
+    if(_base.isOpen())
+    {
+        _base.transaction();
+        QSqlQuery query;
+        query.prepare(DELETE_ADDR_INFO_REQUEST);
+        query.bindValue(":name",user);
+        if(!query.exec())
+        {
+            _base.rollback();
+            return false;
+        }
+        _base.commit();
+        return true;
+    }
+    return false;
 }
 
 QPair<QString,quint16> WorkerClientDataBase::get_addr_info_user(const QString &user)
 {
-
+    QPair<QString,quint16> res;
+    QSqlQuery query;
+    query.prepare(SELECT_ANY_ADDR_INFO_REQUEST);
+    query.bindValue(":name",user);
+    if(_base.isOpen() && query.exec())
+    {
+        if(query.next())
+        {
+            res.first = query.value("addr").toString();
+            res.second = static_cast<quint16>(query.value("port").toInt());
+        }
+    }
+    return res;
 }
 
 WorkerClientDataBase::WorkerClientDataBase():

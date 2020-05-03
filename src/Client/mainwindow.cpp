@@ -56,7 +56,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     auto name = _settings.get_name();
 
-
     _remote_dir.insert(name,qMakePair(0,ui->tree_dir));
     ui->users->addItem(name + ("(user)"));
 
@@ -73,6 +72,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->name_line->setText(name);
     ui->path_line->setText(path);
+
+    ui->stack_widget->removeWidget(ui->remote_page);
 }
 
 MainWindow::~MainWindow()
