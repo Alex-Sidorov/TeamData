@@ -16,7 +16,7 @@ class WorkerDataClient
     using FileCharacteristics = std::tuple<quint64,QString,QString>;
     using FileMetaData = QMap<QString,FileCharacteristics>;
     using DirsPath = QStringList;
-
+    using UserAddrInfo = QPair<QString,quint16>;
 
 public:
     using MetaDataDir = QPair<DirsPath,FileMetaData>;
@@ -41,7 +41,7 @@ private:
     QMap<QTcpSocket*,std::tuple<MetaDataDir,TransferData>> _clients_data;
     QMap<QTcpSocket*,QString> _username;
 
-    QPair<QString,MetaDataDir> parse_recved_data(QByteArray &data);
+    std::tuple<UserAddrInfo,QPair<QString,MetaDataDir>> parse_recved_data(QByteArray &data);
 };
 
 #endif // WORKERDATACLIENT_H

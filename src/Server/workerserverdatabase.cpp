@@ -22,6 +22,12 @@ const char* WorkerServerDataBase::INSERT_FILES_REQUEST = "INSERT INTO files (nam
 const char* WorkerServerDataBase::DELETE_FILES_REQUEST = "DELETE FROM files WHERE name = :name;";
 const char* WorkerServerDataBase::SELECT_FILES_REQUEST = "SELECT path,created_data,last_modified_data,size FROM files WHERE name = :name;";
 
+const char* WorkerServerDataBase::INSERT_ADDR_INFO_USER_REQUEST = "INSERT INTO user_addr_info (name,port,addr) VALUES (:name,:port,:addr);";
+const char* WorkerServerDataBase::DELETE_ADDR_INFO_REQUEST = "DELETE FROM user_addr_info WHERE name = :name;";
+const char* WorkerServerDataBase::UPDATE_ADDR_USER_REQUEST = "UPDATE user_addr_info SET addr = :addr WHERE name = :name;";
+const char* WorkerServerDataBase::UPDATE_PORT_USER_REQUEST = "UPDATE user_addr_info SET port = :port WHERE name = :name;";
+const char* WorkerServerDataBase::SELECT_ANY_ADDR_INFO_REQUEST = "SELECT addr, port FROM user_addr_info WHERE name = :name;";
+
 QStringList WorkerServerDataBase::get_all_user()const
 {
     QStringList res;
@@ -200,6 +206,115 @@ WorkerServerDataBase::FileMetaData WorkerServerDataBase::get_data_files_user(con
             auto last_modified_data = query.value("last_modified_data").toString();
             FileCharacteristics data = std::make_tuple(size,last_modified_data,created_data);
             res.insert(path,data);
+        }
+    }
+    return res;
+}
+
+bool WorkerServerDataBase::is_user_info(const QString &user)
+{
+    if(get_addr_info_user(user).first.isEmpty())
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+bool WorkerServerDataBase::insert_addr_info_user(const QString &user,const QString &addr, quint16 port)
+{
+    if(_base.isOpen() && is_user(user))
+    {
+        _base.transaction();
+        QSqlQuery query;
+        query.prepare(INSERT_ADDR_INFO_USER_REQUEST);
+        query.bindValue(":name",user);
+        query.bindValue(":port",port);
+        query.bindValue(":addr",addr);
+        if(!query.exec())
+        {
+            _base.rollback();
+            return false;
+        }
+        _base.commit();
+        return true;
+    }
+    return false;
+}
+
+bool WorkerServerDataBase::change_addr_user(const QString &user,const QString &addr)
+{
+    if(_base.isOpen() && is_user(user))
+    {
+        _base.transaction();
+        QSqlQuery query;
+        query.prepare(UPDATE_ADDR_USER_REQUEST);
+        query.bindValue(":name",user);
+        query.bindValue(":addr",addr);
+        if(!query.exec())
+        {
+            _base.rollback();
+            return false;
+        }
+        _base.commit();
+        return true;
+    }
+    return false;
+}
+
+bool WorkerServerDataBase::change_port_user(const QString &user,quint16 port)
+{
+    if(_base.isOpen() && is_user(user))
+    {
+        _base.transaction();
+        QSqlQuery query;
+        query.prepare(UPDATE_PORT_USER_REQUEST);
+        query.bindValue(":name",user);
+        query.bindValue(":port",port);
+        if(!query.exec())
+        {
+            _base.rollback();
+            return false;
+        }
+        _base.commit();
+        return true;
+    }
+    return false;
+}
+
+bool WorkerServerDataBase::delete_addr_info_user(const QString &user)
+{
+    if(_base.isOpen())
+    {
+        _base.transaction();
+        QSqlQuery query;
+        query.prepare(DELETE_ADDR_INFO_REQUEST);
+        query.bindValue(":name",user);
+        if(!query.exec())
+        {
+            _base.rollback();
+            return false;
+        }
+        _base.commit();
+        return true;
+    }
+    return false;
+}
+
+QPair<QString,quint16> WorkerServerDataBase::get_addr_info_user(const QString &user)
+{
+    QPair<QString,quint16> res;
+    QSqlQuery query;
+    query.prepare(SELECT_ANY_ADDR_INFO_REQUEST);
+    query.bindValue(":name",user);
+    if(_base.isOpen() && query.exec())
+    {
+        if(query.next())
+        {
+            res.first = query.value("addr").toString();
+            res.second = static_cast<quint16>(query.value("port").toInt());
         }
     }
     return res;

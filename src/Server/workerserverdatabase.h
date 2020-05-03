@@ -29,6 +29,13 @@ public:
     bool delete_data_files_user(const QString &user);
     FileMetaData get_data_files_user(const QString &user);
 
+    bool insert_addr_info_user(const QString &user,const QString &addr, quint16 port);
+    bool is_user_info(const QString &user);
+    bool change_addr_user(const QString &user,const QString &addr);
+    bool change_port_user(const QString &user,quint16 port);
+    bool delete_addr_info_user(const QString &user);
+    QPair<QString,quint16> get_addr_info_user(const QString &user);
+
 private:
     QSqlDatabase _base;
 
@@ -47,6 +54,12 @@ private:
     static const char* INSERT_FILES_REQUEST;
     static const char* DELETE_FILES_REQUEST;
     static const char* SELECT_FILES_REQUEST;
+
+    static const char* INSERT_ADDR_INFO_USER_REQUEST;
+    static const char* UPDATE_ADDR_USER_REQUEST;
+    static const char* UPDATE_PORT_USER_REQUEST;
+    static const char* SELECT_ANY_ADDR_INFO_REQUEST;
+    static const char* DELETE_ADDR_INFO_REQUEST;
 };
 
 #endif // WORKERSERVERDATABASE_H

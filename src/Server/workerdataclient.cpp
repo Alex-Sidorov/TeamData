@@ -5,7 +5,10 @@
 
 void WorkerDataClient::change_data(QTcpSocket *client, TransferData &data)
 {
-    auto meta_data = parse_recved_data(data);
+    auto parse_data = parse_recved_data(data);
+    auto user_info = std::get<0>(parse_data);
+    auto meta_data = std::get<1>(parse_data);
+
     _username[client] = meta_data.first;
     _clients_data[client] = std::make_tuple(meta_data.second,data);
 
@@ -15,17 +18,27 @@ void WorkerDataClient::change_data(QTcpSocket *client, TransferData &data)
     worker_data_base.insert_data_dir_user(meta_data.first, meta_data.second.first);
     worker_data_base.delete_data_files_user(meta_data.first);
     worker_data_base.insert_data_files_user(meta_data.first, meta_data.second.second);
+    if(!worker_data_base.is_user_info(meta_data.first))
+    {
+        worker_data_base.insert_addr_info_user(meta_data.first,user_info.first,user_info.second);
+    }
+    else
+    {
+        worker_data_base.change_addr_user(meta_data.first,user_info.first);
+        worker_data_base.change_port_user(meta_data.first,user_info.second);
+    }
 }
 
-QPair<QString,WorkerDataClient::MetaDataDir> WorkerDataClient::parse_recved_data(TransferData &data)
+std::tuple<WorkerDataClient::UserAddrInfo,QPair<QString,WorkerDataClient::MetaDataDir>>
+WorkerDataClient::parse_recved_data(TransferData &data)
 {
     QDataStream stream(&data,QIODevice::ReadOnly);
 
     MetaDataDir meta_data;
     QString name;
 
-    QString addr;//unused;
-    quint16 port;//unused;
+    QString addr;
+    quint16 port;
 
     size_t count_files = 0;
     stream >> addr >> port >> name >> meta_data.first >> count_files;
@@ -38,7 +51,7 @@ QPair<QString,WorkerDataClient::MetaDataDir> WorkerDataClient::parse_recved_data
                             >> std::get<2>(file_info);
         meta_data.second.insert(name_file,file_info);
     }
-    return qMakePair(name, meta_data);
+    return std::make_tuple(qMakePair(addr,port),qMakePair(name, meta_data));
 }
 
 void WorkerDataClient::fill_transfers_data(QByteArray &data, const QList<QTcpSocket *> &users)
@@ -120,8 +133,10 @@ void WorkerDataClient::create_sended_data(QByteArray &data, QString &name, MetaD
 {
     QDataStream stream(&data,QIODevice::WriteOnly);
 
-    stream << QString()
-           << static_cast<quint16>(0)
+    WorkerServerDataBase worker;
+    auto addr_info = worker.get_addr_info_user(name);
+    stream << addr_info.first
+           << addr_info.second
            << name
            << meta_data.first
            << static_cast<size_t>(meta_data.second.size());
