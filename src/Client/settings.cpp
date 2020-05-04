@@ -284,24 +284,34 @@ WorkerClientDataBase::FileMetaData Settings::get_data_files_user(const QString &
      return WorkerClientDataBase().get_data_files_user(user);
 }
 
-bool Settings::insert_task_user(const QString &user,const QStringList &files, const QStringList &local_files)
+bool Settings::insert_task_user(const QString &user,const QStringList &files, const QStringList &local_files, const QStringList &dates)
 {
-    return WorkerClientDataBase().insert_task_user(user,files,local_files);
+    return WorkerClientDataBase().insert_task_user(user,files,local_files,dates);
 }
 
-bool Settings::delete_task_user(const QString &user)
+bool Settings::update_task_user(const QString &user,const QString &file, const QString &date)
 {
-    return WorkerClientDataBase().delete_task_user(user);
+    return WorkerClientDataBase().update_task_user(user,file,date);
 }
 
-WorkerClientDataBase::Tasks Settings::get_task_user(const QString &user)const
+bool Settings::delete_all_task_user(const QString &user)
 {
-    return WorkerClientDataBase().get_task_user(user);
+    return WorkerClientDataBase().delete_all_task_user(user);
 }
 
-WorkerClientDataBase::UsersTasks Settings::get_all_task_user()const
+bool Settings::delete_task_user(const QString &user, const QStringList &files)
 {
-    return WorkerClientDataBase().get_all_task_user();
+    return WorkerClientDataBase().delete_task_user(user,files);
+}
+
+WorkerClientDataBase::Tasks Settings::get_all_task_user(const QString &user)const
+{
+    return WorkerClientDataBase().get_all_task_user(user);
+}
+
+WorkerClientDataBase::UsersTasks Settings::get_all_task_users()const
+{
+    return WorkerClientDataBase().get_all_task_users();
 }
 
 bool Settings::insert_addr_info_user(const QString &user,const QString &addr, quint16 port)

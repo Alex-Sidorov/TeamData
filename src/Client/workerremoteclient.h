@@ -5,6 +5,7 @@
 #include <QSharedPointer>
 #include <QVector>
 #include <QMap>
+#include <QMutex>
 
 #include <BaseServer/base_server.h>
 #include <BaseClient/base_client.h>
@@ -42,6 +43,8 @@ public:
 
     void download_file(const QString &src_file, const QString &dst_file, const QString &user);
 
+    void work_task(const QString &user);
+
 public slots:
     void slot_ready_read(QTcpSocket *socket);
 
@@ -52,6 +55,9 @@ private:
     Settings _settings;
 
     QMap<CLIENT*,TaskRecvFile::WorkInfo> _info_for_recv;
+    QMutex _mutex_for_download;
+
+    static constexpr const char* FORMAT_DATE = "dd.MM.yyyy hh:mm:ss";
 };
 
 #endif // WORKERREMOTECLIENT_H

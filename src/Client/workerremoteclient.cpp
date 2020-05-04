@@ -2,6 +2,7 @@
 #include "tasksendfile.h"
 
 #include <QFileInfo>
+#include <QDateTime>
 
 bool WorkerRemoteClient::run_serv()
 {
@@ -70,10 +71,15 @@ void WorkerRemoteClient::download_file(const QString &src_file, const QString &d
     auto &port = addr_info.second;
 
     auto client = new CLIENT(addr,port);
-    auto work_info = &_info_for_recv[client];
 
-    connect(client,&CLIENT::ready_data_read,this,[client, work_info,this, dst_file]
+    _mutex_for_download.lock();
+    auto work_info = &_info_for_recv[client];
+    _mutex_for_download.unlock();
+
+    connect(client,&CLIENT::ready_data_read,this,[client, work_info,this, dst_file,src_file,user]
     {
+        QMutexLocker lock(&_mutex_for_download);
+
         QByteArray data;
         client->read_data(data);
         if(!work_info->_is_recved && data == "null")
@@ -97,11 +103,15 @@ void WorkerRemoteClient::download_file(const QString &src_file, const QString &d
         }
 
         auto task = new TaskRecvFile(work_info,data);
-        connect(task,&TaskRecvFile::recved_data,client,[this, client]()
+        connect(task,&TaskRecvFile::recved_data,client,[this, client,src_file,user]()
         {
+            QMutexLocker lock(&_mutex_for_download);
             _info_for_recv.remove(client);
             client->deleteLater();
-            emit downloaded_file();
+
+            auto date = std::get<2>(_settings.get_data_files_user(user)[src_file]);
+            _settings.update_task_user(user,src_file,date);
+            //emit downloaded_file();
         }, Qt::ConnectionType::QueuedConnection);
         _proxy->push(task);
     });
@@ -110,6 +120,8 @@ void WorkerRemoteClient::download_file(const QString &src_file, const QString &d
     {
         qDebug() << state;
         emit error_connect_to_host();
+
+        QMutexLocker lock(&_mutex_for_download);
         _info_for_recv.remove(client);
         client->deleteLater();
     });
@@ -117,10 +129,36 @@ void WorkerRemoteClient::download_file(const QString &src_file, const QString &d
     connect(client,&CLIENT::connected_socket,this,[src_file,client, this]
     {
         client->write_data(src_file.toUtf8());
-        emit connect_to_host();
+        //emit connect_to_host();
     });
 
     client->connect_to_host();
+}
+
+void WorkerRemoteClient::work_task(const QString &user)
+{
+    auto tasks = _settings.get_all_task_user(user);
+    auto &tasks_files = tasks.first.first;
+    auto &tasks_local_files = tasks.first.second;
+    auto &dates = tasks.second;
+    int index = 0;
+    for(auto &task_file : tasks_files)
+    {
+        auto files = _settings.get_data_files_user(user);
+        if(files.find(task_file) != files.end())
+        {
+            if(!QFileInfo(tasks_local_files[index]).isFile()
+                    || dates[index] != std::get<2>(files[task_file]))
+            {
+                download_file(task_file,tasks_local_files[index],user);
+            }
+        }
+        else
+        {
+            _settings.delete_task_user(user,{task_file});
+        }
+        index++;
+    }
 }
 
 void WorkerRemoteClient::stop_serv()

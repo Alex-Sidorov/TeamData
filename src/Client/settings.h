@@ -55,10 +55,12 @@ public:
     bool change_data_files_user(const QString &user, const WorkerClientDataBase::FileMetaData &data);
     WorkerClientDataBase::FileMetaData get_data_files_user(const QString &user);
 
-    bool insert_task_user(const QString &user, const QStringList &files, const QStringList &local_files);
-    bool delete_task_user(const QString &user);
-    WorkerClientDataBase::Tasks get_task_user(const QString &user)const;
-    WorkerClientDataBase::UsersTasks get_all_task_user()const;
+    bool insert_task_user(const QString &user, const QStringList &files, const QStringList &local_files, const QStringList &dates);
+    bool update_task_user(const QString &user,const QString &file, const QString &date);
+    bool delete_all_task_user(const QString &user);
+    bool delete_task_user(const QString &user, const QStringList &files);
+    WorkerClientDataBase::Tasks get_all_task_user(const QString &user)const;
+    WorkerClientDataBase::UsersTasks get_all_task_users()const;
 
     bool insert_addr_info_user(const QString &user,const QString &addr, quint16 port);
     bool delete_addr_info_user(const QString &user);

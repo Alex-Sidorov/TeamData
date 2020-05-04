@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[26];
-    char stringdata0[434];
+    QByteArrayData data[30];
+    char stringdata0[522];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -56,7 +56,11 @@ QT_MOC_LITERAL(21, 343, 28), // "on_path_line_editingFinished"
 QT_MOC_LITERAL(22, 372, 20), // "on_work_serv_clicked"
 QT_MOC_LITERAL(23, 393, 18), // "slot_download_file"
 QT_MOC_LITERAL(24, 412, 16), // "QTreeWidgetItem*"
-QT_MOC_LITERAL(25, 429, 4) // "item"
+QT_MOC_LITERAL(25, 429, 4), // "item"
+QT_MOC_LITERAL(26, 434, 16), // "slot_insert_task"
+QT_MOC_LITERAL(27, 451, 16), // "slot_delete_task"
+QT_MOC_LITERAL(28, 468, 24), // "on_search_button_clicked"
+QT_MOC_LITERAL(29, 493, 28) // "on_search_line_returnPressed"
 
     },
     "MainWindow\0on_pushButton_clicked\0\0"
@@ -71,7 +75,9 @@ QT_MOC_LITERAL(25, 429, 4) // "item"
     "on_self_port_valueChanged\0"
     "on_path_line_editingFinished\0"
     "on_work_serv_clicked\0slot_download_file\0"
-    "QTreeWidgetItem*\0item"
+    "QTreeWidgetItem*\0item\0slot_insert_task\0"
+    "slot_delete_task\0on_search_button_clicked\0"
+    "on_search_line_returnPressed"
 };
 #undef QT_MOC_LITERAL
 
@@ -81,7 +87,7 @@ static const uint qt_meta_data_MainWindow[] = {
        8,       // revision
        0,       // classname
        0,    0, // classinfo
-      14,   14, // methods
+      18,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -89,20 +95,24 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   84,    2, 0x08 /* Private */,
-       3,    0,   85,    2, 0x08 /* Private */,
-       4,    1,   86,    2, 0x08 /* Private */,
-       6,    2,   89,    2, 0x08 /* Private */,
-      10,    1,   94,    2, 0x08 /* Private */,
-      12,    1,   97,    2, 0x08 /* Private */,
-      15,    0,  100,    2, 0x08 /* Private */,
-      16,    0,  101,    2, 0x08 /* Private */,
-      17,    0,  102,    2, 0x08 /* Private */,
-      18,    1,  103,    2, 0x08 /* Private */,
-      20,    1,  106,    2, 0x08 /* Private */,
-      21,    0,  109,    2, 0x08 /* Private */,
-      22,    0,  110,    2, 0x08 /* Private */,
-      23,    1,  111,    2, 0x08 /* Private */,
+       1,    0,  104,    2, 0x08 /* Private */,
+       3,    0,  105,    2, 0x08 /* Private */,
+       4,    1,  106,    2, 0x08 /* Private */,
+       6,    2,  109,    2, 0x08 /* Private */,
+      10,    1,  114,    2, 0x08 /* Private */,
+      12,    1,  117,    2, 0x08 /* Private */,
+      15,    0,  120,    2, 0x08 /* Private */,
+      16,    0,  121,    2, 0x08 /* Private */,
+      17,    0,  122,    2, 0x08 /* Private */,
+      18,    1,  123,    2, 0x08 /* Private */,
+      20,    1,  126,    2, 0x08 /* Private */,
+      21,    0,  129,    2, 0x08 /* Private */,
+      22,    0,  130,    2, 0x08 /* Private */,
+      23,    1,  131,    2, 0x08 /* Private */,
+      26,    1,  134,    2, 0x08 /* Private */,
+      27,    1,  137,    2, 0x08 /* Private */,
+      28,    0,  140,    2, 0x08 /* Private */,
+      29,    0,  141,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -119,6 +129,10 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void, 0x80000000 | 24,   25,
+    QMetaType::Bool, 0x80000000 | 24,   25,
+    QMetaType::Bool, 0x80000000 | 24,   25,
+    QMetaType::Void,
+    QMetaType::Void,
 
        0        // eod
 };
@@ -143,6 +157,12 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 11: _t->on_path_line_editingFinished(); break;
         case 12: _t->on_work_serv_clicked(); break;
         case 13: _t->slot_download_file((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1]))); break;
+        case 14: { bool _r = _t->slot_insert_task((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])));
+            if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
+        case 15: { bool _r = _t->slot_delete_task((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])));
+            if (_a[0]) *reinterpret_cast< bool*>(_a[0]) = std::move(_r); }  break;
+        case 16: _t->on_search_button_clicked(); break;
+        case 17: _t->on_search_line_returnPressed(); break;
         default: ;
         }
     }
@@ -177,13 +197,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 14)
+        if (_id < 18)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 14;
+        _id -= 18;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 14)
+        if (_id < 18)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 14;
+        _id -= 18;
     }
     return _id;
 }

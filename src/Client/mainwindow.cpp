@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QIcon>
 #include <QMenu>
+#include <QHeaderView>
 
 const QColor MainWindow::TASK_COLOR = qRgb(65,105,225);
 const QColor MainWindow::DEFAULT_COLOR = qRgb(255,255,255);
@@ -46,6 +47,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&_worker_remote_client,&WorkerRemoteClient::downloaded_file,this,[]
     {
         QMessageBox::information(nullptr,"Информация","Файл скачен");
+    });
+
+    connect(ui->tree_dir,&QTreeWidget::doubleClicked,this,[this]
+    {
+        for(auto &item : _search_res)
+        {
+            item->setBackgroundColor(0,Qt::white);
+        }
+        _search_res.clear();
     });
 
     qRegisterMetaType<WorkerMetaData::MetaDataDir>("MetaDataDir");
@@ -97,6 +107,14 @@ void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data, QString name)
 
         new_tree->setContextMenuPolicy(Qt::CustomContextMenu);
         connect(new_tree,&QTreeWidget::customContextMenuRequested,this, &MainWindow::slot_sub_menu);
+        connect(new_tree,&QTreeWidget::doubleClicked,this,[this]
+        {
+            for(auto &item : _search_res)
+            {
+                item->setBackgroundColor(0,Qt::white);
+                _search_res.clear();
+            }
+        });
 
         new_tree->setHeaderItem(ui->tree_dir->headerItem()->clone());
         int index = ui->stack_widget->addWidget(new_tree);
@@ -106,7 +124,8 @@ void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data, QString name)
     auto tree = _remote_dir.find(name)->second;
     tree->clear();
     add_dirs(tree, data.first);
-    add_files(tree, data.second);
+    add_files(name,tree, data.second);
+    _worker_remote_client.work_task(name);
 }
 
 void MainWindow::slot_sub_menu(const QPoint &pos)
@@ -122,19 +141,24 @@ void MainWindow::slot_sub_menu(const QPoint &pos)
         if(item->backgroundColor(0) != TASK_COLOR)
         {
             tasks_option = sub_menu.addAction("Добавить задачу");
-            connect(tasks_option,&QAction::triggered,this,[item]
-            {
-                item->setBackgroundColor(0,TASK_COLOR);
-                qDebug() << "task";
+            connect(tasks_option,&QAction::triggered,this,[this,item]
+            {                
+                if(slot_insert_task(item))
+                {
+                    item->setBackgroundColor(0,TASK_COLOR);
+                }
             });
         }
         else
         {
             tasks_option = sub_menu.addAction("Снять задачу");
-            connect(tasks_option,&QAction::triggered,this,[item]
+            connect(tasks_option,&QAction::triggered,this,[this,item]
             {
-                item->setBackgroundColor(0,DEFAULT_COLOR);
-                qDebug() << "task";
+                if(slot_delete_task(item))
+                {
+                    item->setBackgroundColor(0,DEFAULT_COLOR);
+                }
+
             });
         }
 
@@ -215,10 +239,16 @@ void MainWindow::add_dirs(QTreeWidget *tree, QStringList &dirs)
     tree->setCurrentItem(nullptr);
 }
 
-void MainWindow::add_files(QTreeWidget *tree, WorkerMetaData::FileMetaData &files)
+void MainWindow::add_files(const QString &name, QTreeWidget *tree, WorkerMetaData::FileMetaData &files)
 {
+    auto tasks_files = _settings.get_all_task_user(name).first.first;
     for(auto it = files.begin(); it != files.end(); it++)
     {
+        bool is_tasks = false;
+        if(tasks_files.indexOf(it.key()) != -1)
+        {
+            is_tasks = true;
+        }
         auto path = it.key().split('/');
         auto data = it.value();
         tree->setCurrentItem(nullptr);
@@ -243,6 +273,10 @@ void MainWindow::add_files(QTreeWidget *tree, WorkerMetaData::FileMetaData &file
                 else
                 {
                     tree->insertTopLevelItem(0,name);
+                }
+                if(is_tasks)
+                {
+                    name->setBackgroundColor(0,TASK_COLOR);
                 }
             }
             else
@@ -422,8 +456,8 @@ void MainWindow::slot_download_file(QTreeWidgetItem *item)
     {
         if(!item->text(1).isEmpty())
         {
-            QString path;
             QString file_name = item->text(0);
+            QString path = get_absolute_path(item);
             while(item)
             {
                 if(item->childCount())
@@ -443,6 +477,143 @@ void MainWindow::slot_download_file(QTreeWidgetItem *item)
                 _worker_remote_client.download_file(path,dst,name);
             }
         }
-
     }
+}
+
+bool MainWindow::slot_insert_task(QTreeWidgetItem *item)
+{
+    auto index = ui->stack_widget->currentIndex();
+    if(item && index)
+    {
+        if(!item->text(1).isEmpty())
+        {
+            QString file_name = item->text(0);
+            QString path = get_absolute_path(item);
+            auto dst = QFileDialog::getSaveFileName(nullptr,"Выберите место сохранения файла",file_name);
+            if(!dst.isEmpty())
+            {
+                auto name = ui->users->item(index)->text();
+                return _settings.insert_task_user(name,{path},{dst},{"null"});
+            }
+        }
+    }
+    return false;
+}
+
+bool MainWindow::slot_delete_task(QTreeWidgetItem *item)
+{
+    auto index = ui->stack_widget->currentIndex();
+    if(item && index)
+    {
+        if(!item->text(1).isEmpty())
+        {
+            QString file_name = item->text(0);
+            QString path = get_absolute_path(item);
+            auto name = ui->users->item(index)->text();
+            return _settings.delete_task_user(name,{path});
+        }
+    }
+    return false;
+}
+
+QString MainWindow::get_absolute_path(QTreeWidgetItem *item)
+{
+    QString path;
+    while(item)
+    {
+        path.push_front('/' + item->text(0));
+        item = item->parent();
+    }
+    return path;
+}
+
+
+void MainWindow::on_search_button_clicked()
+{
+    QTreeWidget* tree = nullptr;
+    if(ui->stack_widget->currentIndex())
+    {
+        tree = static_cast<QTreeWidget*>(ui->stack_widget->currentWidget());
+    }
+    else
+    {
+        tree = ui->tree_dir;
+    }
+    for(auto &item : _search_res)
+    {
+        item->setBackgroundColor(0,Qt::white);
+    }
+    _search_res = search_item(tree,ui->search_line->text());
+    if(_search_res.empty())
+    {
+        QMessageBox::information(nullptr,"Информация","Объект не обнаружен");
+    }
+    for(auto &item : _search_res)
+    {
+        item->setBackgroundColor(0,Qt::red);
+    }
+}
+
+void MainWindow::on_search_line_returnPressed()
+{
+    on_search_button_clicked();
+}
+
+QList<QTreeWidgetItem*> MainWindow::search_item(QTreeWidget* tree, const QString &text)
+{
+    if(!tree || text.isEmpty())
+    {
+        return {};
+    }
+    tree->setCurrentItem(nullptr);
+
+    if(text[0] != '/')
+    {
+        return tree->findItems(text,Qt::MatchFlag::MatchRecursive);
+    }
+
+    auto path = text.split('/');
+    path.removeAll("");
+
+    QList<QTreeWidgetItem*> items;
+    for(int i = 0; i < path.size(); i++)
+    {
+        auto cur = tree->currentItem();
+        if(i + 1 == path.size())
+        {
+            if(!cur)
+            {
+               items = tree->findItems(path[i],Qt::MatchFlag::MatchFixedString);
+            }
+            else
+            {
+                for(int j = 0; j < cur->childCount(); j++)
+                {
+                    if(cur->child(j)->text(0) == path[i])
+                    {
+                        items.push_back(cur->child(j));
+                    }
+                }
+            }
+        }
+        else
+        {
+            if(!cur)
+            {
+               tree->setCurrentItem(tree->findItems(path[i],Qt::MatchFlag::MatchFixedString)[0]);
+            }
+            else
+            {
+                for(int j = 0; j < cur->childCount(); j++)
+                {
+                    if(cur->child(j)->text(0) == path[i])
+                    {
+                        tree->setCurrentItem(cur->child(j));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return items;
 }

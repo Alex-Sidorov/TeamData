@@ -12,7 +12,11 @@ public:
     using FileCharacteristics = std::tuple<quint64,QString,QString>;
     using FileMetaData = QMap<QString,FileCharacteristics>;
     using DirsPath = QStringList;
-    using Tasks = QPair<QStringList,QStringList>;
+    using Files = QStringList;
+    using LocalFile = QStringList;
+    using Dates = QStringList;
+    using PathFiles = QPair<Files,LocalFile>;
+    using Tasks = QPair<PathFiles,Dates>;
     using UsersTasks = QMap<QString,Tasks>;
 
 
@@ -39,10 +43,12 @@ public:
     bool delete_data_files_user(const QString &user);
     FileMetaData get_data_files_user(const QString &user);
 
-    bool insert_task_user(const QString &user,const QStringList &files, const QStringList &local_file);
-    bool delete_task_user(const QString &user);
-    Tasks get_task_user(const QString &user)const;
-    UsersTasks get_all_task_user()const;
+    bool insert_task_user(const QString &user,const QStringList &files, const QStringList &local_file, const QStringList &dates);
+    bool update_task_user(const QString &user,const QString &file, const QString &date);
+    bool delete_task_user(const QString &user, const QStringList &files);
+    bool delete_all_task_user(const QString &user);
+    Tasks get_all_task_user(const QString &user)const;
+    UsersTasks get_all_task_users()const;
 
 private:
     QSqlDatabase _base;
@@ -64,7 +70,9 @@ private:
     static const char* SELECT_FILES_REQUEST;
 
     static const char* INSERT_TASK_REQUEST;
-    static const char* DELETE_TASK_REQUEST;
+    static const char* UPDATE_LAST_MODIFIED_TASK_FILE_REQUEST;
+    static const char* DELETE_TASK_USER_REQUEST;
+    static const char* DELETE_ALL_TASK_USER_REQUEST;
     static const char* SELECT_TASK_REQUEST;
     static const char* SELECT_ANY_TASK_REQUEST;
 
@@ -73,6 +81,14 @@ private:
     static const char* UPDATE_PORT_USER_REQUEST;
     static const char* SELECT_ANY_ADDR_INFO_REQUEST;
     static const char* DELETE_ADDR_INFO_REQUEST;
+
+    /*static const char* INSERT_TASK_FILE_USER_REQUEST;
+    static const char* UPDATE_LOCAL_LAST_MODIFIED_DATE_FILE_REQUEST;
+    static const char* UPDATE_LAST_MODIFIED_DATE_FILE_REQUEST;
+    static const char* SELECT_DATES_LAST_MODIFIED_FILE_REQUEST;
+    static const char* SELECT_DATES_LAST_MODIFIED_ANY_FILE_REQUEST;
+    static const char* DELETE_ANY_TASK_FILE_USER_REQUEST;
+    static const char* DELETE_TASKS_FILES_USER_REQUEST;*/
 };
 
 #endif // WORKERSERVERDATABASE_H

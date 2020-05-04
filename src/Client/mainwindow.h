@@ -38,25 +38,22 @@ private slots:
     void slot_removed_dirs(QStringList dirs);
     void slot_load_tree(WorkerMetaData::MetaDataDir data, QString name);
     void slot_sub_menu(const QPoint &pos);
-
     void on_users_doubleClicked(const QModelIndex &index);
-
     void on_name_line_editingFinished();
-
     void on_self_addr_editingFinished();
-
     void on_serv_addr_editingFinished();
-
     void on_serv_port_valueChanged(int arg1);
-
     void on_self_port_valueChanged(int arg1);
-
     void on_path_line_editingFinished();
-
     void on_work_serv_clicked();
 
-
     void slot_download_file(QTreeWidgetItem *item);
+    bool slot_insert_task(QTreeWidgetItem *item);
+    bool slot_delete_task(QTreeWidgetItem *item);
+
+    void on_search_button_clicked();
+
+    void on_search_line_returnPressed();
 
 private:
     Ui::MainWindow *ui;
@@ -70,11 +67,15 @@ private:
     WorkerRemoteClient _worker_remote_client;
 
     Settings _settings;
+    QList<QTreeWidgetItem*> _search_res;
 
     void remove_items_tree(WorkerMetaData::MetaDataDir data);
 
     void add_dirs(QTreeWidget *tree, QStringList &dirs);
-    void add_files(QTreeWidget *tree, WorkerMetaData::FileMetaData &files);
+    void add_files(const QString &name, QTreeWidget *tree, WorkerMetaData::FileMetaData &files);
+    QString get_absolute_path(QTreeWidgetItem *item);
+
+    QList<QTreeWidgetItem*> search_item(QTreeWidget *tree, const QString &text);
 
     static const QColor TASK_COLOR;
     static const QColor DEFAULT_COLOR;
