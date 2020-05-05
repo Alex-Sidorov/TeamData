@@ -1,43 +1,48 @@
 #ifndef TASKRECVMSG_H
 #define TASKRECVMSG_H
 
+#include "ActiveObject/abstracttask.h"
+#include "ActiveObject/proxyactiveobject.h"
+#include "BaseServer/base_server.h"
+
 #include <QObject>
 
-#include <ActiveObject/abstracttask.h>
-#include <ActiveObject/proxyactiveobject.h>
-
-#include <BaseServer/base_server.h>
-
-class TaskRecvMsg : public QObject, public ActiveObject::AbstractTask
+namespace TasksServer
 {
-    Q_OBJECT
-
-signals:
-    void recved_data();
-public:
-
-    struct WorkInfo
+    class TaskRecvMsg : public QObject, public ActiveObject::AbstractTask
     {
-        WorkInfo():_size(0), _is_recved(false){}
-        void clear()
+        Q_OBJECT
+
+    signals:
+        void recved_data();
+
+    public:
+
+        struct WorkInfo
         {
-            _size = 0;
-            _is_recved = false;
-            _msg.clear();
-        }
-        QByteArray _msg;
-        qint32 _size;
-        bool _is_recved;
+            WorkInfo():_size(0), _is_recved(false){}
+            void clear()
+            {
+                _size = 0;
+                _is_recved = false;
+                _msg.clear();
+            }
+            QByteArray _msg;
+            qint32 _size;
+            bool _is_recved;
+        };
+
+        void run_process() override;
+
+        TaskRecvMsg(WorkInfo *_info,QByteArray &new_data);
+        virtual ~TaskRecvMsg()  override;
+
+    private:
+        WorkInfo *_info;
+        QByteArray _new_data;
     };
+}
 
-    void run_process() override;
 
-    TaskRecvMsg(WorkInfo *_info,QByteArray &new_data);
-    virtual ~TaskRecvMsg()  override;
-
-private:
-    WorkInfo *_info;
-    QByteArray _new_data;
-};
 
 #endif // TASKRECVMSG_H

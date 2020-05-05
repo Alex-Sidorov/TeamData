@@ -488,7 +488,7 @@ QPair<QString,quint16> WorkerClientDataBase::get_addr_info_user(const QString &u
 }
 
 WorkerClientDataBase::WorkerClientDataBase():
-    _base(QSqlDatabase::addDatabase(TYPE_DATA_BASE))
+    _base(QSqlDatabase::database())
 {
     _base.setDatabaseName(DEFAULT_NAME_DATA_BASE);
     _base.open();

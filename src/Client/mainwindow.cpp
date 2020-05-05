@@ -58,6 +58,8 @@ MainWindow::MainWindow(QWidget *parent) :
         _search_res.clear();
     });
 
+    QSqlDatabase::addDatabase("QSQLITE");
+
     qRegisterMetaType<WorkerMetaData::MetaDataDir>("MetaDataDir");
 
     connect(&worker_meta_data,&WorkerMetaData::upload_tree,this,&MainWindow::slot_load_tree,Qt::ConnectionType::QueuedConnection);
@@ -112,8 +114,8 @@ void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data, QString name)
             for(auto &item : _search_res)
             {
                 item->setBackgroundColor(0,Qt::white);
-                _search_res.clear();
             }
+            _search_res.clear();
         });
 
         new_tree->setHeaderItem(ui->tree_dir->headerItem()->clone());

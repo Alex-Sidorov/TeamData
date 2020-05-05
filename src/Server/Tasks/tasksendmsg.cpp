@@ -1,6 +1,6 @@
 #include "tasksendmsg.h"
 
-void TaskSendMsg::run_process()
+void TasksServer::TaskSendMsg::run_process()
 {
     if(_msg.isEmpty())
     {
@@ -31,12 +31,12 @@ void TaskSendMsg::run_process()
     }
 }
 
-TaskSendMsg::TaskSendMsg(const QByteArray &msg, ProxyActiveObject *proxy, uint32_t MTU):
+TasksServer::TaskSendMsg::TaskSendMsg(const QByteArray &msg, ProxyActiveObject *proxy, uint32_t MTU):
     _msg(msg), _proxy(proxy), _MTU(MTU), _is_sended(false)
 {
 }
 
-TaskSendMsg::~TaskSendMsg()
+TasksServer::TaskSendMsg::~TaskSendMsg()
 {
 
 }

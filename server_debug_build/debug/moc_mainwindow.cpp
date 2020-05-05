@@ -21,36 +21,36 @@
 QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
-struct qt_meta_stringdata_MainWindow_t {
+struct qt_meta_stringdata_WindowServer_t {
     QByteArrayData data[9];
-    char stringdata0[111];
+    char stringdata0[113];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_MainWindow_t, stringdata0) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_WindowServer_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
-static const qt_meta_stringdata_MainWindow_t qt_meta_stringdata_MainWindow = {
+static const qt_meta_stringdata_WindowServer_t qt_meta_stringdata_WindowServer = {
     {
-QT_MOC_LITERAL(0, 0, 10), // "MainWindow"
-QT_MOC_LITERAL(1, 11, 22), // "on_work_button_clicked"
-QT_MOC_LITERAL(2, 34, 0), // ""
-QT_MOC_LITERAL(3, 35, 15), // "slot_ready_read"
-QT_MOC_LITERAL(4, 51, 11), // "QTcpSocket*"
-QT_MOC_LITERAL(5, 63, 6), // "socket"
-QT_MOC_LITERAL(6, 70, 14), // "slot_send_data"
-QT_MOC_LITERAL(7, 85, 18), // "QList<QTcpSocket*>"
-QT_MOC_LITERAL(8, 104, 6) // "source"
+QT_MOC_LITERAL(0, 0, 12), // "WindowServer"
+QT_MOC_LITERAL(1, 13, 22), // "on_work_button_clicked"
+QT_MOC_LITERAL(2, 36, 0), // ""
+QT_MOC_LITERAL(3, 37, 15), // "slot_ready_read"
+QT_MOC_LITERAL(4, 53, 11), // "QTcpSocket*"
+QT_MOC_LITERAL(5, 65, 6), // "socket"
+QT_MOC_LITERAL(6, 72, 14), // "slot_send_data"
+QT_MOC_LITERAL(7, 87, 18), // "QList<QTcpSocket*>"
+QT_MOC_LITERAL(8, 106, 6) // "source"
 
     },
-    "MainWindow\0on_work_button_clicked\0\0"
-    "slot_ready_read\0QTcpSocket*\0socket\0"
+    "WindowServer\0on_work_button_clicked\0"
+    "\0slot_ready_read\0QTcpSocket*\0socket\0"
     "slot_send_data\0QList<QTcpSocket*>\0"
     "source"
 };
 #undef QT_MOC_LITERAL
 
-static const uint qt_meta_data_MainWindow[] = {
+static const uint qt_meta_data_WindowServer[] = {
 
  // content:
        8,       // revision
@@ -76,10 +76,10 @@ static const uint qt_meta_data_MainWindow[] = {
        0        // eod
 };
 
-void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void WindowServer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
-        auto *_t = static_cast<MainWindow *>(_o);
+        auto *_t = static_cast<WindowServer *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->on_work_button_clicked(); break;
@@ -108,30 +108,30 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
     }
 }
 
-QT_INIT_METAOBJECT const QMetaObject MainWindow::staticMetaObject = { {
+QT_INIT_METAOBJECT const QMetaObject WindowServer::staticMetaObject = { {
     &QMainWindow::staticMetaObject,
-    qt_meta_stringdata_MainWindow.data,
-    qt_meta_data_MainWindow,
+    qt_meta_stringdata_WindowServer.data,
+    qt_meta_data_WindowServer,
     qt_static_metacall,
     nullptr,
     nullptr
 } };
 
 
-const QMetaObject *MainWindow::metaObject() const
+const QMetaObject *WindowServer::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
-void *MainWindow::qt_metacast(const char *_clname)
+void *WindowServer::qt_metacast(const char *_clname)
 {
     if (!_clname) return nullptr;
-    if (!strcmp(_clname, qt_meta_stringdata_MainWindow.stringdata0))
+    if (!strcmp(_clname, qt_meta_stringdata_WindowServer.stringdata0))
         return static_cast<void*>(this);
     return QMainWindow::qt_metacast(_clname);
 }
 
-int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int WindowServer::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QMainWindow::qt_metacall(_c, _id, _a);
     if (_id < 0)

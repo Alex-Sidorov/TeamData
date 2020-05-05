@@ -3,30 +3,38 @@
 #include <QDataStream>
 #include <QHostAddress>
 
+using namespace DataBaseWork;
+using namespace WorkDataClientOnServer;
+
 void WorkerDataClient::change_data(QTcpSocket *client, TransferData &data)
 {
     auto parse_data = parse_recved_data(data);
-    auto user_info = std::get<0>(parse_data);
-    auto meta_data = std::get<1>(parse_data);
+    auto &user_info = std::get<0>(parse_data);
+    auto &meta_data = std::get<1>(parse_data);
 
     _username[client] = meta_data.first;
     _clients_data[client] = std::make_tuple(meta_data.second,data);
 
-    WorkerServerDataBase worker_data_base;
-    worker_data_base.insert_user(_username[client]);
-    worker_data_base.delete_data_dir_user(meta_data.first);
-    worker_data_base.insert_data_dir_user(meta_data.first, meta_data.second.first);
-    worker_data_base.delete_data_files_user(meta_data.first);
-    worker_data_base.insert_data_files_user(meta_data.first, meta_data.second.second);
-    if(!worker_data_base.is_user_info(meta_data.first))
+    auto name_connection = WorkerServerDataBase::get_new_name_connection();
     {
-        worker_data_base.insert_addr_info_user(meta_data.first,user_info.first,user_info.second);
+        WorkerServerDataBase worker_data_base(QString() + name_connection);
+
+        worker_data_base.insert_user(_username[client]);
+        worker_data_base.delete_data_dir_user(meta_data.first);
+        worker_data_base.insert_data_dir_user(meta_data.first, meta_data.second.first);
+        worker_data_base.delete_data_files_user(meta_data.first);
+        worker_data_base.insert_data_files_user(meta_data.first, meta_data.second.second);
+        if(!worker_data_base.is_user_info(meta_data.first))
+        {
+            worker_data_base.insert_addr_info_user(meta_data.first,user_info.first,user_info.second);
+        }
+        else
+        {
+            worker_data_base.change_addr_user(meta_data.first,user_info.first);
+            worker_data_base.change_port_user(meta_data.first,user_info.second);
+        }
     }
-    else
-    {
-        worker_data_base.change_addr_user(meta_data.first,user_info.first);
-        worker_data_base.change_port_user(meta_data.first,user_info.second);
-    }
+    WorkerServerDataBase::remove_connection(name_connection);
 }
 
 std::tuple<WorkerDataClient::UserAddrInfo,QPair<QString,WorkerDataClient::MetaDataDir>>
@@ -46,9 +54,9 @@ WorkerDataClient::parse_recved_data(TransferData &data)
     {
         QString name_file;
         FileCharacteristics file_info;
-        stream >> name_file >> std::get<0>(file_info)
-                            >> std::get<1>(file_info)
-                            >> std::get<2>(file_info);
+        stream >> name_file >> std::get<INDEX_SIZE>(file_info)
+                            >> std::get<INDEX_LAST_MODIFIED>(file_info)
+                            >> std::get<INDEX_CREATED>(file_info);
         meta_data.second.insert(name_file,file_info);
     }
     return std::make_tuple(qMakePair(addr,port),qMakePair(name, meta_data));
@@ -70,7 +78,7 @@ void WorkerDataClient::fill_transfers_data(QByteArray &data, const QList<QTcpSoc
     stream << static_cast<size_t>(temp.size());
     for(auto user : temp)
     {
-        stream << std::get<1>(_clients_data[user]);
+        stream << std::get<INDEX_TRANSFER_DATA>(_clients_data[user]);
     }
 }
 
@@ -79,7 +87,7 @@ WorkerDataClient::MetaDataDir WorkerDataClient::get_metadata(QTcpSocket *client)
 {
     if(_clients_data.find(client) != _clients_data.end())
     {
-        return std::get<0>(_clients_data[client]);
+        return std::get<INDEX_PARSE_DATA>(_clients_data[client]);
     }
     else
     {
@@ -91,7 +99,7 @@ WorkerDataClient::TransferData WorkerDataClient::get_transfer_data(QTcpSocket *c
 {
     if(_clients_data.find(client) != _clients_data.end())
     {
-        return std::get<1>(_clients_data[client]);
+        return std::get<INDEX_TRANSFER_DATA>(_clients_data[client]);
     }
     else
     {
@@ -101,39 +109,42 @@ WorkerDataClient::TransferData WorkerDataClient::get_transfer_data(QTcpSocket *c
 
 void WorkerDataClient::get_full_meta_data(QByteArray &data, const QStringList& filter)
 {
-    WorkerServerDataBase worker_data_base;
-    auto users = worker_data_base.get_all_user();
-
-    for(auto &user : filter)
+    auto name_connection = WorkerServerDataBase::get_new_name_connection();
     {
-        users.removeOne(user);
-    }
+        WorkerServerDataBase worker_data_base(name_connection);
+        auto users = worker_data_base.get_all_user();
 
-    QDataStream stream(&data,QIODevice::WriteOnly);
-    stream << static_cast<size_t>(users.size());
+        for(auto &user : filter)
+        {
+            users.removeOne(user);
+        }
 
-    auto it = _clients_data.begin();
-    while(it != _clients_data.end())
-    {
-        users.removeOne(_username[it.key()]);
-        stream << std::get<1>(it.value());
-        ++it;
-    }
+        QDataStream stream(&data,QIODevice::WriteOnly);
+        stream << static_cast<size_t>(users.size());
 
-    for(auto &user : users)
-    {
-        QByteArray temp;
-        auto pair = qMakePair(worker_data_base.get_data_dir_user(user),worker_data_base.get_data_files_user(user));
-        create_sended_data(temp, user, pair);
-        stream << temp;
+        auto it = _clients_data.begin();
+        while(it != _clients_data.end())
+        {
+            users.removeOne(_username[it.key()]);
+            stream << std::get<INDEX_TRANSFER_DATA>(it.value());
+            ++it;
+        }
+
+        for(auto &user : users)
+        {
+            QByteArray temp;
+            auto pair = qMakePair(worker_data_base.get_data_dir_user(user),worker_data_base.get_data_files_user(user));
+            created_transfer_data(temp, user, pair,worker_data_base);
+            stream << temp;
+        }
     }
+    WorkerServerDataBase::remove_connection(name_connection);
 }
 
-void WorkerDataClient::create_sended_data(QByteArray &data, QString &name, MetaDataDir &meta_data)
+void WorkerDataClient::created_transfer_data(QByteArray &data, QString &name, MetaDataDir &meta_data, WorkerServerDataBase &worker)
 {
     QDataStream stream(&data,QIODevice::WriteOnly);
 
-    WorkerServerDataBase worker;
     auto addr_info = worker.get_addr_info_user(name);
     stream << addr_info.first
            << addr_info.second
@@ -144,9 +155,9 @@ void WorkerDataClient::create_sended_data(QByteArray &data, QString &name, MetaD
     auto &map = meta_data.second;
     for(auto it = map.begin(); it != map.end(); it++)
     {
-        stream << it.key() << std::get<0>(it.value())
-                           << std::get<2>(it.value())
-                           << std::get<1>(it.value());
+        stream << it.key() << std::get<INDEX_SIZE>(it.value())
+                           << std::get<INDEX_CREATED>(it.value())
+                           << std::get<INDEX_LAST_MODIFIED>(it.value());
     }
 }
 

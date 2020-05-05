@@ -1,6 +1,6 @@
 #include "taskrecvmsg.h"
 
-void TaskRecvMsg::run_process()
+void TasksServer::TaskRecvMsg::run_process()
 {
     if(_new_data.isEmpty())
     {
@@ -30,12 +30,12 @@ void TaskRecvMsg::run_process()
 }
 
 
-TaskRecvMsg::~TaskRecvMsg()
+TasksServer::TaskRecvMsg::~TaskRecvMsg()
 {
 
 }
 
-TaskRecvMsg::TaskRecvMsg(WorkInfo *info,QByteArray &new_data):
+TasksServer::TaskRecvMsg::TaskRecvMsg(WorkInfo *info,QByteArray &new_data):
     _info(info), _new_data(new_data)
 {
 

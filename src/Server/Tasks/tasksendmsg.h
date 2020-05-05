@@ -8,26 +8,31 @@
 #include <BaseServer/base_server.h>
 
 
-using DataTransfer::BaseServer;
-using ActiveObject::ProxyActiveObject;
-
-class TaskSendMsg : public QObject, public ActiveObject::AbstractTask
+namespace TasksServer
 {
-    Q_OBJECT
-signals:
-    void send_data(QByteArray array);
-public:
+    using DataTransfer::BaseServer;
+    using ActiveObject::ProxyActiveObject;
 
-    void run_process() override;
 
-    TaskSendMsg(const QByteArray &msg, ProxyActiveObject *proxy, uint32_t MTU = 1500);
-    virtual ~TaskSendMsg() override;
+    class TaskSendMsg : public QObject, public ActiveObject::AbstractTask
+    {
+        Q_OBJECT
+    signals:
+        void send_data(QByteArray array);
+    public:
 
-private:
-    QByteArray _msg;
-    ProxyActiveObject *_proxy;
-    uint32_t _MTU;
-    bool _is_sended;
-};
+        void run_process() override;
+
+        TaskSendMsg(const QByteArray &msg, ProxyActiveObject *proxy, uint32_t MTU = 1500);
+        virtual ~TaskSendMsg() override;
+
+    private:
+        QByteArray _msg;
+        ProxyActiveObject *_proxy;
+        uint32_t _MTU;
+        bool _is_sended;
+    };
+}
+
 
 #endif // TASKSENDMSG_H

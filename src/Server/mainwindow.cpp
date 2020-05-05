@@ -1,9 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QThread>
+#include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent) :
+WindowServer::WindowServer(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -11,62 +11,85 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 }
 
-MainWindow::~MainWindow()
+WindowServer::~WindowServer()
 {
     delete ui;
 }
 
-void MainWindow::on_work_button_clicked()
+void WindowServer::on_work_button_clicked()
 {
     if(_serv.isNull())
     {
-        _serv.reset(new BaseServer(ui->serv_addr->text(),ui->serv_port->text().toInt()));
+        _serv.reset(new DataTransfer::BaseServer(ui->serv_addr->text(),ui->serv_port->text().toInt()));
 
-        connect(_serv.get(),&BaseServer::new_connection,this,[this]
+        connect(_serv.get(),&DataTransfer::BaseServer::new_connection,this,[this]
         {
             _serv->add_connection();
+
+            auto info = _serv->info_connection().back();
+            ui->terminal->addItem("Подключился:" + info.first + QString::number(info.second));
+
             auto client = _serv->get_client_sockets().back();
+            _users[client] = info;
 
             QByteArray temp;
             _worker_data_client.get_full_meta_data(temp);
             send_msg(client,temp);
         });
 
-        connect(_serv.get(),&BaseServer::disconnected_socket,this,[&](QTcpSocket *socket)
+        connect(_serv.get(),&DataTransfer::BaseServer::disconnected_socket,this,[&](QTcpSocket *socket)
         {
+            auto &info = _users[socket];
+            ui->terminal->addItem("Отключился:" + info.first + QString::number(info.second));
+            _users.remove(socket);
+
             _serv->remove_connection(socket);
             _worker_data_client.remove_client(socket);
         });
-        connect(_serv.get(),&BaseServer::ready_data_read,this,&MainWindow::slot_ready_read);
+        connect(_serv.get(),&DataTransfer::BaseServer::ready_data_read,this,&WindowServer::slot_ready_read);
     }
     if(_serv->is_run())
     {
         _serv->stop();
+        ui->work_button->setText("Запустить сервер");
+        ui->serv_addr->setEnabled(true);
+        ui->serv_port->setEnabled(true);
+        ui->statusBar->clearMessage();
     }
     else
     {
-        _serv->run();
+        if(_serv->run())
+        {
+            ui->work_button->setText("Остановить сервер");
+            ui->serv_addr->setEnabled(false);
+            ui->serv_port->setEnabled(false);
+            ui->statusBar->showMessage("RUN");
+        }
+        else
+        {
+            QMessageBox::warning(nullptr,"Ошибка","Не удалось запустить сервер");
+        }
     }
 }
 
-void MainWindow::slot_ready_read(QTcpSocket *socket)
+void WindowServer::slot_ready_read(QTcpSocket *socket)
 {
 
     QByteArray data;
     _serv->read_data(socket,data);
 
-    auto task = new TaskRecvMsg(&info_recv_data[socket],data);
-    connect(task,&TaskRecvMsg::recved_data,_serv.get(),[socket,this]()
+    auto task = new TasksServer::TaskRecvMsg(&_info_recv_data[socket],data);
+    connect(task,&TasksServer::TaskRecvMsg::recved_data,_serv.get(),[socket,this]()
     {
-        _worker_data_client.change_data(socket,info_recv_data[socket]._msg);
-        info_recv_data[socket].clear();
+        _worker_data_client.change_data(socket, _info_recv_data[socket]._msg);
+        _info_recv_data[socket].clear();
         slot_send_data({socket});
     }, Qt::ConnectionType::DirectConnection);
     _proxy.push(task);
 
 }
 
-void MainWindow::slot_send_data(const QList<QTcpSocket *> &source)
+void WindowServer::slot_send_data(const QList<QTcpSocket *> &source)
 {
     auto users = _serv->get_client_sockets();
     for(auto s : source)
@@ -85,10 +108,10 @@ void MainWindow::slot_send_data(const QList<QTcpSocket *> &source)
     }
 }
 
-void MainWindow::send_msg(QTcpSocket *socket, const QByteArray &data)
+void WindowServer::send_msg(QTcpSocket *socket, const QByteArray &data)
 {
-    auto task = new TaskSendMsg(data,&_proxy);
-    connect(task,&TaskSendMsg::send_data,socket,[&,socket](QByteArray array)
+    auto task = new TasksServer::TaskSendMsg(data,&_proxy);
+    connect(task,&TasksServer::TaskSendMsg::send_data,socket,[&,socket](QByteArray array)
     {
        _serv->write_data(socket,array);
     }, Qt::ConnectionType::QueuedConnection);

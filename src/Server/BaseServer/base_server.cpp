@@ -113,7 +113,6 @@ bool dt::BaseServer::write_data(QTcpSocket *socket, QByteArray &data)
 
     if(is_valid_socket(socket)  && !data.isEmpty())
     {
-        //socket->write(QByteArray::number(data.size()));
         socket->write(data);
         return _wait_for_bytes_written ? socket->waitForBytesWritten(_wait_for_bytes_written) : true;
     }
@@ -133,7 +132,6 @@ bool dt::BaseServer::write_data(int index, QByteArray &data)
 
     if(is_valid_socket(socket)  && !data.isEmpty())
     {
-        //socket->write(QByteArray::number(data.size()));
         socket->write(data);
         return _wait_for_bytes_written ? socket->waitForBytesWritten(_wait_for_bytes_written) : true;
     }
@@ -145,7 +143,7 @@ bool dt::BaseServer::read_data(QTcpSocket *socket, QByteArray &data)
     bool is_thread_safe = _sockets_mutexes.find(socket) != _sockets_mutexes.end();
     QMutexLocker lock(is_thread_safe ? _sockets_mutexes[socket].get() : nullptr);
 
-    if(is_valid_socket(socket) && socket->bytesAvailable())
+    while(is_valid_socket(socket) && socket->bytesAvailable())
     {
         data = socket->readAll();
         return true;

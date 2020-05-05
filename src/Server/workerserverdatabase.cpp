@@ -4,9 +4,15 @@
 #include <QSqlRecord>
 #include <QSqlError>
 #include <QVariantList>
+#include <QThread>
+
+using namespace DataBaseWork;
+
+QMutex WorkerServerDataBase::_data_base_mutex(QMutex::Recursive);
 
 const char* WorkerServerDataBase::TYPE_DATA_BASE = "QSQLITE";
 const char* WorkerServerDataBase::DEFAULT_NAME_DATA_BASE = "data.sqlite";
+const char* WorkerServerDataBase::DEFAULT_NAME_CONNECTION_DATA_BASE = "db_connection_";
 
 const char* WorkerServerDataBase::INSERT_USER_REQUEST = "INSERT INTO users (name) VALUES (:name);";
 const char* WorkerServerDataBase::DELETE_USER_REQUEST = "DELETE FROM users WHERE name = :name;";
@@ -28,10 +34,25 @@ const char* WorkerServerDataBase::UPDATE_ADDR_USER_REQUEST = "UPDATE user_addr_i
 const char* WorkerServerDataBase::UPDATE_PORT_USER_REQUEST = "UPDATE user_addr_info SET port = :port WHERE name = :name;";
 const char* WorkerServerDataBase::SELECT_ANY_ADDR_INFO_REQUEST = "SELECT addr, port FROM user_addr_info WHERE name = :name;";
 
+QString WorkerServerDataBase::get_new_name_connection()
+{
+    int id = 0;
+    auto temp = QThread::currentThreadId();
+    memcpy(&id,&temp,sizeof (id));
+    return DEFAULT_NAME_CONNECTION_DATA_BASE + QString::number(id);
+}
+
+void WorkerServerDataBase::remove_connection(const QString &name_connection)
+{
+    QSqlDatabase::removeDatabase(name_connection);
+}
+
 QStringList WorkerServerDataBase::get_all_user()const
 {
+    QMutexLocker lock(&_data_base_mutex);
+
     QStringList res;
-    QSqlQuery query;
+    QSqlQuery query(_base);
     query.prepare(SELECT_USER_REQUEST);
     if(_base.isOpen() && query.exec())
     {
@@ -45,7 +66,9 @@ QStringList WorkerServerDataBase::get_all_user()const
 
 bool WorkerServerDataBase::insert_user(const QString &user)
 {
-    QSqlQuery query;
+    QMutexLocker lock(&_data_base_mutex);
+
+    QSqlQuery query(_base);
     query.prepare(INSERT_USER_REQUEST);
     query.bindValue(":name",user);
     if(!_base.isOpen() || !query.exec())
@@ -57,7 +80,9 @@ bool WorkerServerDataBase::insert_user(const QString &user)
 
 bool WorkerServerDataBase::delete_user(const QString &user)
 {
-    QSqlQuery query;
+    QMutexLocker lock(&_data_base_mutex);
+
+    QSqlQuery query(_base);
     query.prepare(DELETE_USER_REQUEST);
     query.bindValue(":name",user);
     if(!_base.isOpen() || !is_user(user) || !query.exec())
@@ -69,7 +94,9 @@ bool WorkerServerDataBase::delete_user(const QString &user)
 
 bool WorkerServerDataBase::is_user(const QString &user)
 {
-    QSqlQuery query;
+    QMutexLocker lock(&_data_base_mutex);
+
+    QSqlQuery query(_base);
     query.prepare(SELECT_ANY_USER_REQUEST);
     query.bindValue(":name",user);
     if(!_base.isOpen() || !query.exec())
@@ -88,10 +115,12 @@ bool WorkerServerDataBase::is_user(const QString &user)
 
 bool WorkerServerDataBase::insert_data_dir_user(const QString &user,const QStringList &dirs)
 {
+    QMutexLocker lock(&_data_base_mutex);
+
     if(_base.isOpen() && is_user(user))
     {
         _base.transaction();
-        QSqlQuery query;
+        QSqlQuery query(_base);
         query.prepare(INSERT_DIR_REQUEST);
         for(auto &dir : dirs)
         {
@@ -111,10 +140,12 @@ bool WorkerServerDataBase::insert_data_dir_user(const QString &user,const QStrin
 
 bool WorkerServerDataBase::delete_data_dir_user(const QString &user)
 {
+    QMutexLocker lock(&_data_base_mutex);
+
     if(_base.isOpen())
     {
         _base.transaction();
-        QSqlQuery query;
+        QSqlQuery query(_base);
         query.prepare(DELETE_DIR_REQUEST);
         query.bindValue(":name",user);
         if(!query.exec())
@@ -130,8 +161,10 @@ bool WorkerServerDataBase::delete_data_dir_user(const QString &user)
 
 WorkerServerDataBase::DirsPath WorkerServerDataBase::get_data_dir_user(const QString &user)
 {
+    QMutexLocker lock(&_data_base_mutex);
+
     QStringList res;
-    QSqlQuery query;
+    QSqlQuery query(_base);
     query.prepare(SELECT_DIR_REQUEST);
     query.bindValue(":name",user);
     if(_base.isOpen() && query.exec())
@@ -146,18 +179,20 @@ WorkerServerDataBase::DirsPath WorkerServerDataBase::get_data_dir_user(const QSt
 
 bool WorkerServerDataBase::insert_data_files_user(const QString &user,const WorkerServerDataBase::FileMetaData &data)
 {
+    QMutexLocker lock(&_data_base_mutex);
+
     if(_base.isOpen() && is_user(user))
     {
         _base.transaction();
-        QSqlQuery query;
+        QSqlQuery query(_base);
         query.prepare(INSERT_FILES_REQUEST);
         for(auto it = data.begin(); it != data.end(); it++)
         {
             query.bindValue(":name",user);
             query.bindValue(":path",it.key());
-            query.bindValue(":created_data",std::get<2>(it.value()));
-            query.bindValue(":last_modified_data",std::get<1>(it.value()));
-            query.bindValue(":size",QString::number(std::get<0>(it.value())));
+            query.bindValue(":created_data",std::get<INDEX_CREATED>(it.value()));
+            query.bindValue(":last_modified_data",std::get<INDEX_LAST_MODIFIED>(it.value()));
+            query.bindValue(":size",QString::number(std::get<INDEX_SIZE>(it.value())));
 
             if(!query.exec())
             {
@@ -173,10 +208,12 @@ bool WorkerServerDataBase::insert_data_files_user(const QString &user,const Work
 
 bool WorkerServerDataBase::delete_data_files_user(const QString &user)
 {
+    QMutexLocker lock(&_data_base_mutex);
+
     if(_base.isOpen())
     {
         _base.transaction();
-        QSqlQuery query;
+        QSqlQuery query(_base);
         query.prepare(DELETE_FILES_REQUEST);
         query.bindValue(":name",user);
         if(!query.exec())
@@ -192,8 +229,10 @@ bool WorkerServerDataBase::delete_data_files_user(const QString &user)
 
 WorkerServerDataBase::FileMetaData WorkerServerDataBase::get_data_files_user(const QString &user)
 {
+    QMutexLocker lock(&_data_base_mutex);
+
     FileMetaData res;
-    QSqlQuery query;
+    QSqlQuery query(_base);
     query.prepare(SELECT_FILES_REQUEST);
     query.bindValue(":name",user);
     if(_base.isOpen() && query.exec())
@@ -213,22 +252,19 @@ WorkerServerDataBase::FileMetaData WorkerServerDataBase::get_data_files_user(con
 
 bool WorkerServerDataBase::is_user_info(const QString &user)
 {
-    if(get_addr_info_user(user).first.isEmpty())
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
+    QMutexLocker lock(&_data_base_mutex);
+
+    return get_addr_info_user(user).first.isEmpty() ? false : true;
 }
 
 bool WorkerServerDataBase::insert_addr_info_user(const QString &user,const QString &addr, quint16 port)
 {
+    QMutexLocker lock(&_data_base_mutex);
+
     if(_base.isOpen() && is_user(user))
     {
         _base.transaction();
-        QSqlQuery query;
+        QSqlQuery query(_base);
         query.prepare(INSERT_ADDR_INFO_USER_REQUEST);
         query.bindValue(":name",user);
         query.bindValue(":port",port);
@@ -246,10 +282,12 @@ bool WorkerServerDataBase::insert_addr_info_user(const QString &user,const QStri
 
 bool WorkerServerDataBase::change_addr_user(const QString &user,const QString &addr)
 {
+    QMutexLocker lock(&_data_base_mutex);
+
     if(_base.isOpen() && is_user(user))
     {
         _base.transaction();
-        QSqlQuery query;
+        QSqlQuery query(_base);
         query.prepare(UPDATE_ADDR_USER_REQUEST);
         query.bindValue(":name",user);
         query.bindValue(":addr",addr);
@@ -266,10 +304,12 @@ bool WorkerServerDataBase::change_addr_user(const QString &user,const QString &a
 
 bool WorkerServerDataBase::change_port_user(const QString &user,quint16 port)
 {
+    QMutexLocker lock(&_data_base_mutex);
+
     if(_base.isOpen() && is_user(user))
     {
         _base.transaction();
-        QSqlQuery query;
+        QSqlQuery query(_base);
         query.prepare(UPDATE_PORT_USER_REQUEST);
         query.bindValue(":name",user);
         query.bindValue(":port",port);
@@ -286,10 +326,12 @@ bool WorkerServerDataBase::change_port_user(const QString &user,quint16 port)
 
 bool WorkerServerDataBase::delete_addr_info_user(const QString &user)
 {
+    QMutexLocker lock(&_data_base_mutex);
+
     if(_base.isOpen())
     {
         _base.transaction();
-        QSqlQuery query;
+        QSqlQuery query(_base);
         query.prepare(DELETE_ADDR_INFO_REQUEST);
         query.bindValue(":name",user);
         if(!query.exec())
@@ -305,8 +347,10 @@ bool WorkerServerDataBase::delete_addr_info_user(const QString &user)
 
 QPair<QString,quint16> WorkerServerDataBase::get_addr_info_user(const QString &user)
 {
+    QMutexLocker lock(&_data_base_mutex);
+
     QPair<QString,quint16> res;
-    QSqlQuery query;
+    QSqlQuery query(_base);
     query.prepare(SELECT_ANY_ADDR_INFO_REQUEST);
     query.bindValue(":name",user);
     if(_base.isOpen() && query.exec())
@@ -320,11 +364,18 @@ QPair<QString,quint16> WorkerServerDataBase::get_addr_info_user(const QString &u
     return res;
 }
 
-WorkerServerDataBase::WorkerServerDataBase():
-    _base(QSqlDatabase::addDatabase(TYPE_DATA_BASE))
+WorkerServerDataBase::WorkerServerDataBase(const QString &connection_name)
 {
-    _base.setDatabaseName(DEFAULT_NAME_DATA_BASE);
-    _base.open();
+    if(QSqlDatabase::contains(connection_name))
+    {
+        QSqlDatabase::database(DEFAULT_NAME_CONNECTION_DATA_BASE);
+    }
+    else
+    {
+        _base = QSqlDatabase::addDatabase(TYPE_DATA_BASE,connection_name);
+        _base.setDatabaseName(DEFAULT_NAME_DATA_BASE);
+        _base.open();
+    }
 }
 
 WorkerServerDataBase::~WorkerServerDataBase()

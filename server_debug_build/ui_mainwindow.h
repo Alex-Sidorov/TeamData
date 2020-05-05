@@ -126,7 +126,7 @@ public:
         serv_addr->setText(QApplication::translate("MainWindow", "192.168.100.4", nullptr));
         label_4->setText(QApplication::translate("MainWindow", "\320\237\320\276\321\200\321\202", nullptr));
         serv_port->setText(QApplication::translate("MainWindow", "8000", nullptr));
-        work_button->setText(QApplication::translate("MainWindow", "start/stop", nullptr));
+        work_button->setText(QApplication::translate("MainWindow", "\320\227\320\260\320\277\321\203\321\201\321\202\320\270\321\202\321\214 \321\201\320\265\321\200\320\262\320\265\321\200", nullptr));
     } // retranslateUi
 
 };

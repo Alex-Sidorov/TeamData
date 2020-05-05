@@ -57,7 +57,7 @@
     <item>
      <widget class="QPushButton" name="work_button">
       <property name="text">
-       <string>start/stop</string>
+       <string>Запустить сервер</string>
       </property>
      </widget>
     </item>
