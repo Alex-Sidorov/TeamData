@@ -6,7 +6,7 @@
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../../src/Client/FileSystemWatcher/workermetadata.h"
+#include "../../src/Client/Workers/workermetadata.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
@@ -20,41 +20,42 @@
 QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
-struct qt_meta_stringdata_WorkerMetaData_t {
+struct qt_meta_stringdata_WorkMetaDataOnClient__WorkerMetaData_t {
     QByteArrayData data[14];
-    char stringdata0[140];
+    char stringdata0[162];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_WorkerMetaData_t, stringdata0) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_WorkMetaDataOnClient__WorkerMetaData_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
-static const qt_meta_stringdata_WorkerMetaData_t qt_meta_stringdata_WorkerMetaData = {
+static const qt_meta_stringdata_WorkMetaDataOnClient__WorkerMetaData_t qt_meta_stringdata_WorkMetaDataOnClient__WorkerMetaData = {
     {
-QT_MOC_LITERAL(0, 0, 14), // "WorkerMetaData"
-QT_MOC_LITERAL(1, 15, 11), // "upload_tree"
-QT_MOC_LITERAL(2, 27, 0), // ""
-QT_MOC_LITERAL(3, 28, 11), // "MetaDataDir"
-QT_MOC_LITERAL(4, 40, 4), // "data"
-QT_MOC_LITERAL(5, 45, 4), // "name"
-QT_MOC_LITERAL(6, 50, 9), // "new_files"
-QT_MOC_LITERAL(7, 60, 12), // "FileMetaData"
-QT_MOC_LITERAL(8, 73, 13), // "removed_files"
-QT_MOC_LITERAL(9, 87, 8), // "new_dirs"
-QT_MOC_LITERAL(10, 96, 12), // "removed_dirs"
-QT_MOC_LITERAL(11, 109, 13), // "files_changed"
-QT_MOC_LITERAL(12, 123, 4), // "path"
-QT_MOC_LITERAL(13, 128, 11) // "dir_changed"
+QT_MOC_LITERAL(0, 0, 36), // "WorkMetaDataOnClient::WorkerM..."
+QT_MOC_LITERAL(1, 37, 11), // "upload_tree"
+QT_MOC_LITERAL(2, 49, 0), // ""
+QT_MOC_LITERAL(3, 50, 11), // "MetaDataDir"
+QT_MOC_LITERAL(4, 62, 4), // "data"
+QT_MOC_LITERAL(5, 67, 4), // "name"
+QT_MOC_LITERAL(6, 72, 9), // "new_files"
+QT_MOC_LITERAL(7, 82, 12), // "FileMetaData"
+QT_MOC_LITERAL(8, 95, 13), // "removed_files"
+QT_MOC_LITERAL(9, 109, 8), // "new_dirs"
+QT_MOC_LITERAL(10, 118, 12), // "removed_dirs"
+QT_MOC_LITERAL(11, 131, 13), // "files_changed"
+QT_MOC_LITERAL(12, 145, 4), // "path"
+QT_MOC_LITERAL(13, 150, 11) // "dir_changed"
 
     },
-    "WorkerMetaData\0upload_tree\0\0MetaDataDir\0"
-    "data\0name\0new_files\0FileMetaData\0"
-    "removed_files\0new_dirs\0removed_dirs\0"
-    "files_changed\0path\0dir_changed"
+    "WorkMetaDataOnClient::WorkerMetaData\0"
+    "upload_tree\0\0MetaDataDir\0data\0name\0"
+    "new_files\0FileMetaData\0removed_files\0"
+    "new_dirs\0removed_dirs\0files_changed\0"
+    "path\0dir_changed"
 };
 #undef QT_MOC_LITERAL
 
-static const uint qt_meta_data_WorkerMetaData[] = {
+static const uint qt_meta_data_WorkMetaDataOnClient__WorkerMetaData[] = {
 
  // content:
        8,       // revision
@@ -92,7 +93,7 @@ static const uint qt_meta_data_WorkerMetaData[] = {
        0        // eod
 };
 
-void WorkerMetaData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void WorkMetaDataOnClient::WorkerMetaData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
         auto *_t = static_cast<WorkerMetaData *>(_o);
@@ -147,30 +148,30 @@ void WorkerMetaData::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
     }
 }
 
-QT_INIT_METAOBJECT const QMetaObject WorkerMetaData::staticMetaObject = { {
+QT_INIT_METAOBJECT const QMetaObject WorkMetaDataOnClient::WorkerMetaData::staticMetaObject = { {
     &QObject::staticMetaObject,
-    qt_meta_stringdata_WorkerMetaData.data,
-    qt_meta_data_WorkerMetaData,
+    qt_meta_stringdata_WorkMetaDataOnClient__WorkerMetaData.data,
+    qt_meta_data_WorkMetaDataOnClient__WorkerMetaData,
     qt_static_metacall,
     nullptr,
     nullptr
 } };
 
 
-const QMetaObject *WorkerMetaData::metaObject() const
+const QMetaObject *WorkMetaDataOnClient::WorkerMetaData::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
-void *WorkerMetaData::qt_metacast(const char *_clname)
+void *WorkMetaDataOnClient::WorkerMetaData::qt_metacast(const char *_clname)
 {
     if (!_clname) return nullptr;
-    if (!strcmp(_clname, qt_meta_stringdata_WorkerMetaData.stringdata0))
+    if (!strcmp(_clname, qt_meta_stringdata_WorkMetaDataOnClient__WorkerMetaData.stringdata0))
         return static_cast<void*>(this);
     return QObject::qt_metacast(_clname);
 }
 
-int WorkerMetaData::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int WorkMetaDataOnClient::WorkerMetaData::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QObject::qt_metacall(_c, _id, _a);
     if (_id < 0)
@@ -188,35 +189,35 @@ int WorkerMetaData::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void WorkerMetaData::upload_tree(MetaDataDir _t1, QString _t2)
+void WorkMetaDataOnClient::WorkerMetaData::upload_tree(MetaDataDir _t1, QString _t2)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);
 }
 
 // SIGNAL 1
-void WorkerMetaData::new_files(FileMetaData _t1)
+void WorkMetaDataOnClient::WorkerMetaData::new_files(FileMetaData _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 1, _a);
 }
 
 // SIGNAL 2
-void WorkerMetaData::removed_files(FileMetaData _t1)
+void WorkMetaDataOnClient::WorkerMetaData::removed_files(FileMetaData _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 2, _a);
 }
 
 // SIGNAL 3
-void WorkerMetaData::new_dirs(QStringList _t1)
+void WorkMetaDataOnClient::WorkerMetaData::new_dirs(QStringList _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 3, _a);
 }
 
 // SIGNAL 4
-void WorkerMetaData::removed_dirs(QStringList _t1)
+void WorkMetaDataOnClient::WorkerMetaData::removed_dirs(QStringList _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 4, _a);

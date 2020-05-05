@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
+CONFIG += c++14
 
 SOURCES += \
         main.cpp \
@@ -34,17 +35,17 @@ SOURCES += \
     ActiveObject/scheduler.cpp \
     BaseClient/base_client.cpp \
     FileSystemWatcher/filesystem_informer.cpp \
-    tasksendmsg.cpp \
-    taskrecvmsg.cpp \
-    FileSystemWatcher/workermetadata.cpp \
-    taskfilechanged.cpp \
-    taskdirchanged.cpp \
-    settings.cpp \
-    workerclientdatabase.cpp \
     BaseServer/base_server.cpp \
-    workerremoteclient.cpp \
-    tasksendfile.cpp \
-    taskrecvfile.cpp
+    Tasks/taskdirchanged.cpp \
+    Tasks/taskfilechanged.cpp \
+    Tasks/taskrecvfile.cpp \
+    Tasks/taskrecvmsg.cpp \
+    Tasks/tasksendfile.cpp \
+    Tasks/tasksendmsg.cpp \
+    Settings/settings.cpp \
+    Workers/workerclientdatabase.cpp \
+    Workers/workermetadata.cpp \
+    Workers/workerremoteclient.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -53,17 +54,17 @@ HEADERS += \
     ActiveObject/scheduler.h \
     BaseClient/base_client.h \
     FileSystemWatcher/filesystem_informer.h \
-    tasksendmsg.h \
-    taskrecvmsg.h \
-    FileSystemWatcher/workermetadata.h \
-    taskfilechanged.h \
-    taskdirchanged.h \
-    settings.h \
-    workerclientdatabase.h \
     BaseServer/base_server.h \
-    workerremoteclient.h \
-    tasksendfile.h \
-    taskrecvfile.h
+    Tasks/taskdirchanged.h \
+    Tasks/taskfilechanged.h \
+    Tasks/taskrecvfile.h \
+    Tasks/taskrecvmsg.h \
+    Tasks/tasksendfile.h \
+    Tasks/tasksendmsg.h \
+    Settings/settings.h \
+    Workers/workerclientdatabase.h \
+    Workers/workermetadata.h \
+    Workers/workerremoteclient.h
 
 FORMS += \
         mainwindow.ui

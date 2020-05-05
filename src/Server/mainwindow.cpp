@@ -20,7 +20,7 @@ void WindowServer::on_work_button_clicked()
 {
     if(_serv.isNull())
     {
-        _serv.reset(new DataTransfer::BaseServer(ui->serv_addr->text(),ui->serv_port->text().toInt()));
+        _serv.reset(new DataTransfer::BaseServer(ui->serv_addr->text(),static_cast<quint16>(ui->serv_port->text().toInt())));
 
         connect(_serv.get(),&DataTransfer::BaseServer::new_connection,this,[this]
         {

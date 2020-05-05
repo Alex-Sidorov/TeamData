@@ -4,7 +4,7 @@
 #include "Tasks/taskrecvmsg.h"
 #include "Tasks/tasksendmsg.h"
 #include "BaseServer/base_server.h"
-#include "workerdataclient.h"
+#include "Workers/workerdataclient.h"
 
 #include <QMainWindow>
 #include <QSharedPointer>

@@ -6,7 +6,7 @@
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../../src/Client/taskdirchanged.h"
+#include "../../src/Client/Tasks/taskdirchanged.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
@@ -20,27 +20,28 @@
 QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
-struct qt_meta_stringdata_TaskDirChanged_t {
+struct qt_meta_stringdata_TasksClient__TaskDirChanged_t {
     QByteArrayData data[3];
-    char stringdata0[30];
+    char stringdata0[43];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_TaskDirChanged_t, stringdata0) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_TasksClient__TaskDirChanged_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
-static const qt_meta_stringdata_TaskDirChanged_t qt_meta_stringdata_TaskDirChanged = {
+static const qt_meta_stringdata_TasksClient__TaskDirChanged_t qt_meta_stringdata_TasksClient__TaskDirChanged = {
     {
-QT_MOC_LITERAL(0, 0, 14), // "TaskDirChanged"
-QT_MOC_LITERAL(1, 15, 13), // "complete_task"
-QT_MOC_LITERAL(2, 29, 0) // ""
+QT_MOC_LITERAL(0, 0, 27), // "TasksClient::TaskDirChanged"
+QT_MOC_LITERAL(1, 28, 13), // "complete_task"
+QT_MOC_LITERAL(2, 42, 0) // ""
 
     },
-    "TaskDirChanged\0complete_task\0"
+    "TasksClient::TaskDirChanged\0complete_task\0"
+    ""
 };
 #undef QT_MOC_LITERAL
 
-static const uint qt_meta_data_TaskDirChanged[] = {
+static const uint qt_meta_data_TasksClient__TaskDirChanged[] = {
 
  // content:
        8,       // revision
@@ -62,7 +63,7 @@ static const uint qt_meta_data_TaskDirChanged[] = {
        0        // eod
 };
 
-void TaskDirChanged::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void TasksClient::TaskDirChanged::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
         auto *_t = static_cast<TaskDirChanged *>(_o);
@@ -83,32 +84,32 @@ void TaskDirChanged::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
     }
 }
 
-QT_INIT_METAOBJECT const QMetaObject TaskDirChanged::staticMetaObject = { {
+QT_INIT_METAOBJECT const QMetaObject TasksClient::TaskDirChanged::staticMetaObject = { {
     &QObject::staticMetaObject,
-    qt_meta_stringdata_TaskDirChanged.data,
-    qt_meta_data_TaskDirChanged,
+    qt_meta_stringdata_TasksClient__TaskDirChanged.data,
+    qt_meta_data_TasksClient__TaskDirChanged,
     qt_static_metacall,
     nullptr,
     nullptr
 } };
 
 
-const QMetaObject *TaskDirChanged::metaObject() const
+const QMetaObject *TasksClient::TaskDirChanged::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
-void *TaskDirChanged::qt_metacast(const char *_clname)
+void *TasksClient::TaskDirChanged::qt_metacast(const char *_clname)
 {
     if (!_clname) return nullptr;
-    if (!strcmp(_clname, qt_meta_stringdata_TaskDirChanged.stringdata0))
+    if (!strcmp(_clname, qt_meta_stringdata_TasksClient__TaskDirChanged.stringdata0))
         return static_cast<void*>(this);
     if (!strcmp(_clname, "ActiveObject::AbstractTask"))
         return static_cast< ActiveObject::AbstractTask*>(this);
     return QObject::qt_metacast(_clname);
 }
 
-int TaskDirChanged::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int TasksClient::TaskDirChanged::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QObject::qt_metacall(_c, _id, _a);
     if (_id < 0)
@@ -126,7 +127,7 @@ int TaskDirChanged::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void TaskDirChanged::complete_task(bool _t1)
+void TasksClient::TaskDirChanged::complete_task(bool _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);

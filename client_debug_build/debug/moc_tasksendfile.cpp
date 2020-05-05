@@ -20,28 +20,29 @@
 QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
-struct qt_meta_stringdata_TaskSendFile_t {
+struct qt_meta_stringdata_TasksClient__TaskSendFile_t {
     QByteArrayData data[4];
-    char stringdata0[30];
+    char stringdata0[43];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_TaskSendFile_t, stringdata0) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_TasksClient__TaskSendFile_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
-static const qt_meta_stringdata_TaskSendFile_t qt_meta_stringdata_TaskSendFile = {
+static const qt_meta_stringdata_TasksClient__TaskSendFile_t qt_meta_stringdata_TasksClient__TaskSendFile = {
     {
-QT_MOC_LITERAL(0, 0, 12), // "TaskSendFile"
-QT_MOC_LITERAL(1, 13, 9), // "send_data"
-QT_MOC_LITERAL(2, 23, 0), // ""
-QT_MOC_LITERAL(3, 24, 5) // "array"
+QT_MOC_LITERAL(0, 0, 25), // "TasksClient::TaskSendFile"
+QT_MOC_LITERAL(1, 26, 9), // "send_data"
+QT_MOC_LITERAL(2, 36, 0), // ""
+QT_MOC_LITERAL(3, 37, 5) // "array"
 
     },
-    "TaskSendFile\0send_data\0\0array"
+    "TasksClient::TaskSendFile\0send_data\0"
+    "\0array"
 };
 #undef QT_MOC_LITERAL
 
-static const uint qt_meta_data_TaskSendFile[] = {
+static const uint qt_meta_data_TasksClient__TaskSendFile[] = {
 
  // content:
        8,       // revision
@@ -63,7 +64,7 @@ static const uint qt_meta_data_TaskSendFile[] = {
        0        // eod
 };
 
-void TaskSendFile::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void TasksClient::TaskSendFile::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
         auto *_t = static_cast<TaskSendFile *>(_o);
@@ -84,32 +85,32 @@ void TaskSendFile::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
     }
 }
 
-QT_INIT_METAOBJECT const QMetaObject TaskSendFile::staticMetaObject = { {
+QT_INIT_METAOBJECT const QMetaObject TasksClient::TaskSendFile::staticMetaObject = { {
     &QObject::staticMetaObject,
-    qt_meta_stringdata_TaskSendFile.data,
-    qt_meta_data_TaskSendFile,
+    qt_meta_stringdata_TasksClient__TaskSendFile.data,
+    qt_meta_data_TasksClient__TaskSendFile,
     qt_static_metacall,
     nullptr,
     nullptr
 } };
 
 
-const QMetaObject *TaskSendFile::metaObject() const
+const QMetaObject *TasksClient::TaskSendFile::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
-void *TaskSendFile::qt_metacast(const char *_clname)
+void *TasksClient::TaskSendFile::qt_metacast(const char *_clname)
 {
     if (!_clname) return nullptr;
-    if (!strcmp(_clname, qt_meta_stringdata_TaskSendFile.stringdata0))
+    if (!strcmp(_clname, qt_meta_stringdata_TasksClient__TaskSendFile.stringdata0))
         return static_cast<void*>(this);
     if (!strcmp(_clname, "ActiveObject::AbstractTask"))
         return static_cast< ActiveObject::AbstractTask*>(this);
     return QObject::qt_metacast(_clname);
 }
 
-int TaskSendFile::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int TasksClient::TaskSendFile::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QObject::qt_metacall(_c, _id, _a);
     if (_id < 0)
@@ -127,7 +128,7 @@ int TaskSendFile::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void TaskSendFile::send_data(QByteArray _t1)
+void TasksClient::TaskSendFile::send_data(QByteArray _t1)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 0, _a);

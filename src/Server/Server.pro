@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++11
+CONFIG += c++14
 
 SOURCES += \
         main.cpp \
@@ -35,8 +36,8 @@ SOURCES += \
     BaseServer/base_server.cpp \
     Tasks/taskrecvmsg.cpp \
     Tasks/tasksendmsg.cpp \
-    workerdataclient.cpp \
-    workerserverdatabase.cpp
+    Workers/workerdataclient.cpp \
+    Workers/workerserverdatabase.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -46,8 +47,8 @@ HEADERS += \
     BaseServer/base_server.h \
     Tasks/taskrecvmsg.h \
     Tasks/tasksendmsg.h \
-    workerdataclient.h \
-    workerserverdatabase.h
+    Workers/workerdataclient.h \
+    Workers/workerserverdatabase.h
 
 FORMS += \
         mainwindow.ui

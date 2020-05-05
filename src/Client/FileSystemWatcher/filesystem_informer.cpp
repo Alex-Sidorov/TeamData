@@ -3,8 +3,6 @@
 #include <QDirIterator>
 #include <QDateTime>
 
-#include <QDebug>
-
 namespace fsw = FileSystemWatcher;
 
 void fsw::FileSystemInformer::remove_intermediary_directories(QStringList &directories)
@@ -21,7 +19,7 @@ void fsw::FileSystemInformer::remove_intermediary_directories(QStringList &direc
             }
             else
             {
-                i++;
+                ++i;
             }
         }
 

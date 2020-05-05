@@ -6,7 +6,7 @@
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../../src/Client/workerremoteclient.h"
+#include "../../src/Client/Workers/workerremoteclient.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
@@ -20,39 +20,39 @@
 QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
-struct qt_meta_stringdata_WorkerRemoteClient_t {
+struct qt_meta_stringdata_WorkRemoteDevice__WorkerRemoteClient_t {
     QByteArrayData data[11];
-    char stringdata0[164];
+    char stringdata0[182];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_WorkerRemoteClient_t, stringdata0) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_WorkRemoteDevice__WorkerRemoteClient_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
-static const qt_meta_stringdata_WorkerRemoteClient_t qt_meta_stringdata_WorkerRemoteClient = {
+static const qt_meta_stringdata_WorkRemoteDevice__WorkerRemoteClient_t qt_meta_stringdata_WorkRemoteDevice__WorkerRemoteClient = {
     {
-QT_MOC_LITERAL(0, 0, 18), // "WorkerRemoteClient"
-QT_MOC_LITERAL(1, 19, 15), // "error_name_file"
-QT_MOC_LITERAL(2, 35, 0), // ""
-QT_MOC_LITERAL(3, 36, 15), // "error_open_file"
-QT_MOC_LITERAL(4, 52, 21), // "error_connect_to_host"
-QT_MOC_LITERAL(5, 74, 22), // "error_didnt_found_file"
-QT_MOC_LITERAL(6, 97, 15), // "connect_to_host"
-QT_MOC_LITERAL(7, 113, 15), // "downloaded_file"
-QT_MOC_LITERAL(8, 129, 15), // "slot_ready_read"
-QT_MOC_LITERAL(9, 145, 11), // "QTcpSocket*"
-QT_MOC_LITERAL(10, 157, 6) // "socket"
+QT_MOC_LITERAL(0, 0, 36), // "WorkRemoteDevice::WorkerRemot..."
+QT_MOC_LITERAL(1, 37, 15), // "error_name_file"
+QT_MOC_LITERAL(2, 53, 0), // ""
+QT_MOC_LITERAL(3, 54, 15), // "error_open_file"
+QT_MOC_LITERAL(4, 70, 21), // "error_connect_to_host"
+QT_MOC_LITERAL(5, 92, 22), // "error_didnt_found_file"
+QT_MOC_LITERAL(6, 115, 15), // "connect_to_host"
+QT_MOC_LITERAL(7, 131, 15), // "downloaded_file"
+QT_MOC_LITERAL(8, 147, 15), // "slot_ready_read"
+QT_MOC_LITERAL(9, 163, 11), // "QTcpSocket*"
+QT_MOC_LITERAL(10, 175, 6) // "socket"
 
     },
-    "WorkerRemoteClient\0error_name_file\0\0"
-    "error_open_file\0error_connect_to_host\0"
-    "error_didnt_found_file\0connect_to_host\0"
-    "downloaded_file\0slot_ready_read\0"
-    "QTcpSocket*\0socket"
+    "WorkRemoteDevice::WorkerRemoteClient\0"
+    "error_name_file\0\0error_open_file\0"
+    "error_connect_to_host\0error_didnt_found_file\0"
+    "connect_to_host\0downloaded_file\0"
+    "slot_ready_read\0QTcpSocket*\0socket"
 };
 #undef QT_MOC_LITERAL
 
-static const uint qt_meta_data_WorkerRemoteClient[] = {
+static const uint qt_meta_data_WorkRemoteDevice__WorkerRemoteClient[] = {
 
  // content:
        8,       // revision
@@ -90,7 +90,7 @@ static const uint qt_meta_data_WorkerRemoteClient[] = {
        0        // eod
 };
 
-void WorkerRemoteClient::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void WorkRemoteDevice::WorkerRemoteClient::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
         auto *_t = static_cast<WorkerRemoteClient *>(_o);
@@ -163,30 +163,30 @@ void WorkerRemoteClient::qt_static_metacall(QObject *_o, QMetaObject::Call _c, i
     }
 }
 
-QT_INIT_METAOBJECT const QMetaObject WorkerRemoteClient::staticMetaObject = { {
+QT_INIT_METAOBJECT const QMetaObject WorkRemoteDevice::WorkerRemoteClient::staticMetaObject = { {
     &QObject::staticMetaObject,
-    qt_meta_stringdata_WorkerRemoteClient.data,
-    qt_meta_data_WorkerRemoteClient,
+    qt_meta_stringdata_WorkRemoteDevice__WorkerRemoteClient.data,
+    qt_meta_data_WorkRemoteDevice__WorkerRemoteClient,
     qt_static_metacall,
     nullptr,
     nullptr
 } };
 
 
-const QMetaObject *WorkerRemoteClient::metaObject() const
+const QMetaObject *WorkRemoteDevice::WorkerRemoteClient::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
-void *WorkerRemoteClient::qt_metacast(const char *_clname)
+void *WorkRemoteDevice::WorkerRemoteClient::qt_metacast(const char *_clname)
 {
     if (!_clname) return nullptr;
-    if (!strcmp(_clname, qt_meta_stringdata_WorkerRemoteClient.stringdata0))
+    if (!strcmp(_clname, qt_meta_stringdata_WorkRemoteDevice__WorkerRemoteClient.stringdata0))
         return static_cast<void*>(this);
     return QObject::qt_metacast(_clname);
 }
 
-int WorkerRemoteClient::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int WorkRemoteDevice::WorkerRemoteClient::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QObject::qt_metacall(_c, _id, _a);
     if (_id < 0)
@@ -204,37 +204,37 @@ int WorkerRemoteClient::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void WorkerRemoteClient::error_name_file()
+void WorkRemoteDevice::WorkerRemoteClient::error_name_file()
 {
     QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
 }
 
 // SIGNAL 1
-void WorkerRemoteClient::error_open_file()
+void WorkRemoteDevice::WorkerRemoteClient::error_open_file()
 {
     QMetaObject::activate(this, &staticMetaObject, 1, nullptr);
 }
 
 // SIGNAL 2
-void WorkerRemoteClient::error_connect_to_host()
+void WorkRemoteDevice::WorkerRemoteClient::error_connect_to_host()
 {
     QMetaObject::activate(this, &staticMetaObject, 2, nullptr);
 }
 
 // SIGNAL 3
-void WorkerRemoteClient::error_didnt_found_file()
+void WorkRemoteDevice::WorkerRemoteClient::error_didnt_found_file()
 {
     QMetaObject::activate(this, &staticMetaObject, 3, nullptr);
 }
 
 // SIGNAL 4
-void WorkerRemoteClient::connect_to_host()
+void WorkRemoteDevice::WorkerRemoteClient::connect_to_host()
 {
     QMetaObject::activate(this, &staticMetaObject, 4, nullptr);
 }
 
 // SIGNAL 5
-void WorkerRemoteClient::downloaded_file()
+void WorkRemoteDevice::WorkerRemoteClient::downloaded_file()
 {
     QMetaObject::activate(this, &staticMetaObject, 5, nullptr);
 }

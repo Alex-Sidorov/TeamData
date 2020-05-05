@@ -5,46 +5,44 @@
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
 #include <QDataStream>
-
 #include <QThread>
 #include <QMessageBox>
 #include <QIcon>
 #include <QMenu>
-#include <QHeaderView>
 
-const QColor MainWindow::TASK_COLOR = qRgb(65,105,225);
-const QColor MainWindow::DEFAULT_COLOR = qRgb(255,255,255);
+const QColor WindowClient::TASK_COLOR = qRgb(65,105,225);
+const QColor WindowClient::DEFAULT_COLOR = qRgb(255,255,255);
 
-MainWindow::MainWindow(QWidget *parent) :
+WindowClient::WindowClient(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    worker_meta_data(&_proxy),
+    _worker_meta_data(&_proxy),
     _worker_remote_client(&_proxy)
 {
     _proxy.start();
     ui->setupUi(this);
 
-    connect(&_worker_remote_client,&WorkerRemoteClient::error_name_file,this,[]
+    connect(&_worker_remote_client,&WorkRemoteDevice::WorkerRemoteClient::error_name_file,this,[]
     {
         QMessageBox::warning(nullptr,"Ошибка","Неверное имя файла");
     });
-    connect(&_worker_remote_client,&WorkerRemoteClient::error_open_file,this,[]
+    connect(&_worker_remote_client,&WorkRemoteDevice::WorkerRemoteClient::error_open_file,this,[]
     {
         QMessageBox::warning(nullptr,"Ошибка","Ошибка открытия файла");
     });
-    connect(&_worker_remote_client,&WorkerRemoteClient::error_connect_to_host,this,[]
+    connect(&_worker_remote_client,&WorkRemoteDevice::WorkerRemoteClient::error_connect_to_host,this,[]
     {
         QMessageBox::warning(nullptr,"Ошибка","Ошибка подключения");
     });
-    connect(&_worker_remote_client,&WorkerRemoteClient::error_didnt_found_file,this,[]
+    connect(&_worker_remote_client,&WorkRemoteDevice::WorkerRemoteClient::error_didnt_found_file,this,[]
     {
         QMessageBox::warning(nullptr,"Ошибка","Файл на устройстве не найден");
     });
-    connect(&_worker_remote_client,&WorkerRemoteClient::connect_to_host,this,[]
+    connect(&_worker_remote_client,&WorkRemoteDevice::WorkerRemoteClient::connect_to_host,this,[]
     {
         QMessageBox::information(nullptr,"Информация","Устройство подключено");
     });
-    connect(&_worker_remote_client,&WorkerRemoteClient::downloaded_file,this,[]
+    connect(&_worker_remote_client,&WorkRemoteDevice::WorkerRemoteClient::downloaded_file,this,[]
     {
         QMessageBox::information(nullptr,"Информация","Файл скачен");
     });
@@ -58,11 +56,10 @@ MainWindow::MainWindow(QWidget *parent) :
         _search_res.clear();
     });
 
-    QSqlDatabase::addDatabase("QSQLITE");
+    qRegisterMetaType<WorkMetaDataOnClient::WorkerMetaData::MetaDataDir>("MetaDataDir");
 
-    qRegisterMetaType<WorkerMetaData::MetaDataDir>("MetaDataDir");
-
-    connect(&worker_meta_data,&WorkerMetaData::upload_tree,this,&MainWindow::slot_load_tree,Qt::ConnectionType::QueuedConnection);
+    connect(&_worker_meta_data,&WorkMetaDataOnClient::WorkerMetaData::upload_tree,
+            this,&WindowClient::slot_load_tree,Qt::ConnectionType::QueuedConnection);
 
     _settings.read_settings();
 
@@ -79,8 +76,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->serv_port->setValue(_settings.get_serv_port());
     ui->self_port->setValue(_settings.get_self_port());
 
-    worker_meta_data.load_data_from_database();
-    worker_meta_data.scan_dir();
+    _worker_meta_data.load_data_from_database();
+    _worker_meta_data.scan_dir();
 
     ui->name_line->setText(name);
     ui->path_line->setText(path);
@@ -88,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stack_widget->removeWidget(ui->remote_page);
 }
 
-MainWindow::~MainWindow()
+WindowClient::~WindowClient()
 {
     for(auto &widget : _remote_dir)
     {
@@ -100,7 +97,8 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data, QString name)
+void WindowClient::slot_load_tree(WorkMetaDataOnClient::WorkerMetaData::MetaDataDir data,
+                                QString name)
 {
     if(_remote_dir.find(name) == _remote_dir.end())
     {
@@ -108,7 +106,7 @@ void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data, QString name)
         auto new_tree = new QTreeWidget;
 
         new_tree->setContextMenuPolicy(Qt::CustomContextMenu);
-        connect(new_tree,&QTreeWidget::customContextMenuRequested,this, &MainWindow::slot_sub_menu);
+        connect(new_tree,&QTreeWidget::customContextMenuRequested,this, &WindowClient::slot_sub_menu);
         connect(new_tree,&QTreeWidget::doubleClicked,this,[this]
         {
             for(auto &item : _search_res)
@@ -130,7 +128,7 @@ void MainWindow::slot_load_tree(WorkerMetaData::MetaDataDir data, QString name)
     _worker_remote_client.work_task(name);
 }
 
-void MainWindow::slot_sub_menu(const QPoint &pos)
+void WindowClient::slot_sub_menu(const QPoint &pos)
 {
     auto tree = static_cast<QTreeWidget*>(ui->stack_widget->currentWidget());
     auto item = tree->itemAt(pos);
@@ -173,7 +171,7 @@ void MainWindow::slot_sub_menu(const QPoint &pos)
     }
 }
 
-void MainWindow::add_dirs(QTreeWidget *tree, QStringList &dirs)
+void WindowClient::add_dirs(QTreeWidget *tree, QStringList &dirs)
 {
     for(auto it = dirs.begin(); it != dirs.end(); it++)
     {
@@ -241,7 +239,9 @@ void MainWindow::add_dirs(QTreeWidget *tree, QStringList &dirs)
     tree->setCurrentItem(nullptr);
 }
 
-void MainWindow::add_files(const QString &name, QTreeWidget *tree, WorkerMetaData::FileMetaData &files)
+void WindowClient::add_files(const QString &name,
+                           QTreeWidget *tree,
+                           WorkMetaDataOnClient::WorkerMetaData::FileMetaData &files)
 {
     auto tasks_files = _settings.get_all_task_user(name).first.first;
     for(auto it = files.begin(); it != files.end(); it++)
@@ -305,7 +305,7 @@ void MainWindow::add_files(const QString &name, QTreeWidget *tree, WorkerMetaDat
     tree->setCurrentItem(nullptr);
 }
 
-void MainWindow::slot_removed_dirs(QStringList dirs)
+void WindowClient::slot_removed_dirs(QStringList dirs)
 {
     for(int i = 0; i < dirs.size(); i++)
     {
@@ -331,7 +331,7 @@ void MainWindow::slot_removed_dirs(QStringList dirs)
     }
 }
 
-void MainWindow::on_pushButton_clicked()
+void WindowClient::on_pushButton_clicked()
 {
     if(_client.isNull())
     {        
@@ -342,7 +342,7 @@ void MainWindow::on_pushButton_clicked()
             ui->statusBar->showMessage("CONNECTED");
             ui->serv_addr->setEnabled(false);
             ui->serv_port->setEnabled(false);
-            worker_meta_data.scan_dir();
+            _worker_meta_data.scan_dir();
         });
         connect(_client.get(),&BaseClient::disconnected_socket,this,[&]
         {
@@ -350,7 +350,7 @@ void MainWindow::on_pushButton_clicked()
             ui->serv_addr->setEnabled(true);
             ui->serv_port->setEnabled(true);
         });
-        worker_meta_data.change_client(_client.data());
+        _worker_meta_data.change_client(_client.data());
     }
     if(_client->is_connected())
     {
@@ -364,7 +364,7 @@ void MainWindow::on_pushButton_clicked()
 }
 
 
-void MainWindow::on_select_path_button_clicked()
+void WindowClient::on_select_path_button_clicked()
 {
     auto dir = QFileDialog::getExistingDirectory(nullptr,"Выбор рабочей директории","",nullptr);
     if(!dir.isEmpty())
@@ -374,7 +374,7 @@ void MainWindow::on_select_path_button_clicked()
     }
 }
 
-void MainWindow::on_users_doubleClicked(const QModelIndex &index)
+void WindowClient::on_users_doubleClicked(const QModelIndex &index)
 {
     if(index.isValid())
     {
@@ -385,7 +385,7 @@ void MainWindow::on_users_doubleClicked(const QModelIndex &index)
     }
 }
 
-void MainWindow::on_name_line_editingFinished()
+void WindowClient::on_name_line_editingFinished()
 {
     auto name = ui->name_line->text();
 
@@ -407,33 +407,33 @@ void MainWindow::on_name_line_editingFinished()
     ui->users->item(0)->setText(name);
 }
 
-void MainWindow::on_self_addr_editingFinished()
+void WindowClient::on_self_addr_editingFinished()
 {
     _settings.set_self_addr(ui->self_addr->text());
 }
 
-void MainWindow::on_serv_addr_editingFinished()
+void WindowClient::on_serv_addr_editingFinished()
 {
     _settings.set_serv_addr(ui->serv_addr->text());
 }
 
-void MainWindow::on_serv_port_valueChanged(int value)
+void WindowClient::on_serv_port_valueChanged(int value)
 {
     _settings.set_serv_port(value);
 }
 
-void MainWindow::on_self_port_valueChanged(int value)
+void WindowClient::on_self_port_valueChanged(int value)
 {
     _settings.set_self_port(value);
 }
 
-void MainWindow::on_path_line_editingFinished()
+void WindowClient::on_path_line_editingFinished()
 {
     _settings.set_path(ui->path_line->text());
-    worker_meta_data.scan_dir();
+    _worker_meta_data.scan_dir();
 }
 
-void MainWindow::on_work_serv_clicked()
+void WindowClient::on_work_serv_clicked()
 {
     if(!_worker_remote_client.is_serv_run())
     {
@@ -451,7 +451,7 @@ void MainWindow::on_work_serv_clicked()
     }
 }
 
-void MainWindow::slot_download_file(QTreeWidgetItem *item)
+void WindowClient::slot_download_file(QTreeWidgetItem *item)
 {
     auto index = ui->stack_widget->currentIndex();
     if(item && index)
@@ -482,7 +482,7 @@ void MainWindow::slot_download_file(QTreeWidgetItem *item)
     }
 }
 
-bool MainWindow::slot_insert_task(QTreeWidgetItem *item)
+bool WindowClient::slot_insert_task(QTreeWidgetItem *item)
 {
     auto index = ui->stack_widget->currentIndex();
     if(item && index)
@@ -502,7 +502,7 @@ bool MainWindow::slot_insert_task(QTreeWidgetItem *item)
     return false;
 }
 
-bool MainWindow::slot_delete_task(QTreeWidgetItem *item)
+bool WindowClient::slot_delete_task(QTreeWidgetItem *item)
 {
     auto index = ui->stack_widget->currentIndex();
     if(item && index)
@@ -518,7 +518,7 @@ bool MainWindow::slot_delete_task(QTreeWidgetItem *item)
     return false;
 }
 
-QString MainWindow::get_absolute_path(QTreeWidgetItem *item)
+QString WindowClient::get_absolute_path(QTreeWidgetItem *item)
 {
     QString path;
     while(item)
@@ -530,7 +530,7 @@ QString MainWindow::get_absolute_path(QTreeWidgetItem *item)
 }
 
 
-void MainWindow::on_search_button_clicked()
+void WindowClient::on_search_button_clicked()
 {
     QTreeWidget* tree = nullptr;
     if(ui->stack_widget->currentIndex())
@@ -556,12 +556,12 @@ void MainWindow::on_search_button_clicked()
     }
 }
 
-void MainWindow::on_search_line_returnPressed()
+void WindowClient::on_search_line_returnPressed()
 {
     on_search_button_clicked();
 }
 
-QList<QTreeWidgetItem*> MainWindow::search_item(QTreeWidget* tree, const QString &text)
+QList<QTreeWidgetItem*> WindowClient::search_item(QTreeWidget* tree, const QString &text)
 {
     if(!tree || text.isEmpty())
     {
