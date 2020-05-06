@@ -63,7 +63,7 @@ void WindowServer::on_work_button_clicked()
             ui->work_button->setText("Остановить сервер");
             ui->serv_addr->setEnabled(false);
             ui->serv_port->setEnabled(false);
-            ui->statusBar->showMessage("RUN");
+            ui->statusBar->showMessage("Сервер работает");
         }
         else
         {

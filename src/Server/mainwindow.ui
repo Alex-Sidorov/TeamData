@@ -13,49 +13,176 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget {
+    background-color: rgb(216, 216, 216);
+}
+</string>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>Сервер|</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>IP адрес:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="serv_addr">
-        <property name="text">
-         <string>192.168.100.4</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Порт</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="serv_port">
-        <property name="text">
-         <string>8000</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QWidget" name="widget" native="true">
+      <property name="styleSheet">
+       <string notr="true">QWidget
+{
+	border: 1px solid grey;
+	border-radius: 4px;
+	background-color:rgb(109, 109, 109);
+}
+</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border: 1px ;
+color : white;</string>
+           </property>
+           <property name="text">
+            <string>Сервер метаданных</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border: 1px ;
+color : white;</string>
+           </property>
+           <property name="text">
+            <string>IP адрес</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="serv_addr">
+           <property name="styleSheet">
+            <string notr="true">QWidget
+{
+	border: 1px solid grey;
+	border-radius: 4px;
+	background : white;
+}</string>
+           </property>
+           <property name="text">
+            <string>192.168.100.4</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">border: 1px ;
+color : white;</string>
+           </property>
+           <property name="text">
+            <string>Порт</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="serv_port">
+           <property name="styleSheet">
+            <string notr="true">QWidget
+{
+	border: 1px solid grey;
+	border-radius: 4px;
+	background : white;
+}</string>
+           </property>
+           <property name="text">
+            <string>8000</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton
+{ 
+	height:20;
+	width:200;
+	border: 1px solid grey;
+	border-radius: 4px;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #dadbde, stop: 1 #f6f7fa);
+}
+
+QPushButton::pressed {
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 rgb(251, 252, 255), stop: 1 #f6f7fa);
+}
+</string>
+           </property>
+           <property name="text">
+            <string>Подлючиться к серверу </string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
     </item>
     <item>
      <widget class="QPushButton" name="work_button">
+      <property name="styleSheet">
+       <string notr="true">QPushButton
+{ 
+	height:20;
+	width:140;
+	border: 1px solid grey;
+	border-radius: 4px;
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #dadbde, stop: 1 #f6f7fa);
+}
+
+QPushButton::pressed {
+    background-color:qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 rgb(251, 252, 255), stop: 1 #f6f7fa);
+}
+</string>
+      </property>
       <property name="text">
        <string>Запустить сервер</string>
       </property>
@@ -64,7 +191,12 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QListWidget" name="terminal"/>
+       <widget class="QListWidget" name="terminal">
+        <property name="styleSheet">
+         <string notr="true">background-color:rgb(88, 88, 88);
+color:white;</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

@@ -16,6 +16,7 @@ release/settings.o
 release/workerclientdatabase.o
 release/workermetadata.o
 release/workerremoteclient.o
+release/qrc_resource.o
 release/moc_mainwindow.o
 release/moc_base_client.o
 release/moc_base_server.o

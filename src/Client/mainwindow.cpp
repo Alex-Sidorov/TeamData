@@ -11,7 +11,7 @@
 #include <QMenu>
 
 const QColor WindowClient::TASK_COLOR = qRgb(65,105,225);
-const QColor WindowClient::DEFAULT_COLOR = qRgb(255,255,255);
+const QColor WindowClient::DEFAULT_COLOR = qRgb(88, 88, 88);
 
 WindowClient::WindowClient(QWidget *parent) :
     QMainWindow(parent),
@@ -19,39 +19,42 @@ WindowClient::WindowClient(QWidget *parent) :
     _worker_meta_data(&_proxy),
     _worker_remote_client(&_proxy)
 {
-    _proxy.start();
     ui->setupUi(this);
+
+    setWindowIcon(QIcon(":icons/icon.png"));
+
+    _proxy.start();
 
     connect(&_worker_remote_client,&WorkRemoteDevice::WorkerRemoteClient::error_name_file,this,[]
     {
-        QMessageBox::warning(nullptr,"Ошибка","Неверное имя файла");
+
     });
     connect(&_worker_remote_client,&WorkRemoteDevice::WorkerRemoteClient::error_open_file,this,[]
     {
-        QMessageBox::warning(nullptr,"Ошибка","Ошибка открытия файла");
+
     });
     connect(&_worker_remote_client,&WorkRemoteDevice::WorkerRemoteClient::error_connect_to_host,this,[]
     {
-        QMessageBox::warning(nullptr,"Ошибка","Ошибка подключения");
+
     });
     connect(&_worker_remote_client,&WorkRemoteDevice::WorkerRemoteClient::error_didnt_found_file,this,[]
     {
-        QMessageBox::warning(nullptr,"Ошибка","Файл на устройстве не найден");
+
     });
     connect(&_worker_remote_client,&WorkRemoteDevice::WorkerRemoteClient::connect_to_host,this,[]
     {
-        QMessageBox::information(nullptr,"Информация","Устройство подключено");
+
     });
     connect(&_worker_remote_client,&WorkRemoteDevice::WorkerRemoteClient::downloaded_file,this,[]
     {
-        QMessageBox::information(nullptr,"Информация","Файл скачен");
+
     });
 
     connect(ui->tree_dir,&QTreeWidget::doubleClicked,this,[this]
     {
         for(auto &item : _search_res)
         {
-            item->setBackgroundColor(0,Qt::white);
+            item->setBackgroundColor(0,DEFAULT_COLOR);
         }
         _search_res.clear();
     });
@@ -66,7 +69,7 @@ WindowClient::WindowClient(QWidget *parent) :
     auto name = _settings.get_name();
 
     _remote_dir.insert(name,qMakePair(0,ui->tree_dir));
-    ui->users->addItem(name + ("(user)"));
+    ui->users->addItem(name + ("(Пользователь)"));
 
     auto path = _settings.get_path();    
 
@@ -111,12 +114,13 @@ void WindowClient::slot_load_tree(WorkMetaDataOnClient::WorkerMetaData::MetaData
         {
             for(auto &item : _search_res)
             {
-                item->setBackgroundColor(0,Qt::white);
+                item->setBackgroundColor(0,DEFAULT_COLOR);
             }
             _search_res.clear();
         });
 
         new_tree->setHeaderItem(ui->tree_dir->headerItem()->clone());
+        new_tree->setStyleSheet(ui->tree_dir->styleSheet());
         int index = ui->stack_widget->addWidget(new_tree);
         _remote_dir[name] = qMakePair(index,new_tree);
 
@@ -339,16 +343,20 @@ void WindowClient::on_pushButton_clicked()
 
         connect(_client.get(),&BaseClient::connected_socket,this,[&]
         {
-            ui->statusBar->showMessage("CONNECTED");
+            ui->statusBar->showMessage("Подключен к серверу");
+            ui->pushButton->setText("Отключиться от сервера");
             ui->serv_addr->setEnabled(false);
             ui->serv_port->setEnabled(false);
+            ui->name_line->setEnabled(false);
             _worker_meta_data.scan_dir();
         });
         connect(_client.get(),&BaseClient::disconnected_socket,this,[&]
         {
+            ui->pushButton->setText("Подключиться к серверу");
             ui->statusBar->clearMessage();
             ui->serv_addr->setEnabled(true);
             ui->serv_port->setEnabled(true);
+             ui->name_line->setEnabled(true);
         });
         _worker_meta_data.change_client(_client.data());
     }
@@ -403,7 +411,7 @@ void WindowClient::on_name_line_editingFinished()
     _remote_dir.insert(name,data);
 
     _settings.set_name(name);
-    name += "(user)";
+    name += "(Пользователь)";
     ui->users->item(0)->setText(name);
 }
 
@@ -439,12 +447,14 @@ void WindowClient::on_work_serv_clicked()
     {
         if(_worker_remote_client.run_serv())
         {
+            ui->work_serv->setText("Остановить личный сервер");
             ui->self_addr->setEnabled(false);
             ui->self_port->setEnabled(false);
         }
     }
     else
     {
+        ui->work_serv->setText("Запустить личный сервер");
         _worker_remote_client.stop_serv();
         ui->self_addr->setEnabled(true);
         ui->self_port->setEnabled(true);
@@ -543,12 +553,12 @@ void WindowClient::on_search_button_clicked()
     }
     for(auto &item : _search_res)
     {
-        item->setBackgroundColor(0,Qt::white);
+        item->setBackgroundColor(0,DEFAULT_COLOR);
     }
     _search_res = search_item(tree,ui->search_line->text());
     if(_search_res.empty())
     {
-        QMessageBox::information(nullptr,"Информация","Объект не обнаружен");
+        QMessageBox::information(this,"Информация","Объект не обнаружен");
     }
     for(auto &item : _search_res)
     {
@@ -619,3 +629,4 @@ QList<QTreeWidgetItem*> WindowClient::search_item(QTreeWidget* tree, const QStri
     }
     return items;
 }
+

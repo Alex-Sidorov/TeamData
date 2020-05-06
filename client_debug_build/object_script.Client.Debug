@@ -16,6 +16,7 @@ debug/settings.o
 debug/workerclientdatabase.o
 debug/workermetadata.o
 debug/workerremoteclient.o
+debug/qrc_resource.o
 debug/moc_mainwindow.o
 debug/moc_base_client.o
 debug/moc_base_server.o
