@@ -55,8 +55,8 @@ WorkerDataClient::parse_recved_data(TransferData &data)
         QString name_file;
         FileCharacteristics file_info;
         stream >> name_file >> std::get<INDEX_SIZE>(file_info)
-                            >> std::get<INDEX_LAST_MODIFIED>(file_info)
-                            >> std::get<INDEX_CREATED>(file_info);
+                            >> std::get<INDEX_CREATED>(file_info)
+                            >> std::get<INDEX_LAST_MODIFIED>(file_info);
         meta_data.second.insert(name_file,file_info);
     }
     return std::make_tuple(qMakePair(addr,port),qMakePair(name, meta_data));

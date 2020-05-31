@@ -14,10 +14,11 @@ using namespace WorkMetaDataOnClient;
 
 void WorkerMetaData::scan_dir()
 {
+    _path = _settings.read_path();
     if(!_path.isEmpty())
     {
         remove_watcher_path();
-        _path = _settings.read_path();
+
         _name = _settings.read_name();
 
         auto dirs = fsi::get_terminal_directories(_path);
@@ -164,6 +165,7 @@ void WorkerMetaData::parse_recved_data(QByteArray &data)
                            >> std::get<INDEX_SIZE>(file_info)
                            >> std::get<INDEX_CREATED>(file_info)
                            >> std::get<INDEX_LAST_MODIFIED>(file_info);
+
                 meta_data.second.insert(name_file,file_info);
             }
             _remote_meta_data[name] = meta_data;

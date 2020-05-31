@@ -21,7 +21,6 @@ namespace DataTransfer
         void socket_error(QTcpSocket *socket, QAbstractSocket::SocketError state);
         void ready_data_read(QTcpSocket *socket);
         void disconnected_socket(QTcpSocket *socket);
-        void recved_data();
 
     public:
         BaseServer(const QString &addr,quint16 port);

@@ -45,8 +45,8 @@ namespace WorkDataClientOnServer
         std::tuple<UserAddrInfo,QPair<QString,MetaDataDir>> parse_recved_data(QByteArray &data);
 
         static constexpr int INDEX_SIZE = 0;
-        static constexpr int INDEX_LAST_MODIFIED = 1;
-        static constexpr int INDEX_CREATED = 2;
+        static constexpr int INDEX_CREATED = 1;
+        static constexpr int INDEX_LAST_MODIFIED = 2;
 
         static constexpr int INDEX_PARSE_DATA = 0;
         static constexpr int INDEX_TRANSFER_DATA = 1;

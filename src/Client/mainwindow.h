@@ -59,7 +59,6 @@ private:
 
     QSharedPointer<BaseClient>_client;
     ActiveObject::ProxyActiveObject _proxy;
-    TasksClient::TaskRecvMsg::WorkInfo info_recv_data;
     WorkMetaDataOnClient::WorkerMetaData _worker_meta_data;
     WorkRemoteDevice::WorkerRemoteClient _worker_remote_client;
 

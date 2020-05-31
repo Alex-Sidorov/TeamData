@@ -18,16 +18,24 @@ WindowServer::~WindowServer()
 
 void WindowServer::on_work_button_clicked()
 {
-    if(_serv.isNull())
+    if(!_serv.isNull() && _serv->is_run())
     {
-        _serv.reset(new DataTransfer::BaseServer(ui->serv_addr->text(),static_cast<quint16>(ui->serv_port->text().toInt())));
+        _serv->stop();
+        ui->work_button->setText("Запустить сервер");
+        ui->serv_addr->setEnabled(true);
+        ui->serv_port->setEnabled(true);
+        ui->statusBar->clearMessage();
+    }
+    else
+    {
+        _serv.reset(new DataTransfer::BaseServer(ui->serv_addr->text(),ui->serv_port->value()));
 
         connect(_serv.get(),&DataTransfer::BaseServer::new_connection,this,[this]
         {
             _serv->add_connection();
 
             auto info = _serv->info_connection().back();
-            ui->terminal->addItem("Подключился:" + info.first + QString::number(info.second));
+            ui->terminal->addItem("Подключился:" + info.first + ' ' + QString::number(info.second));
 
             auto client = _serv->get_client_sockets().back();
             _users[client] = info;
@@ -40,24 +48,14 @@ void WindowServer::on_work_button_clicked()
         connect(_serv.get(),&DataTransfer::BaseServer::disconnected_socket,this,[&](QTcpSocket *socket)
         {
             auto &info = _users[socket];
-            ui->terminal->addItem("Отключился:" + info.first + QString::number(info.second));
+            ui->terminal->addItem("Отключился:" + info.first + ' ' + QString::number(info.second));
             _users.remove(socket);
 
             _serv->remove_connection(socket);
             _worker_data_client.remove_client(socket);
         });
         connect(_serv.get(),&DataTransfer::BaseServer::ready_data_read,this,&WindowServer::slot_ready_read);
-    }
-    if(_serv->is_run())
-    {
-        _serv->stop();
-        ui->work_button->setText("Запустить сервер");
-        ui->serv_addr->setEnabled(true);
-        ui->serv_port->setEnabled(true);
-        ui->statusBar->clearMessage();
-    }
-    else
-    {
+
         if(_serv->run())
         {
             ui->work_button->setText("Остановить сервер");

@@ -15,7 +15,6 @@ namespace DataTransfer
         void ready_data_read();
         void connected_socket();
         void disconnected_socket();
-        void recved_data();
 
     public:
         BaseClient(const QString &addr,quint16 port);

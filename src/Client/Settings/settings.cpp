@@ -193,40 +193,42 @@ bool Settings::read_settings(const QString &name_file)
         _settings.setPath(QSettings::IniFormat,QSettings::UserScope,name_file);
     }
 
+    bool res = true;
+
     auto self_addr = read_self_addr();
     if(self_addr.isEmpty())
     {
-        return false;
+        res = false;
     }
 
     quint16 self_port = read_self_port();
     if(!self_port)
     {
-        return false;
+        res = false;
     }
 
     auto serv_addr = read_serv_addr();
     if(serv_addr.isEmpty())
     {
-        return false;
+        res = false;
     }
 
     quint16 serv_port = read_serv_port();
     if(!serv_port)
     {
-        return false;
+        res = false;
     }
 
     auto name = read_name();
     if(name.isEmpty())
     {
-        return false;
+        res = false;
     }
 
     auto path = read_path();
     if(path.isEmpty())
     {
-        return false;
+        res = false;
     }
 
     _self_addr = self_addr;
@@ -235,7 +237,7 @@ bool Settings::read_settings(const QString &name_file)
     _serv_port = serv_port;
     _name = name;
     _path = path;
-    return true;
+    return res;
 }
 
 bool Settings::add_user(const QString &user)

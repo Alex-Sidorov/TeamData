@@ -86,8 +86,8 @@ namespace WorkMetaDataOnClient
         void remove_watcher_path();
 
         static constexpr int INDEX_SIZE = 0;
-        static constexpr int INDEX_LAST_MODIFIED = 1;
-        static constexpr int INDEX_CREATED = 2;
+        static constexpr int INDEX_CREATED = 1;
+        static constexpr int INDEX_LAST_MODIFIED = 2;
     };
 }
 

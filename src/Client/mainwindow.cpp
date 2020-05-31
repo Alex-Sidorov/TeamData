@@ -337,7 +337,12 @@ void WindowClient::slot_removed_dirs(QStringList dirs)
 
 void WindowClient::on_pushButton_clicked()
 {
-    if(_client.isNull())
+    if(!_client.isNull() && _client->is_connected())
+    {
+        _client->disconnect_to_host();
+        _client.reset();
+    }
+    else
     {        
         _client.reset(new BaseClient(_settings.get_serv_addr(),_settings.get_serv_port()));
 
@@ -358,16 +363,9 @@ void WindowClient::on_pushButton_clicked()
             ui->serv_port->setEnabled(true);
              ui->name_line->setEnabled(true);
         });
-        _worker_meta_data.change_client(_client.data());
-    }
-    if(_client->is_connected())
-    {
-        _client->disconnect_to_host();
-        _client.reset();   
-    }
-    else
-    {
         _client->connect_to_host();
+        _worker_meta_data.change_client(_client.data());
+
     }
 }
 
@@ -470,18 +468,7 @@ void WindowClient::slot_download_file(QTreeWidgetItem *item)
         {
             QString file_name = item->text(0);
             QString path = get_absolute_path(item);
-            while(item)
-            {
-                if(item->childCount())
-                {
-                    path.push_front(item->text(0) + '/');
-                }
-                else
-                {
-                    path.push_front(item->text(0));
-                }
-                item = item->parent();
-            }
+
             auto dst = QFileDialog::getSaveFileName(nullptr,"Выберите место сохранения файла",file_name);
             if(!dst.isEmpty())
             {

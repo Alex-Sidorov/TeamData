@@ -9,7 +9,6 @@ namespace ActiveObject
     {
         using TypeTask = Scheduler::TypeDefferedTask;
     public:
-        static constexpr int val = 1;
         bool start();
         void wait();
         unsigned int push(AbstractTask *task);

@@ -41,8 +41,6 @@ namespace WorkRemoteDevice
 
         bool is_serv_run()const;
 
-        QString parse_request(QByteArray &msg);
-
         void download_file(const QString &src_file, const QString &dst_file, const QString &user);
 
         void work_task(const QString &user);

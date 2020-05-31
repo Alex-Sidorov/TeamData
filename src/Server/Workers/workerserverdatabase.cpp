@@ -243,7 +243,7 @@ WorkerServerDataBase::FileMetaData WorkerServerDataBase::get_data_files_user(con
             quint64 size = static_cast<quint64>(query.value("size").toString().toDouble());
             auto created_data = query.value("created_data").toString();
             auto last_modified_data = query.value("last_modified_data").toString();
-            FileCharacteristics data = std::make_tuple(size,last_modified_data,created_data);
+            FileCharacteristics data = std::make_tuple(size,created_data,last_modified_data);
             res.insert(path,data);
         }
     }
@@ -254,7 +254,7 @@ bool WorkerServerDataBase::is_user_info(const QString &user)
 {
     QMutexLocker lock(&_data_base_mutex);
 
-    return get_addr_info_user(user).first.isEmpty() ? false : true;
+    return get_addr_info_user(user).first == "null" ? false : true;
 }
 
 bool WorkerServerDataBase::insert_addr_info_user(const QString &user,const QString &addr, quint16 port)
@@ -349,7 +349,7 @@ QPair<QString,quint16> WorkerServerDataBase::get_addr_info_user(const QString &u
 {
     QMutexLocker lock(&_data_base_mutex);
 
-    QPair<QString,quint16> res;
+    QPair<QString,quint16> res("null",0);
     QSqlQuery query(_base);
     query.prepare(SELECT_ANY_ADDR_INFO_REQUEST);
     query.bindValue(":name",user);

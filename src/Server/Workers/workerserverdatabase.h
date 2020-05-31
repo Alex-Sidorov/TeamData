@@ -71,8 +71,8 @@ namespace DataBaseWork
         static const char* DELETE_ADDR_INFO_REQUEST;
 
         static constexpr int INDEX_SIZE = 0;
-        static constexpr int INDEX_LAST_MODIFIED = 1;
-        static constexpr int INDEX_CREATED = 2;
+        static constexpr int INDEX_CREATED = 1;
+        static constexpr int INDEX_LAST_MODIFIED = 2;
     };
 }
 
